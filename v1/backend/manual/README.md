@@ -19,7 +19,7 @@
 ~/deploy-backend.sh
 ```
 
-### 2. 배포 절차 
+### 3. 배포 절차 
 1. DB 상태 확인
    - `systemctl status mysql  # 또는 sudo systemctl restart mysql`
 2. Nginx 상태 확인
@@ -35,7 +35,7 @@
 6. 배포 후 로그 확인
    - `pm2 logs nemo-backend`
 
-### 3. 배포 스크립트 내용
+### 4. 배포 스크립트 내용
 ```bash
 #!/bin/bash
 set -e
@@ -83,6 +83,6 @@ curl http://localhost:8080/actuator/health
 ```
 
 
-### 비고
+### 5. 비고
 - 현 단계에서 .env 파일은 서버 내에서 관리
 - [왜 서버에서 빌드?](https://github.com/100-hours-a-week/6-nemo-wiki/wiki/%5BCL%5D-%EC%84%9C%EB%B2%84%EC%97%90%EC%84%9C-%EB%B9%8C%EB%93%9C%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0)
