@@ -7,6 +7,22 @@ REPO_URL="https://github.com/100-hours-a-week/6-nemo-be.git"
 BRANCH="develop"
 SCRIPT_DIR="$ROOT_DIR/scripts"
 
+# 디스코드 웹훅
+WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+WEBHOOK_BACKEND_URL="https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
+
+send_discord_notification() {
+  local message="$1"
+
+  for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_BACKEND_URL"
+  do
+    curl -H "Content-Type: application/json" \
+      -X POST \
+      -d "{\"content\": \"$message\"}" \
+      "$webhook_url"
+  done
+}
+
 cd "$ROOT_DIR"
 
 # 백업
@@ -42,7 +58,12 @@ bash "$SCRIPT_DIR/run.sh"
 
 # 🔎 헬스체크
 sleep 30
-bash "$SCRIPT_DIR/healthcheck.sh"
+if bash "$SCRIPT_DIR/healthcheck.sh"; then
+  send_discord_notification "✅ [배포 성공] $SERVICE_NAME 배포 완료! (브랜치: $BRANCH)"
+else
+  send_discord_notification "❌ [배포 실패] $SERVICE_NAME 배포 실패! (브랜치: $BRANCH)"
+  exit 1
+fi
 
 # ✅ 완료
 pm2 status

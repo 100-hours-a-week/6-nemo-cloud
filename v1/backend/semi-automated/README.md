@@ -1,3 +1,5 @@
+# Backend Semi-Automated Deployment Guide (v1-dev)
+
 ### 1. 개요
 
 - 기존의 명령어 기반의 수동 배포의 비효율성을 개선하고, 반복 작업은 스크립트로 자동화한 Semi-Automated 배포 방식
@@ -17,6 +19,7 @@
 │   │   ├── backup.sh              # JAR 파일 백업 스크립트
 │   │   ├── deploy.sh              # 전체 배포 스크립트 (백업 + 빌드 + 실행)
 │   │   ├── healthcheck.sh         # 헬스체크 스크립트
+│   │   ├── healthcheck_cron.sh    # 헬스체크 크론 스크립트
 │   │   ├── rollback.sh            # 롤백 스크립트
 │   │   └── run.sh                 # PM2 서비스 실행 스크립트
 │   └── .env                       #환경변수 파일
@@ -84,6 +87,22 @@ source ~/.bashrc
     BRANCH="develop"
     SCRIPT_DIR="$ROOT_DIR/scripts"
     
+    # 디스코드 웹훅
+    WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+    WEBHOOK_BACKEND_URL="https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
+    
+    send_discord_notification() {
+      local message="$1"
+      
+      for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_BACKEND_URL"
+      do
+        curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\": \"$message\"}" \
+          "$webhook_url"
+      done
+    }
+    
     cd "$ROOT_DIR"
     
     # 백업
@@ -119,7 +138,12 @@ source ~/.bashrc
     
     # 🔎 헬스체크
     sleep 30
-    bash "$SCRIPT_DIR/healthcheck.sh"
+    if bash "$SCRIPT_DIR/healthcheck.sh"; then
+      send_discord_notification "✅ [배포 성공] $SERVICE_NAME 배포 완료! (브랜치: $BRANCH)"
+    else
+      send_discord_notification "❌ [배포 실패] $SERVICE_NAME 배포 실패! (브랜치: $BRANCH)"
+      exit 1
+    fi
     
     # ✅ 완료
     pm2 status
@@ -192,6 +216,22 @@ source ~/.bashrc
     PORT=8080
     ENV_FILE="$ROOT_DIR/.env"
     
+    # 디스코드 웹훅
+    WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+    WEBHOOK_BACKEND_URL="https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
+    
+    send_discord_notification() {
+      local message="$1"
+      
+      for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_BACKEND_URL"
+      do
+        curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\": \"$message\"}" \
+          "$webhook_url"
+      done
+    }
+    
     # ===== 롤백 대상 결정 =====
     if [ -n "${1:-}" ]; then
       # 전체 파일명으로 롤백
@@ -212,6 +252,10 @@ source ~/.bashrc
       fi
       echo "📦 최신 롤백: $TARGET_JAR"
     fi
+    
+    # 타임스탬프 추출
+    TARGET_FILE=$(basename "$TARGET_JAR")
+    TIMESTAMP=$(echo "$TARGET_FILE" | grep -oP '\d{8}-\d{4}')
     
     # ===== PM2 실행 =====
     echo "🛑 기존 서비스 종료 중..."
@@ -234,8 +278,63 @@ source ~/.bashrc
     # ===== 헬스체크 =====
     echo "🔎 롤백 후 헬스체크 실행 중..."
     sleep 30
-    bash "$SCRIPT_DIR/healthcheck.sh"
+    if bash "$SCRIPT_DIR/healthcheck.sh"; then
+      send_discord_notification "✅ [롤백 성공] $SERVICE_NAME 롤백 완료! (Rollback Point: $TIMESTAMP)"
+    else
+      send_discord_notification "❌ [롤백 실패] $SERVICE_NAME 롤백 실패! (Rollback Point: $TIMESTAMP)"
+      exit 1
+    fi
+    ```
+
+- **`healthcheck_cron.sh`**
+
+    ```bash
+    #!/bin/bash
+    set -euo pipefail
+    
+    SERVICE_NAME="nemo-backend"
+    HEALTH_URL="http://localhost:8080/actuator/health"
+    WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+    
+    send_discord_alert() {
+      local message="$1"
+      curl -H "Content-Type: application/json" \
+        -X POST \
+        -d "{\"content\": \"$message\"}" \
+        "$WEBHOOK_URL"
+    }
+    
+    RESPONSE=$(curl -s "$HEALTH_URL" || true)
+    
+    if echo "$RESPONSE" | grep -q '"status":"UP"'; then
+      echo "✅ [$SERVICE_NAME] 서비스 정상 동작 중."
+    else
+      send_discord_alert "🚨 [$SERVICE_NAME] 헬스체크 실패! 서비스 비정상 상태 감지."
+    fi
+    ```
+
+    ```bash
+    # 권한 부여
+    chmod +x /home/ubuntu/nemo/backend/scripts/healthcheck_cron.sh
+    
+    # 주기 등록
+    crontab -e
+    
+    # Dev 서버 설정(5분 주기)
+    */5 * * * * /home/ubuntu/nemo/backend/scripts/healthcheck_cron.sh
+    
+     # 크론탭 실행 로그 확인 (Ubuntu 기준)
+     cat /var/log/syslog | grep CRON
     ```
 
 
 ### 5. 비고
+
+- 기존의 Manual 방식은 없던 롤백 로직 추가
+- 디스코드 알림 추가
+  - 배포 성공 유무 (각 서비스 + 클라우드)
+  - 롤백 성공 유무 (각 서비스 + 클라우드)
+  - 헬스 체크 크론탭 (클라우드만)
+    - dev는 5분 주기
+    - prod는 1분 주기
+    - 트리거: HTTP/200 응답이 아닐 때

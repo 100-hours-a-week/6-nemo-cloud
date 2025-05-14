@@ -9,6 +9,22 @@ BACKUP_DIR="$ROOT_DIR/jar-backups"
 PORT=8080
 ENV_FILE="$ROOT_DIR/.env"
 
+# 디스코드 웹훅
+WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+WEBHOOK_BACKEND_URL="https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
+
+send_discord_notification() {
+  local message="$1"
+
+  for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_BACKEND_URL"
+  do
+    curl -H "Content-Type: application/json" \
+      -X POST \
+      -d "{\"content\": \"$message\"}" \
+      "$webhook_url"
+  done
+}
+
 # ===== 롤백 대상 결정 =====
 if [ -n "${1:-}" ]; then
   # 전체 파일명으로 롤백
@@ -29,6 +45,10 @@ else
   fi
   echo "📦 최신 롤백: $TARGET_JAR"
 fi
+
+# 타임스탬프 추출
+TARGET_FILE=$(basename "$TARGET_JAR")
+TIMESTAMP=$(echo "$TARGET_FILE" | grep -oP '\d{8}-\d{4}')
 
 # ===== PM2 실행 =====
 echo "🛑 기존 서비스 종료 중..."
@@ -51,4 +71,9 @@ echo "✅ 롤백 완료: $TARGET_JAR"
 # ===== 헬스체크 =====
 echo "🔎 롤백 후 헬스체크 실행 중..."
 sleep 30
-bash "$SCRIPT_DIR/healthcheck.sh"
+if bash "$SCRIPT_DIR/healthcheck.sh"; then
+  send_discord_notification "✅ [롤백 성공] $SERVICE_NAME 롤백 완료! (Rollback Point: $TIMESTAMP)"
+else
+  send_discord_notification "❌ [롤백 실패] $SERVICE_NAME 롤백 실패! (Rollback Point: $TIMESTAMP)"
+  exit 1
+fi
