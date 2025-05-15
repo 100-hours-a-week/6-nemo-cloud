@@ -8,6 +8,7 @@ SCRIPT_DIR="$ROOT_DIR/scripts"
 BACKUP_DIR="$ROOT_DIR/jar-backups"
 PORT=8080
 ENV_FILE="$ROOT_DIR/.env"
+BRANCH="develop"
 
 # 디스코드 웹훅
 WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
@@ -72,8 +73,8 @@ echo "✅ 롤백 완료: $TARGET_JAR"
 echo "🔎 롤백 후 헬스체크 실행 중..."
 sleep 30
 if bash "$SCRIPT_DIR/healthcheck.sh"; then
-  send_discord_notification "✅ [롤백 성공] $SERVICE_NAME 롤백 완료! (Rollback Point: $TIMESTAMP)"
+  send_discord_notification "✅ [롤백 성공: $BRANCH] $SERVICE_NAME 롤백 완료! (Rollback Point: $TIMESTAMP)"
 else
-  send_discord_notification "❌ [롤백 실패] $SERVICE_NAME 롤백 실패! (Rollback Point: $TIMESTAMP)"
+  send_discord_notification "❌ [롤백 실패: $BRANCH] $SERVICE_NAME 롤백 실패! (Rollback Point: $TIMESTAMP)"
   exit 1
 fi
