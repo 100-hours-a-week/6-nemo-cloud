@@ -59,9 +59,9 @@ bash "$SCRIPT_DIR/run.sh"
 # 🔎 헬스체크
 sleep 30
 if bash "$SCRIPT_DIR/healthcheck.sh"; then
-  send_discord_notification "✅ [배포 성공] $SERVICE_NAME 배포 완료! (브랜치: $BRANCH)"
+  send_discord_notification "✅ [배포 성공: $BRANCH] $SERVICE_NAME 배포 완료!"
 else
-  send_discord_notification "❌ [배포 실패] $SERVICE_NAME 배포 실패! (브랜치: $BRANCH)"
+  send_discord_notification "❌ [배포 실패: $BRANCH] $SERVICE_NAME 배포 실패!"
   exit 1
 fi
 

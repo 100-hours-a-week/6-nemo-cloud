@@ -18,5 +18,5 @@ RESPONSE=$(curl -s "$HEALTH_URL" || true)
 if echo "$RESPONSE" | grep -q '"status":"UP"'; then
   echo "✅ [$SERVICE_NAME] 서비스 정상 동작 중."
 else
-  send_discord_alert "🚨 [헬스체크 실패] $SERVICE_NAME 비정상 상태 감지!"
+  send_discord_alert "🚨 [헬스체크 실패: $BRANCH] $SERVICE_NAME 비정상 상태 감지!"
 fi
