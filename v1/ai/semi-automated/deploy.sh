@@ -11,6 +11,22 @@ PORT=8000
 
 cd "$ROOT_DIR"
 
+# 디스코드 웹훅
+WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+WEBHOOK_AI_URL="https://discord.com/api/webhooks/1372202362982240306/Q51_KNqRi1zIVGVU6WSkjlYMhd8KjOtOqwvNMIXIdmbuW_b-bG_Hf31vDBE1JaXPMZFk"
+
+send_discord_notification() {
+  local message="$1"
+
+  for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_AI_URL"
+  do
+    curl -H "Content-Type: application/json" \
+      -X POST \
+      -d "{\"content\": \"$message\"}" \
+      "$webhook_url"
+  done
+}
+
 # 📦 백업
 bash "$SCRIPT_DIR/backup.sh"
 
@@ -35,14 +51,11 @@ fi
 pm2 delete "$SERVICE_NAME" || true
 
 # 🐍 가상환경 준비
-if [ -d "$VENV_DIR" ]; then
-  echo "🐍 기존 가상환경 삭제 중..."
-  rm -rf "$VENV_DIR"
-fi
-
 echo "🐍 새 가상환경 생성 중..."
-python3.13 -m venv "$VENV_DIR"
-
+if [ ! -d "$VENV_DIR" ]; then
+  echo "🐍 가상환경 생성 중..."
+  python3.13 -m venv "$VENV_DIR"
+fi
 
 echo "📦 패키지 설치 중..."
 source "$VENV_DIR/bin/activate"
@@ -55,7 +68,12 @@ bash "$SCRIPT_DIR/run.sh"
 
 # 🔎 헬스체크
 sleep 7
-bash "$SCRIPT_DIR/healthcheck.sh"
+if bash "$SCRIPT_DIR/healthcheck.sh"; then
+  send_discord_notification "✅ [배포 성공: $BRANCH] $SERVICE_NAME 배포 완료!"
+else
+  send_discord_notification "❌ [배포 실패: $BRANCH] $SERVICE_NAME 배포 실패!"
+  exit 1
+fi
 
 # ✅ 완료
 pm2 status
