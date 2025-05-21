@@ -1,27 +1,34 @@
 #!/bin/bash
 set -euo pipefail
 
-PORT=8000
-URL="http://localhost:$PORT/ai/v1/groups/information"
+ENV_FILE="$HOME/nemo/ai/.env"
 
-echo "🔎 헬스체크 및 API 테스트 중..."
+# 환경변수 로드
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  source "$ENV_FILE"
+  set +a
+fi
 
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL" \
-  -H "Content-Type: application/json" \
-  -d '{
-        "name": "스터디 모임",
-        "goal": "백엔드 개발 능력 향상",
-        "category": "개발",
-        "location": "판교",
-        "period": "1개월 이하",
-        "isPlanCreated": true
-      }')
+# 디스코드 알림
+send_discord_alert() {
+  local message="$1"
+  curl -H "Content-Type: application/json" \
+    -X POST \
+    -d "{\"content\": \"$message\"}" \
+    "$WEBHOOK_CLOUD_URL"
+}
 
-if [ "$RESPONSE" -eq 200 ]; then
-  echo "✅ FastAPI 서버 정상 작동 중 (HTTP 200)"
+echo "🔎 [$SERVICE_NAME] 헬스체크 요청 중..."
+
+STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTHCHECK_URL")
+
+if [ "$STATUS" -eq 200 ]; then
+  echo "✅ [$SERVICE_NAME] 서버 정상 작동 (HTTP 200)"
 else
-  echo "❌ FastAPI 서버 비정상. 배포 확인 필요 (HTTP $RESPONSE)"
+  echo "❌ [$SERVICE_NAME] 서버 비정상 (HTTP $STATUS)"
+  send_discord_alert "🚨 [헬스체크 실패: $BRANCH] $SERVICE_NAME 비정상 상태 감지!"
   exit 1
 fi
 
-echo "✅ AI 서비스 배포 및 API 테스트 완료"
+pm2 status

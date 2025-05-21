@@ -1,10 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-SERVICE_NAME="nemo-ai"
-ROOT_DIR="$HOME/nemo/ai"
-BACKUP_DIR="$ROOT_DIR/backups"
-TIMESTAMP=$(TZ=Asia/Seoul date +%Y%m%d-%H%M)
+ENV_FILE="$HOME/nemo/ai/.env"
+
+# 환경변수 로드
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  source "$ENV_FILE"
+  set +a
+fi
 
 mkdir -p "$BACKUP_DIR"
 
