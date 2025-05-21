@@ -1,16 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-SERVICE_NAME="nemo-ai"
-ROOT_DIR="$HOME/nemo/ai"
-VENV_DIR="$ROOT_DIR/venv"
-PORT=8000
-APP_DIR="$ROOT_DIR/ai-service"
-ENV_FILE="$ROOT_DIR/.env"
+ENV_FILE="$HOME/nemo/ai/.env"
 
-# 환경 변수 로드
+# 환경변수 로드
 if [ -f "$ENV_FILE" ]; then
-  echo "📄 .env 환경변수 로드 중..."
   set -a
   source "$ENV_FILE"
   set +a
