@@ -15,15 +15,15 @@ cd "$HOME/nemo"
 if [ -d "cloud" ]; then
   echo "📦 기존 클라우드 스크립트 업데이트 중..."
   cd cloud
-  if ! git pull origin main; then
+  if ! git pull origin"$BRANCH"; then
     echo "❌ 클라우드 git pull 실패. 클린 클론 시도..."
     cd ..
     rm -rf cloud
-    git clone -b main https://github.com/100-hours-a-week/6-nemo-cloud.git cloud
+    git clone -b "$BRANCH" https://github.com/100-hours-a-week/6-nemo-cloud.git cloud
   fi
 else
   echo "📥 클라우드 스크립트 클론 중..."
-  git clone -b main https://github.com/100-hours-a-week/6-nemo-cloud.git cloud
+  git clone -b "$BRANCH" https://github.com/100-hours-a-week/6-nemo-cloud.git cloud
 fi
 
 # 디스코드 웹훅
