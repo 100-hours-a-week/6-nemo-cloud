@@ -1,4 +1,4 @@
-# Backend Semi-Automated Deployment Guide (v1-dev)
+# Backend Semi-Automated Deployment Guide
 
 ### 1. 개요
 Spring Boot 기반 백엔드 서비스의 배포, 실행, 롤백, 헬스체크, 백업을 자동화한 Semi-Automated 구조입니다.
@@ -66,7 +66,6 @@ source ~/.bashrc
     ```
 
 ### 5. 비고
-
 - 기존의 Manual 방식은 없던 롤백 로직 추가
 - 디스코드 알림 추가
   - 배포 성공 유무 (각 서비스 + 클라우드)
@@ -75,3 +74,4 @@ source ~/.bashrc
     - dev는 5분 주기
     - prod는 1분 주기
     - 트리거: HTTP/200 응답이 아닐 때
+- 모든 스크립트는 공통으로 관리되며, .env 기반 분기로 환경을 구분 (리팩토링)
