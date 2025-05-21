@@ -1,19 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-SERVICE_NAME="nemo-backend"
-ROOT_DIR="$HOME/nemo/backend"
-REPO_URL="https://github.com/100-hours-a-week/6-nemo-be.git"
-BRANCH="develop"
-SCRIPT_DIR="$ROOT_DIR/scripts"
+ENV_FILE="$HOME/nemo/backend/.env"
+
+# 환경변수 로드
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  source "$ENV_FILE"
+  set +a
+fi
 
 # 디스코드 웹훅
-WEBHOOK_CLOUD_URL="https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
-WEBHOOK_BACKEND_URL="https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
-
 send_discord_notification() {
   local message="$1"
-
+  
   for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_BACKEND_URL"
   do
     curl -H "Content-Type: application/json" \
@@ -48,15 +48,16 @@ fi
 #PM2 프로세스 종료
 pm2 delete "$SERVICE_NAME" || true
 
+  
 # 빌드
 echo "⚙️ 백엔드 빌드 중..."
 chmod +x gradlew
 ./gradlew clean bootJar -x test
 
-# 🚀 실행
+# 실행
 bash "$SCRIPT_DIR/run.sh"
 
-# 🔎 헬스체크
+# # 헬스체크
 sleep 30
 if bash "$SCRIPT_DIR/healthcheck.sh"; then
   send_discord_notification "✅ [배포 성공: $BRANCH] $SERVICE_NAME 배포 완료!"
@@ -65,6 +66,5 @@ else
   exit 1
 fi
 
-# ✅ 완료
+# 완료
 pm2 status
-echo "✅ 백엔드 배포 완료!"
