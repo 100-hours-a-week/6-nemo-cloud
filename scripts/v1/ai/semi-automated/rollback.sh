@@ -1,10 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+ENV_FILE="$HOME/nemo/ai/.env"
+
 # 환경변수 로드
 if [ -f "$ENV_FILE" ]; then
   set -a
-  source "$ENV_FILE/.env"
+  source "$ENV_FILE"
   set +a
 fi
 

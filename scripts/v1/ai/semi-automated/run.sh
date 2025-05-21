@@ -1,9 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# 환경 변수 로드
+ENV_FILE="$HOME/nemo/ai/.env"
+
+# 환경변수 로드
 if [ -f "$ENV_FILE" ]; then
-  echo "📄 .env 환경변수 로드 중..."
   set -a
   source "$ENV_FILE"
   set +a
