@@ -3,27 +3,13 @@ set -euo pipefail
 export PATH=$PATH:/home/ubuntu/.local/share/pnpm
 export PATH=$PATH:/home/ubuntu/.local/share/pnpm:/home/ubuntu/.nvm/versions/node/v22.14.0/bin
 
+ENV_FILE="$HOME/nemo/ai/.env"
+
 # 환경변수 로드
 if [ -f "$ENV_FILE" ]; then
   set -a
   source "$ENV_FILE"
   set +a
-fi
-
-# 스크립트 최신화
-cd "$HOME/nemo"
-if [ -d "cloud" ]; then
-  echo "📦 기존 클라우드 스크립트 업데이트 중..."
-  cd cloud
-  if ! git pull origin"$BRANCH"; then
-    echo "❌ 클라우드 git pull 실패. 클린 클론 시도..."
-    cd ..
-    rm -rf cloud
-    git clone -b "$BRANCH" https://github.com/100-hours-a-week/6-nemo-cloud.git cloud
-  fi
-else
-  echo "📥 클라우드 스크립트 클론 중..."
-  git clone -b "$BRANCH" https://github.com/100-hours-a-week/6-nemo-cloud.git cloud
 fi
 
 # 디스코드 웹훅

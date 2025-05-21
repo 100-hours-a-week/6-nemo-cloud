@@ -1,6 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+ENV_FILE="$HOME/nemo/ai/.env"
+
+# 환경변수 로드
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  source "$ENV_FILE"
+  set +a
+fi
+
 mkdir -p "$BACKUP_DIR"
 
 # FastAPI 소스 백업 (필요 시 모델 파일 등도 포함 가능)
