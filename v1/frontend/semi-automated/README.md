@@ -67,7 +67,7 @@ crontab -e
 - 기존의 Manual 방식은 없던 롤백 로직 추가
 - .env 파일 관리 필요
 - ESLint Config 파일 관리 필요
-- 초기엔 권한 필요: `chmod +x ~/nemo/cloud/v1/frontend/scripts/*.sh`
+- 초기엔 권한 필요: `chmod +x ~/nemo/cloud/v1/frontend/*.sh`
 - 디스코드 알림 추가
     - 배포 성공 유무 (각 서비스 + 클라우드)
     - 롤백 성공 유무 (각 서비스 + 클라우드)
