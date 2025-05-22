@@ -52,14 +52,14 @@ source ~/.bashrc
 
 ### 4. 크론탭 설정
     ```bash
-    # 권한 부여
-    chmod +x /home/ubuntu/nemo/cloud/v1/backend/healthcheck.sh
+    # 초기엔 권한 필요
+    `chmod +x ~/nemo/cloud/v1/backend/semi-automated/*.sh`
     
     # 주기 등록
     crontab -e
     
     # Dev 서버 설정(5분 주기)
-    */5 * * * * /home/ubuntu/nemo/cloud/v1/backend/healthcheck.sh
+    */5 * * * * /home/ubuntu/nemo/cloud/v1/backend/semi-automated/healthcheck.sh
     
      # 크론탭 실행 로그 확인 (Ubuntu 기준)
      cat /var/log/syslog | grep CRON
