@@ -1,21 +1,35 @@
 #!/bin/bash
 set -euo pipefail
+export PATH=$PATH:/home/ubuntu/.local/share/pnpm
+export PATH=$PATH:/home/ubuntu/.local/share/pnpm:/home/ubuntu/.nvm/versions/node/v22.14.0/bin
 
-SERVICE_NAME="nemo-frontend"
-ROOT_DIR="$HOME/nemo/frontend"
-REPO_URL="https://github.com/100-hours-a-week/6-nemo-fe.git"
-BRANCH="dev"
-SCRIPT_DIR="$ROOT_DIR/scripts"
-APP_DIR="$ROOT_DIR/frontend-service"
-ENV_FILE="$APP_DIR/.env"
-PORT=3000
+ENV_SOURCE_FILE="$HOME/nemo/frontend/.env"  # 복사할 환경변수 파일 경로
+
+# 환경변수 로드
+if [ -f "$ENV_SOURCE_FILE" ]; then
+  set -a
+  source "$ENV_SOURCE_FILE"
+  set +a
+fi
+
+# 디스코드 웹훅
+send_discord_notification() {
+  local message="$1"
+  for webhook_url in "$WEBHOOK_CLOUD_URL" "$WEBHOOK_FRONTEND_URL"
+  do
+    curl -H "Content-Type: application/json" \
+      -X POST \
+      -d "{\"content\": \"$message\"}" \
+      "$webhook_url"
+  done
+}
 
 cd "$ROOT_DIR"
 
-# 📦 [1/6] 빌드 산출물 백업
+# 백업
 bash "$SCRIPT_DIR/backup.sh"
 
-# 📥 [2/6] 소스 최신화
+# 소스 최신화
 if [ -d "frontend-service" ]; then
   echo "📦 기존 소스 업데이트 중..."
   cd frontend-service
@@ -32,28 +46,35 @@ else
   cd frontend-service
 fi
 
-# 📄 [3/6] 환경 변수 로드
-if [ -f "$ENV_FILE" ]; then
+# 환경 변수 복사 및 로드
+if [ -f "$ENV_SOURCE_FILE" ]; then
+  cp "$ENV_SOURCE_FILE" "$ENV_FILE"
+  echo "✅ .env 파일 복사 완료"
   echo "📄 .env 환경변수 로드 중..."
   set -a
-  source "$ENV_FILE"
+  source "$ENV_FILE" || { echo "❌ .env 파일 로드 실패. 배포 중단."; exit 1; }
   set +a
+else
+  echo "❌ .env 파일이 $ENV_SOURCE_FILE 위치에 없습니다. 배포 중단."
+  exit 1
 fi
 
-# 📦 [4/6] 패키지 설치 & 빌드
+# 패키지 설치
 echo "📦 패키지 설치 중..."
 pnpm install
 
+# 빌드
 echo "⚙️ 빌드 중..."
 pnpm run build
 
-# 🚀 [5/6] PM2로 서비스 실행 (빌드 후 실행만 run.sh에서 담당)
+# 실행
 bash "$SCRIPT_DIR/run.sh"
 
-# 🔎 [6/6] 헬스체크
-sleep 7
-bash "$SCRIPT_DIR/healthcheck.sh"
-
-# ✅ 완료
-pm2 status
-echo "✅ 프론트엔드 서비스 배포 완료!"
+# 헬스체크 후 알림 여부 결정
+sleep 10
+if bash "$SCRIPT_DIR/healthcheck.sh"; then
+  send_discord_notification "✅ [배포 성공: $BRANCH] $SERVICE_NAME 배포 완료!"
+else
+  send_discord_notification "❌ [배포 실패: $BRANCH] $SERVICE_NAME 배포 실패!"
+  exit 1
+fi
