@@ -35,7 +35,7 @@ AI 서비스의 반복적인 수동 배포 작업을 줄이고, 배포, 실행, 
 echo 'alias ai-deploy="bash ~/nemo/cloud/v1/ai/semi-automated/deploy.sh"' >> ~/.bashrc
 echo 'ai-rollback() { bash ~/nemo/cloud/v1/ai/semi-automated/rollback.sh \"$1\"; }' >> ~/.bashrc
 echo 'alias ai-health="bash ~/nemo/cloud/v1/ai/semi-automated/healthcheck.sh"' >> ~/.bashrc
-echo 'alias ai-run="bash ~/nemo/cloud/scripts/v1/ai/semi-automated/run.sh"' >> ~/.bashrc
+echo 'alias ai-run="bash ~/nemo/cloud/v1/ai/semi-automated/run.sh"' >> ~/.bashrc
 echo 'alias ai-backup="bash ~/nemo/cloud/v1/ai/semi-automated/backup.sh"' >> ~/.bashrc
 
 source ~/.bashrc
