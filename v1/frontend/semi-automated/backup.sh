@@ -1,11 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-SERVICE_NAME="nemo-frontend"
-ROOT_DIR="$HOME/nemo/frontend"
-BACKUP_DIR="$ROOT_DIR/.next-backups"
-SOURCE_DIR="$ROOT_DIR/frontend-service/.next"
-TIMESTAMP=$(TZ=Asia/Seoul date +%Y%m%d-%H%M)
+ENV_SOURCE_FILE="$HOME/nemo/frontend/.env"  # 복사할 환경변수 파일 경로
+
+# 환경변수 로드
+if [ -f "$ENV_SOURCE_FILE" ]; then
+  set -a
+  source "$ENV_SOURCE_FILE"
+  set +a
+fi
 
 mkdir -p "$BACKUP_DIR"
 
