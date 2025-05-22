@@ -50,14 +50,14 @@ source ~/.bashrc
 
 ### 4. 크론탭 설정
 ```bash
-# 권한 부여
-chmod +x /home/ubuntu/nemo/cloud/v1/frontend/healthcheck.sh
+# 초기엔 권한 필요
+`chmod +x ~/nemo/cloud/v1/frontend/semi-automated/*.sh`
 
 # 주기 등록
 crontab -e
 
 # Dev 서버 설정(5분 주기)
-*/5 * * * * /home/ubuntu/nemo/cloud/v1/frontend/healthcheck.sh
+*/5 * * * * /home/ubuntu/nemo/cloud/v1/frontend/semi-automated/healthcheck.sh
 
  # 크론탭 실행 로그 확인 (Ubuntu 기준)
  cat /var/log/syslog | grep CRON
@@ -65,9 +65,8 @@ crontab -e
 
 ### 5. 비고
 - 기존의 Manual 방식은 없던 롤백 로직 추가
-- .env 파일 관리 필요
-- ESLint Config 파일 관리 필요
-- 초기엔 권한 필요: `chmod +x ~/nemo/cloud/v1/frontend/semi-automated/*.sh`
+- .env 파일 관리 필요 -> 루트 디렉토리에서 관리하되 소스 디렉토리로 복사하는 로직을 추가하여 해결
+- ESLint Config 파일 관리 필요 -> FE쪽 코드 수정 필요
 - 디스코드 알림 추가
     - 배포 성공 유무 (각 서비스 + 클라우드)
     - 롤백 성공 유무 (각 서비스 + 클라우드)
