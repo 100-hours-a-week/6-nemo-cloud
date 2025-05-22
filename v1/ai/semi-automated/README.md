@@ -2,9 +2,10 @@
 
 ### 1. 개요
 AI 서비스의 반복적인 수동 배포 작업을 줄이고, 배포, 실행, 롤백, 헬스체크, 백업까지 한 번에 수행할 수 있도록 한 Semi-Automated 구조입니다.
-- 반복적인 명령어 기반 수동 배포의 비효율성을 개선하고, 배포 프로세스를 스크립트 기반으로 자동화한 Semi-Automated 구조입니다.
+- 모든 스크립트는 cloud 레포에서 관리되며, 서버에서는 .env 환경변수를 기준으로 동작합니다.
+- 기존의 명령어 기반의 수동 배포의 비효율성을 개선하고, 반복 작업은 스크립트로 자동화한 Semi-Automated 배포 방식
 - 클라우드 담당자뿐 아니라 다른 개발자도 서버에 접속하여 **정해진 alias 명령어만으로** `배포`, `재시작`, `롤백`, `헬스체크`, `백업` 작업을 수행할 수 있습니다.
-- **환경 구분은 `.env` 파일을 통해** 이루어지며, `BRANCH`, `PORT`, `SERVICE_NAME` 등의 설정은 서버별로 분리되어 관리됩니다.
+- 디스코드 웹훅을 통해 배포/롤백 성공 여부 및 헬스체크 실패 상황을 실시간으로 모니터링할 수 있습니다.
 
 ### 2. 서버 디렉토리 구조
 
@@ -31,11 +32,11 @@ AI 서비스의 반복적인 수동 배포 작업을 줄이고, 배포, 실행, 
 ### 3. 배포 / 운영 명령어 매핑
 
 ```bash
-echo 'alias ai-deploy="bash ~/nemo/cloud/scripts/v1/ai/semi-automated/deploy.sh"' >> ~/.bashrc
-echo 'ai-rollback() { bash ~/nemo/cloud/scripts/v1/ai/semi-automated/rollback.sh \"$1\"; }' >> ~/.bashrc
-echo 'alias ai-health="bash ~/nemo/cloud/scripts/v1/ai/semi-automated/healthcheck.sh"' >> ~/.bashrc
+echo 'alias ai-deploy="bash ~/nemo/cloud/v1/ai/semi-automated/deploy.sh"' >> ~/.bashrc
+echo 'ai-rollback() { bash ~/nemo/cloud/v1/ai/semi-automated/rollback.sh \"$1\"; }' >> ~/.bashrc
+echo 'alias ai-health="bash ~/nemo/cloud/v1/ai/semi-automated/healthcheck.sh"' >> ~/.bashrc
 echo 'alias ai-run="bash ~/nemo/cloud/scripts/v1/ai/semi-automated/run.sh"' >> ~/.bashrc
-echo 'alias ai-backup="bash ~/nemo/cloud/scripts/v1/ai/semi-automated/backup.sh"' >> ~/.bashrc
+echo 'alias ai-backup="bash ~/nemo/cloud/v1/ai/semi-automated/backup.sh"' >> ~/.bashrc
 
 source ~/.bashrc
 
@@ -51,14 +52,14 @@ source ~/.bashrc
 
 ### 4. 크론탭 설정
     ```bash
-    # 권한 부여
-    chmod +x /home/ubuntu/nemo/cloud/v1/ai/healthcheck.sh
+    # 초기엔 권한 필요
+    `chmod +x ~/nemo/cloud/v1/backend/semi-automated/*.sh`
     
     # 주기 등록
     crontab -e
     
     # Dev 서버 설정(5분 주기)
-    */5 * * * * /home/ubuntu/nemo/cloud/v1/ai/healthcheck.sh
+    */5 * * * * /home/ubuntu/nemo/cloud/v1/ai/semi-automated/healthcheck.sh
     
      # 크론탭 실행 로그 확인 (Ubuntu 기준)
      cat /var/log/syslog | grep CRON
