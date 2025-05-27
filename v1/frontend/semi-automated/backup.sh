@@ -12,9 +12,9 @@ fi
 
 mkdir -p "$BACKUP_DIR"
 
-# .next 빌드 산출물 백업
+# Frontend 소스 백업
 if [ -d "$SOURCE_DIR" ]; then
-  echo "📦 프론트엔드 빌드 산출물 백업 중..."
+  echo "📦 프론트엔드 백업 중..."
   tar -czf "$BACKUP_DIR/$TIMESTAMP.tar.gz" -C "$SOURCE_DIR" .
 
   # 최대 7개만 유지
@@ -22,5 +22,5 @@ if [ -d "$SOURCE_DIR" ]; then
 
   echo "✅ 백업 완료: $BACKUP_DIR/$TIMESTAMP.tar.gz"
 else
-  echo "❌ 백업할 빌드 산출물이 존재하지 않습니다: $SOURCE_DIR"
+  echo "❌ 백업할 소스 디렉토리가 존재하지 않습니다: $ROOT_DIR/ai-service"
 fi
