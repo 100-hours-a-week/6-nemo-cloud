@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  db:
+    restart: always
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: dev_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: Dev1234!
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - nemo-net
+
+  backend:
+    restart: always
+    build:
+      context: ../../backend/backend-service
+      dockerfile:  Dockerfile
+      args:
+        SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../../backend/backend-service/.env
+    depends_on:
+      - db
+    networks:
+      - nemo-net
+
+  frontend:
+    restart: always
+    build:
+      context: ../../frontend/frontend-service
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../../frontend/frontend-service/.env
+    depends_on:
+      - backend
+    networks:
+      - nemo-net
+
+  ai:
+    restart: always
+    build:
+      context: ../../ai/ai-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../../ai/ai-service/.env
+    networks:
+      - nemo-net
+
+networks:
+  nemo-net:
+
+volumes:
+  mysql-data:
