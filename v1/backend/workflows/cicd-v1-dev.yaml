@@ -1,0 +1,41 @@
+name: Backend CI/CD for dev-v1
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean bootJar -x test
+
+      - name: Upload JAR to Server
+        run: |
+          echo "${{ secrets.DEV_SSH_KEY }}" > temp_key
+          chmod 600 temp_key
+          scp -i temp_key -o StrictHostKeyChecking=no ./build/libs/nemo-server-0.0.1-SNAPSHOT.jar \
+          ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:~/nemo/backend/jar-backups/
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          script: |
+            cd ~/nemo/backend/scripts
+            bash deploy_ci_cd.sh
