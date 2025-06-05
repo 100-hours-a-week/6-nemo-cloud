@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: db
     image: mysql:8.0
     ports:
       - "3306:3306"
@@ -11,6 +12,7 @@ services:
       - nemo-net
 
   backend:
+    container_name: backend
     build:
       context: ../../backend/backend-service
       dockerfile:  Dockerfile
@@ -19,22 +21,24 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - ../../cloud/v2/envs/be.env
+      - ../../cloud/v2/envs/backend.env
     networks:
       - nemo-net
 
   frontend:
+    container_name: frontend
     build:
       context: ../../frontend/frontend-service
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     env_file:
-      - ../../cloud/v2/envs/fe.env
+      - ../../cloud/v2/envs/frontend.env
     networks:
       - nemo-net
 
   ai:
+    container_name: ai
     build:
       context: ../../ai/ai-service
       dockerfile: Dockerfile
