@@ -1,3 +1,4 @@
 envs
 .env
 .gitignore
+*.status
