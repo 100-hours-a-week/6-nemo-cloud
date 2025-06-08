@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SERVICE="$1"         # backend, frontend, ai
-ENV="$2"             # dev, prod
+ENV="dev"
 ROLLBACK_TAG="$3"    # 롤백할 이미지 태그 (예: 20240604-1802)
 
 echo ""

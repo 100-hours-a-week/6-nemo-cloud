@@ -13,6 +13,7 @@ services:
 
   backend:
     container_name: backend
+    image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:dev-latest
     build:
       context: ../../backend/backend-service
       dockerfile:  Dockerfile
@@ -27,6 +28,7 @@ services:
 
   frontend:
     container_name: frontend
+    image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev-latest
     build:
       context: ../../frontend/frontend-service
       dockerfile: Dockerfile
@@ -39,6 +41,7 @@ services:
 
   ai:
     container_name: ai
+    image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/ai:dev-latest
     build:
       context: ../../ai/ai-service
       dockerfile: Dockerfile
