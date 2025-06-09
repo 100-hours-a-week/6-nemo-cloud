@@ -32,9 +32,16 @@ if [ "$ENV" == "dev" ]; then
   docker compose up -d
 else
   TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(date +'%Y%m%d-%H%M')"
-  MIG_NAME="be-instance-group"
-  # MIG_NAME="${SERVICE}-${ENV}-mig"
-
+  
+  # MIG 이름 결정
+  if [ "$SERVICE" == "backend" ]; then
+    MIG_NAME="be-instance-group"
+  elif [ "$SERVICE" == "frontend" ]; then
+    MIG_NAME="fe-instance-group"
+  else
+    echo "❌ [오류] '$SERVICE'는 지원되지 않는 서비스입니다 (backend, frontend만 가능)"
+    exit 1
+  fi
 
   echo "🏗️ 템플릿 생성 중: $TEMPLATE_NAME"
   gcloud compute instance-templates create "$TEMPLATE_NAME" \
@@ -43,7 +50,7 @@ else
     --image-project="${IMAGE_PROJECT:-cos-cloud}" \
     --metadata=startup-script="#! /bin/bash
 gcloud secrets versions access latest --secret=${SERVICE}-${ENV}-env > /root/.env
-docker run -d --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE} --restart=always" \
+docker run -d --restart=always --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}" \
     --tags="${SERVICE}-${ENV}"
 
   echo "🔁 MIG 롤링 업데이트 중: $MIG_NAME"
