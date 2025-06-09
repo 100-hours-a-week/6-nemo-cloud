@@ -2,14 +2,18 @@
 set -euo pipefail
 
 SERVICE="$1"   # backend, frontend, ai
-ENV="dev"
+ENV="$2"       # dev or prod
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "📦 [1] 환경변수 및 공통 함수 로드"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 source "$HOME/nemo/cloud/v2/scripts/utils.sh"
-load_env "$SERVICE"
+
+# dev = 서버 내 환경변수, prod = GCP Secret Manager
+if [ "$ENV" == "dev" ]; then
+  load_env "$SERVICE"
+fi
 
 cd "$ROOT_DIR"
 
@@ -27,12 +31,28 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 if [ "$ENV" == "dev" ]; then
   docker compose up -d
 else
-  docker stop "$SERVICE_NAME" 2>/dev/null || true
-  docker rm "$SERVICE_NAME" 2>/dev/null || true
-  docker run -d --name "$SERVICE_NAME" \
-    --env-file "$ENV_FILE" \
-    -p "$PORT:$PORT" \
-    "$IMAGE"
+  TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(date +'%Y%m%d-%H%M')"
+  MIG_NAME="be-instance-group"
+  # MIG_NAME="${SERVICE}-${ENV}-mig"
+
+
+  echo "🏗️ 템플릿 생성 중: $TEMPLATE_NAME"
+  gcloud compute instance-templates create "$TEMPLATE_NAME" \
+    --machine-type="${MACHINE_TYPE:-e2-medium}" \
+    --image-family="${IMAGE_FAMILY:-cos-stable}" \
+    --image-project="${IMAGE_PROJECT:-cos-cloud}" \
+    --metadata=startup-script="#! /bin/bash
+gcloud secrets versions access latest --secret=${SERVICE}-${ENV}-env > /root/.env
+docker run -d --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE} --restart=always" \
+    --tags="${SERVICE}-${ENV}"
+
+  echo "🔁 MIG 롤링 업데이트 중: $MIG_NAME"
+  gcloud compute instance-groups managed rolling-action start-update "$MIG_NAME" \
+    --version=template="projects/${GCP_PROJECT_ID_PROD}/global/instanceTemplates/${TEMPLATE_NAME}" \
+    --region="${REGION}" \
+    --project="${GCP_PROJECT_ID_PROD}" \
+    --max-surge=1 \
+    --max-unavailable=0
 fi
 
 echo ""
