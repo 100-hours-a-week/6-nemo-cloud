@@ -18,7 +18,9 @@ if [ "$ENV" == "dev" ]; then
   load_env "$SERVICE"
 else
   echo "🔐 [prod] Secret Manager에서 환경변수 불러오는 중..."
-  if SECRET_CONTENT=$(gcloud secrets versions access latest --secret="${SERVICE}-${ENV}-env"); then
+  if SECRET_CONTENT=$(gcloud secrets versions access latest \
+    --secret="${SERVICE}-${ENV}-env" \
+    --project="${GCP_PROJECT_ID_PROD}"); then
     export $(echo "$SECRET_CONTENT" | xargs)
   else
     echo "❌ Secret Manager에서 환경변수 로딩 실패"
