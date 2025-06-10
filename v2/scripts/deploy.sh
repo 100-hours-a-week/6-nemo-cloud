@@ -16,6 +16,14 @@ source "$SCRIPT_DIR/utils.sh"
 # dev = 서버 내 환경변수, prod = GCP Secret Manager
 if [ "$ENV" == "dev" ]; then
   load_env "$SERVICE"
+else
+  echo "🔐 [prod] Secret Manager에서 환경변수 불러오는 중..."
+  if SECRET_CONTENT=$(gcloud secrets versions access latest --secret="${SERVICE}-${ENV}-env"); then
+    export $(echo "$SECRET_CONTENT" | xargs)
+  else
+    echo "❌ Secret Manager에서 환경변수 로딩 실패"
+    exit 1
+  fi
 fi
 
 cd "$ROOT_DIR"
