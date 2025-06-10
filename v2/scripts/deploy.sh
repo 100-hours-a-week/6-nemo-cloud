@@ -63,6 +63,7 @@ else
     --image-project="${IMAGE_PROJECT:-cos-cloud}" \
     --network="v2-nemo-prod" \
     --subnet="prod-backend" \
+    --region="${REGION}" \
     --no-address \
     --metadata=startup-script="#! /bin/bash
 gcloud secrets versions access latest --secret=${SERVICE}-${ENV}-env > /root/.env
