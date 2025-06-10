@@ -71,7 +71,7 @@ docker run -d --restart=always --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}
     --version=template="projects/${GCP_PROJECT_ID_PROD}/global/instanceTemplates/${TEMPLATE_NAME}" \
     --region="${REGION}" \
     --project="${GCP_PROJECT_ID_PROD}" \
-    --max-surge=0 \
+    --max-surge=2 \
     --max-unavailable=0
 fi
 
