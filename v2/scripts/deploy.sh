@@ -4,6 +4,9 @@ set -euo pipefail
 SERVICE="$1"   # backend, frontend, ai
 ENV="$2"       # dev or prod
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "📦 [1] 환경변수 및 공통 함수 로드"

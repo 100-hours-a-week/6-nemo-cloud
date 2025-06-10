@@ -28,7 +28,7 @@ services:
 
   frontend:
     container_name: frontend
-    # image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev-latest
+    image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev-latest
     build:
       context: ../../frontend/frontend-service
       dockerfile: Dockerfile
