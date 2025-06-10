@@ -61,6 +61,9 @@ else
     --machine-type="${MACHINE_TYPE:-e2-medium}" \
     --image-family="${IMAGE_FAMILY:-cos-stable}" \
     --image-project="${IMAGE_PROJECT:-cos-cloud}" \
+    --network="v2-nemo-prod" \
+    --subnet="prod-backend" \
+    --no-address \ 
     --metadata=startup-script="#! /bin/bash
 gcloud secrets versions access latest --secret=${SERVICE}-${ENV}-env > /root/.env
 docker run -d --restart=always --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}" \
