@@ -8,7 +8,7 @@ STATUS_FILE="$SCRIPT_DIR/healthcheck_${SERVICE}.status"
 # 상태 파일 디렉토리 보장
 sudo mkdir -p "$(dirname "$STATUS_FILE")"
 
-source "$HOME/nemo/cloud/v2/scripts/utils.sh"
+source "$SCRIPT_DIR/utils.sh"
 load_env "$SERVICE"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
