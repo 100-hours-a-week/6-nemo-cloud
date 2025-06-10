@@ -2,6 +2,8 @@
 set -euo pipefail
 
 SERVICE="$1"
+ENV="$2"       # dev or prod
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATUS_FILE="$SCRIPT_DIR/healthcheck_${SERVICE}.status"
 
@@ -9,7 +11,21 @@ STATUS_FILE="$SCRIPT_DIR/healthcheck_${SERVICE}.status"
 sudo mkdir -p "$(dirname "$STATUS_FILE")"
 
 source "$SCRIPT_DIR/utils.sh"
-load_env "$SERVICE"
+
+# dev = 서버 내 환경변수, prod = GCP Secret Manager
+if [ "$ENV" == "dev" ]; then
+  load_env "$SERVICE"
+else
+  echo "🔐 [prod] Secret Manager에서 환경변수 불러오는 중..."
+  if SECRET_CONTENT=$(gcloud secrets versions access latest \
+    --secret="${SERVICE}-${ENV}-env" \
+    --project="${GCP_PROJECT_ID_PROD}"); then
+    export $(echo "$SECRET_CONTENT" | xargs)
+  else
+    echo "❌ Secret Manager에서 환경변수 로딩 실패"
+    exit 1
+  fi
+fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🩺 [$SERVICE_NAME] 상태 확인 중..."
