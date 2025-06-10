@@ -83,7 +83,7 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🩺 [4] 헬스체크 수행"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE"; then
+if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
   notify_discord_all "✅ [배포 성공: $BRANCH] $SERVICE_NAME 배포 완료!"
   echo ""
   echo "🎉 [$SERVICE_NAME] 배포 완료"
