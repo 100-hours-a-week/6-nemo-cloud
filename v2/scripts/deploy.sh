@@ -74,7 +74,7 @@ TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(TZ=Asia/Seoul date +'%Y%m%d-%H%M')"
 
 echo "🧱 템플릿 이름: $TEMPLATE_NAME"
 
-# 지역 인스턴스 템플릿 생성
+# 인스턴스 템플릿 생성
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --region="${REGION}" \
   --machine-type="${MACHINE_TYPE:-e2-medium}" \
@@ -123,9 +123,8 @@ echo "🔁 MIG 롤링 업데이트 시작: $MIG_NAME"
 
 # MIG 롤링 업데이트
 gcloud compute instance-groups managed rolling-action start-update "$MIG_NAME" \
-  --version=template="projects/${GCP_PROJECT_ID_PROD}/regions/${REGION}/instanceTemplates/${TEMPLATE_NAME}" \
+  --version=template="${TEMPLATE_NAME}" \
   --region="${REGION}" \
-  --project="${GCP_PROJECT_ID_PROD}" \
   --max-surge=2 \
   --max-unavailable=0
 
