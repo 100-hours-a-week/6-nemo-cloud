@@ -64,6 +64,7 @@ else
     --network="v2-nemo-prod" \
     --subnet="prod-backend" \
     --no-address \
+    --region="${REGION}" \
     --service-account="${SERVICE_ACCOUNT}" \
     --scopes="cloud-platform" \
     --metadata=startup-script="#! /bin/bash
