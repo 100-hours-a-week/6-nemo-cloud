@@ -45,7 +45,7 @@ if [ "$ENV" == "dev" ]; then
   docker compose up -d
 else
   TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(TZ=Asia/Seoul date +'%Y%m%d-%H%M')"
-  
+
   # MIG 이름 결정
   if [ "$SERVICE" == "backend" ]; then
     MIG_NAME="be-instance-group"
@@ -63,11 +63,21 @@ else
     --image-project="${IMAGE_PROJECT:-cos-cloud}" \
     --network="v2-nemo-prod" \
     --subnet="prod-backend" \
-    --region="${REGION}" \
     --no-address \
+    --service-account="${SERVICE_ACCOUNT}" \
+    --scopes="cloud-platform" \
     --metadata=startup-script="#! /bin/bash
-gcloud secrets versions access latest --secret=${SERVICE}-${ENV}-env > /root/.env
-docker run -d --restart=always --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}" \
+echo '[startup] 환경변수 로드'
+gcloud secrets versions access latest --secret=${SERVICE}-${ENV}-env --project=${GCP_PROJECT_ID_PROD} > /root/.env
+
+echo '[startup] Docker 인증'
+gcloud auth configure-docker asia-northeast3-docker.pkg.dev --quiet
+
+echo '[startup] 이미지 Pull'
+docker pull ${IMAGE}
+
+echo '[startup] 컨테이너 실행'
+docker run -d --name ${SERVICE} --restart=always --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}" \
     --tags="${SERVICE}-${ENV}"
 
   echo "🔁 MIG 롤링 업데이트 중: $MIG_NAME"
