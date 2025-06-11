@@ -89,7 +89,7 @@ gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --boot-disk-size="${BOOT_DISK_SIZE}GB" \
   --boot-disk-type=pd-balanced \
   --boot-disk-device-name=boot-disk \
-  --metadata-from-file startup-script="$ROOT_DIR/startup.sh"
+  --metadata-from-file startup-script="$SCRIPT_DIR/startup.sh"
 
 
 echo "🔁 MIG 롤링 업데이트 시작: $MIG_NAME"
