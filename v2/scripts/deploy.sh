@@ -75,8 +75,8 @@ TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(TZ=Asia/Seoul date +'%Y%m%d-%H%M')"
 echo "🧱 템플릿 이름: $TEMPLATE_NAME"
 
 # 지역 인스턴스 템플릿 생성
-gcloud compute instance-templates create-with-region "$TEMPLATE_NAME" \
-  --region="${REGION}" \
+gcloud compute instance-templates create "$TEMPLATE_NAME" \
+  --instance-template-region="${REGION}" \
   --machine-type="${MACHINE_TYPE:-e2-medium}" \
   --image-family="${IMAGE_FAMILY:-cos-stable}" \
   --image-project="${IMAGE_PROJECT:-cos-cloud}" \
@@ -86,6 +86,9 @@ gcloud compute instance-templates create-with-region "$TEMPLATE_NAME" \
   --service-account="${SERVICE_ACCOUNT}" \
   --scopes="cloud-platform" \
   --tags="${SERVICE}-${ENV}" \
+  --boot-disk-size="${BOOT_DISK_SIZE}GB" \
+  --boot-disk-type=pd-balanced \
+  --boot-disk-device-name=boot-disk \
   --metadata=startup-script="#!/bin/bash
 set -euo pipefail
 
