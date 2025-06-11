@@ -31,8 +31,8 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "🩺 [$SERVICE_NAME] 상태 확인 중..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-MAX_RETRIES=10
-RETRY_INTERVAL=5
+MAX_RETRIES=20
+RETRY_INTERVAL=10
 STATUS=""
 
 for ((i=1; i<=MAX_RETRIES; i++)); do
