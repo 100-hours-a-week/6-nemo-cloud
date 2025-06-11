@@ -78,8 +78,8 @@ echo "🧱 템플릿 이름: $TEMPLATE_NAME"
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --region="${REGION}" \
   --machine-type="${MACHINE_TYPE:-e2-medium}" \
-  --image-family="${IMAGE_FAMILY:-cos-stable}" \
-  --image-project="${IMAGE_PROJECT:-cos-cloud}" \
+  --image-family="${IMAGE_FAMILY:-ubuntu-2204-lts}" \
+  --image-project="${IMAGE_PROJECT:-ubuntu-os-cloud}" \
   --network="v2-nemo-prod" \
   --subnet="prod-backend" \
   --no-address \
@@ -89,34 +89,7 @@ gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --boot-disk-size="${BOOT_DISK_SIZE}GB" \
   --boot-disk-type=pd-balanced \
   --boot-disk-device-name=boot-disk \
-  --metadata=startup-script="#!/bin/bash
-set -euo pipefail
-
-echo '[startup] 환경변수 로딩'
-if ! gcloud secrets versions access latest \
-  --secret=${SERVICE}-${ENV}-env \
-  --project=${GCP_PROJECT_ID_PROD} > /root/.env; then
-  echo '[startup][ERROR] 환경변수 로딩 실패'
-  exit 1
-fi
-
-echo '[startup] Docker 인증'
-gcloud auth configure-docker asia-northeast3-docker.pkg.dev --quiet
-
-echo '[startup] 이미지 Pull'
-if ! docker pull ${IMAGE}; then
-  echo '[startup][ERROR] 이미지 Pull 실패'
-  exit 1
-fi
-
-echo '[startup] 컨테이너 실행'
-if ! docker run -d --name ${SERVICE} --restart=always \
-  --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}; then
-  echo '[startup][ERROR] 컨테이너 실행 실패'
-  docker logs ${SERVICE} || true
-  exit 1
-fi
-"
+  --metadata-from-file startup-script="$ROOT_DIR/startup.sh"
 
 
 echo "🔁 MIG 롤링 업데이트 시작: $MIG_NAME"
