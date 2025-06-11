@@ -76,7 +76,7 @@ echo "🧱 템플릿 이름: $TEMPLATE_NAME"
 
 # 지역 인스턴스 템플릿 생성
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
-  --instance-template-region="${REGION}" \
+  --region="${REGION}" \
   --machine-type="${MACHINE_TYPE:-e2-medium}" \
   --image-family="${IMAGE_FAMILY:-cos-stable}" \
   --image-project="${IMAGE_PROJECT:-cos-cloud}" \
