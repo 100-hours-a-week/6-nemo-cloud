@@ -74,14 +74,15 @@ TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(TZ=Asia/Seoul date +'%Y%m%d-%H%M')"
 
 echo "🧱 템플릿 이름: $TEMPLATE_NAME"
 
-# 인스턴스 템플릿 생성
+STARTUP_SCRIPT_CMD="bash /home/ubuntu/nemo/cloud/v2/startup.sh $SERVICE $ENV"
+
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --region="${REGION}" \
   --machine-type="${MACHINE_TYPE:-e2-medium}" \
-  --image-family="${IMAGE_FAMILY:-ubuntu-2204-lts}" \
+  --image="${CUSTOM_IMAGE:-v2-docker-be}" \
   --image-project="${IMAGE_PROJECT:-ubuntu-os-cloud}" \
   --network="v2-nemo-prod" \
-  --subnet="prod-backend" \
+  --subnet="$ENV"-"$SERVICE" \
   --no-address \
   --service-account="${SERVICE_ACCOUNT}" \
   --scopes="cloud-platform" \
@@ -89,8 +90,7 @@ gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --boot-disk-size="${BOOT_DISK_SIZE}GB" \
   --boot-disk-type=pd-balanced \
   --boot-disk-device-name=boot-disk \
-  --metadata-from-file startup-script="$SCRIPT_DIR/startup.sh"
-
+  --metadata=startup-script="$STARTUP_SCRIPT_CMD"
 
 echo "🔁 MIG 롤링 업데이트 시작: $MIG_NAME"
 
@@ -107,7 +107,7 @@ echo "🩺 [prod] 헬스체크 수행"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
   notify_discord_all "✅ [배포 성공: $BRANCH] $SERVICE 배포 완료!"
-  echo "🎉 [$SERVICE_NAME] 배포 완료"
+  echo "🎉 [$SERVICE] 배포 완료"
 else
   notify_discord_all "❌ [배포 실패: $BRANCH] $SERVICE 배포 실패!"
   exit 1
