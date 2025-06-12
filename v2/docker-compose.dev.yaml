@@ -14,11 +14,6 @@ services:
   backend:
     container_name: backend
     image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:dev-latest
-    build:
-      context: ../../backend/backend-service
-      dockerfile:  Dockerfile
-      args:
-        SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
     ports:
       - "8080:8080"
     env_file:
@@ -29,9 +24,6 @@ services:
   frontend:
     container_name: frontend
     image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev-latest
-    build:
-      context: ../../frontend/frontend-service
-      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     env_file:
@@ -39,23 +31,9 @@ services:
     networks:
       - nemo-net
 
-  # ai:
-  #   container_name: ai
-  #   image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/ai:dev-latest
-  #   build:
-  #     context: ../../ai/ai-service
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8000:8000"
-  #   env_file:
-  #     - ../../cloud/v2/envs/ai.env
-  #   volumes:
-  #     - /home/ubuntu/nemo/ai/naemo-project-admin-key.json:/app/naemo-project-admin-key.json
-  #   networks:
-  #     - nemo-net
-
 networks:
   nemo-net:
 
 volumes:
   mysql-data:
+

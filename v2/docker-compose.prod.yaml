@@ -1,0 +1,24 @@
+services:
+
+  backend:
+    container_name: backend
+    image: asia-northeast3-docker.pkg.dev/nemo-v2-prod/registry/backend:prod-latest
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../../cloud/v2/envs/backend.prod.env
+    networks:
+      - nemo-net
+
+  frontend:
+    container_name: frontend
+    image: asia-northeast3-docker.pkg.dev/nemo-v2-prod/registry/frontend:prod-latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../../cloud/v2/envs/frontend.prod.env
+    networks:
+      - nemo-net
+
+networks:
+  nemo-net:

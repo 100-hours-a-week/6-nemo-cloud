@@ -1,43 +1,28 @@
 #!/bin/bash
-set -euo pipefail
 
-echo "[startup] 기본 패키지 업데이트"
-apt-get update -y
+echo "[INFO] Running startup script..."
 
-echo "[startup] Docker 설치"
-apt-get install -y docker.io
-systemctl enable docker
-systemctl start docker
+SERVICE="$1"   # backend, frontend, ai
+ENV="$2"       # dev or prod
 
-echo "[startup] gcloud CLI 설치"
-apt-get install -y curl apt-transport-https ca-certificates gnupg
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg \
-  | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" \
-  > /etc/apt/sources.list.d/google-cloud-sdk.list
-apt-get update -y && apt-get install -y google-cloud-cli
+cd /home/ubuntu/nemo/cloud/v2 || exit 1
 
-echo "[startup] 환경변수 로딩"
-if ! gcloud secrets versions access latest \
-  --secret=${SERVICE}-${ENV}-env \
-  --project=${GCP_PROJECT_ID_PROD} > /root/.env; then
-  echo "[startup][ERROR] 환경변수 로딩 실패"
-  exit 1
+ENV_FILE="./envs/${SERVICE}.${ENV}.env"
+SECRET_NAME="${SERVICE}-${ENV}-env"
+PROJECT_ID="nemo-v2-prod"
+
+echo "[INFO] Fetching env from Secret Manager for $SERVICE ($ENV)..."
+if SECRET_CONTENT=$(gcloud secrets versions access latest \
+    --secret="$SECRET_NAME" \
+    --project="$PROJECT_ID"); then
+    echo "$SECRET_CONTENT" > "$ENV_FILE"
+    echo "[INFO] Saved to $ENV_FILE"
+else
+    echo "[ERROR] Failed to fetch secret: $SECRET_NAME"
+    exit 1
 fi
 
-echo "[startup] Docker 인증"
-gcloud auth configure-docker asia-northeast3-docker.pkg.dev --quiet
+echo "[INFO] Starting docker compose for $SERVICE..."
+sudo /usr/bin/docker compose up -d "$SERVICE"ㄹ
 
-echo "[startup] 이미지 Pull"
-if ! docker pull ${IMAGE}; then
-  echo "[startup][ERROR] 이미지 Pull 실패"
-  exit 1
-fi
-
-echo "[startup] 컨테이너 실행"
-if ! docker run -d --name ${SERVICE} --restart=always \
-  --env-file /root/.env -p ${PORT}:${PORT} ${IMAGE}; then
-  echo "[startup][ERROR] 컨테이너 실행 실패"
-  docker logs ${SERVICE} || true
-  exit 1
-fi
+echo "[INFO] Startup script completed."
