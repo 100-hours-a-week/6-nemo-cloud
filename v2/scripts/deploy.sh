@@ -79,7 +79,7 @@ STARTUP_SCRIPT_CMD="bash /home/ubuntu/nemo/cloud/v2/startup.sh $SERVICE $ENV"
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --region="${REGION}" \
   --machine-type="${MACHINE_TYPE:-e2-medium}" \
-  --image="${CUSTOM_IMAGE:-v2-docker-be}" \
+  --image="${CUSTOM_IMAGE:-v2-docker-base}" \
   --image-project="${IMAGE_PROJECT:-ubuntu-os-cloud}" \
   --network="v2-nemo-prod" \
   --subnet="$ENV"-"$SERVICE" \

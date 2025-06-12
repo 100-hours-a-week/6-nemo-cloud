@@ -22,7 +22,10 @@ else
     exit 1
 fi
 
+echo "[INFO] Pulling latest docker image for $SERVICE..."
+sudo /usr/bin/docker compose pull "$SERVICE"
+
 echo "[INFO] Starting docker compose for $SERVICE..."
-sudo /usr/bin/docker compose up -d "$SERVICE"ㄹ
+sudo /usr/bin/docker compose up -d "$SERVICE"
 
 echo "[INFO] Startup script completed."
