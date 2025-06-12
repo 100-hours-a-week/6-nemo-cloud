@@ -38,8 +38,8 @@ if [ "$ENV" == "dev" ]; then
   echo "🐳 [dev] 도커 컴포즈로 실행 중..."
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-  sudo /usr/bin/docker compose -f docker-compose.prod.yaml pull "$SERVICE"
-  sudo /usr/bin/docker compose -f docker-compose.prod.yaml up -d "$SERVICE"
+  sudo /usr/bin/docker compose -f docker-compose.dev.yaml pull "$SERVICE"
+  sudo /usr/bin/docker compose -f docker-compose.dev.yaml up -d "$SERVICE"
 
   echo ""
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
