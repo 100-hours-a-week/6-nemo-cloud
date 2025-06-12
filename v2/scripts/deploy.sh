@@ -41,17 +41,17 @@ if [ "$ENV" == "dev" ]; then
   docker compose -f docker-compose.dev.yaml pull "$SERVICE"
   docker compose -f docker-compose.dev.yaml up -d "$SERVICE"
 
-  # echo ""
-  # echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  # echo "🩺 [dev] 헬스체크 수행"
-  # echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  # if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
-  #   notify_discord_all "✅ [배포 성공: $BRANCH] $SERVICE 배포 완료!"
-  #   echo "🎉 [$SERVICE] 개발 환경 배포 완료"
-  # else
-  #   notify_discord_all "❌ [배포 실패: $BRANCH] $SERVICE 배포 실패!"
-  #   exit 1
-  # fi
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "🩺 [dev] 헬스체크 수행"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
+    notify_discord_all "✅ [배포 성공: $BRANCH] $SERVICE 배포 완료!"
+    echo "🎉 [$SERVICE] 개발 환경 배포 완료"
+  else
+    notify_discord_all "❌ [배포 실패: $BRANCH] $SERVICE 배포 실패!"
+    exit 1
+  fi
 
   exit 0
 fi
