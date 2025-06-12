@@ -23,9 +23,9 @@ else
 fi
 
 echo "[INFO] Pulling latest docker image for $SERVICE..."
-sudo /usr/bin/docker compose pull "$SERVICE"
+sudo /usr/bin/docker compose -f docker-compose.prod.yaml pull "$SERVICE"
 
 echo "[INFO] Starting docker compose for $SERVICE..."
-sudo /usr/bin/docker compose up -d "$SERVICE"
+sudo /usr/bin/docker compose -f docker-compose.prod.yaml up -d "$SERVICE"
 
 echo "[INFO] Startup script completed."
