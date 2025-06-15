@@ -99,6 +99,6 @@ echo "🔁 MIG 롤링 업데이트 시작: $MIG_NAME"
 gcloud compute instance-groups managed rolling-action start-update "$MIG_NAME" \
   --version=template="${TEMPLATE_NAME}" \
   --region="${REGION}" \
-  --minimal-action=REPLACE \
-  --max-surge=2 \
+  --minimal-action=replace \
+  --max-surge=1 \
   --max-unavailable=0
