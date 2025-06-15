@@ -75,7 +75,7 @@ TEMPLATE_NAME="${SERVICE}-${ENV}-template-$(TZ=Asia/Seoul date +'%Y%m%d-%H%M')"
 
 echo "🧱 템플릿 이름: $TEMPLATE_NAME"
 
-STARTUP_SCRIPT_CMD="bash /home/ubuntu/nemo/cloud/v2/scripts/startup.sh $SERVICE $ENV"
+STARTUP_SCRIPT_CMD="bash /home/ubuntu/nemo/cloud/v2/scripts/startup.sh ${SERVICE} ${ENV}"
 
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --region="${REGION}" \
