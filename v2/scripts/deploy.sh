@@ -79,17 +79,17 @@ STARTUP_SCRIPT_CMD="bash /home/ubuntu/nemo/cloud/v2/startup.sh $SERVICE $ENV"
 
 gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --region="${REGION}" \
-  --machine-type="${MACHINE_TYPE:-e2-medium}" \
-  --image="${CUSTOM_IMAGE:-v2-docker-base}" \
-  --image-project="${IMAGE_PROJECT:-ubuntu-os-cloud}" \
-  --network="v2-nemo-prod" \
-  --subnet="$ENV"-"$SERVICE" \
+  --machine-type="${MACHINE_TYPE}" \
+  --image="${CUSTOM_IMAGE}" \
+  --image-project="${GCP_PROJECT_ID_PROD}" \
+  --network=projects/${GCP_PROJECT_ID_PROD}/global/networks/${NETWORK} \
+  --subnet=projects/${GCP_PROJECT_ID_PROD}/regions/${REGION}/subnetworks/${SUBNET} \
   --no-address \
   --service-account="${SERVICE_ACCOUNT}" \
   --scopes="cloud-platform" \
   --tags="${SERVICE}-${ENV}" \
   --boot-disk-size="${BOOT_DISK_SIZE}GB" \
-  --boot-disk-type=pd-balanced \
+  --boot-disk-type="${BOOT_DISK_TYPE}" \
   --boot-disk-device-name=boot-disk \
   --metadata=startup-script="$STARTUP_SCRIPT_CMD"
 
