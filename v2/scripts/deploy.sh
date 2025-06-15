@@ -87,7 +87,7 @@ gcloud compute instance-templates create "$TEMPLATE_NAME" \
   --no-address \
   --service-account="${SERVICE_ACCOUNT}" \
   --scopes="cloud-platform" \
-  --tags="frontend-prod,backend-prod" \
+  --tags="${SERVICE}-${ENV}" \
   --boot-disk-size="${BOOT_DISK_SIZE}GB" \
   --boot-disk-type="${BOOT_DISK_TYPE}" \
   --boot-disk-device-name=boot-disk \
