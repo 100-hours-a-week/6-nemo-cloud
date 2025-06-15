@@ -3,9 +3,12 @@
 echo "[INFO] Running startup script..."
 
 SERVICE="$1"   # backend, frontend, ai
-ENV="$2"       # dev or prod
+ENV=prod       # dev or prod
 
 cd /home/ubuntu/nemo/cloud/v2 || exit 1
+
+echo "[INFO] Pulling latest cloud repo..."
+git pull origin develop || echo "[WARN] git pull 실패"
 
 ENV_FILE="./envs/${SERVICE}.${ENV}.env"
 SECRET_NAME="${SERVICE}-${ENV}-env"
@@ -22,10 +25,24 @@ else
     exit 1
 fi
 
-echo "[INFO] Pulling latest docker image for $SERVICE..."
-docker compose -f docker-compose.prod.yaml pull "$SERVICE"
+echo "[INFO] Pulling latest docker images (all services)..."
+docker compose -f docker-compose.prod.yaml pull
 
-echo "[INFO] Starting docker compose for $SERVICE..."
-docker compose -f docker-compose.prod.yaml up -d --force-recreate "$SERVICE"
+echo "[INFO] Starting docker compose (all services)..."
+docker compose -f docker-compose.prod.yaml up -d --force-recreate
+
+for TARGET_SERVICE in frontend backend; do
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "🩺 [$TARGET_SERVICE] 헬스체크 수행"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  if bash "$SCRIPT_DIR/healthcheck.sh" "$TARGET_SERVICE" "$ENV"; then
+    notify_discord_all "✅ [배포 성공: $BRANCH] $TARGET_SERVICE 배포 완료!"
+    echo "🎉 [$TARGET_SERVICE] 배포 완료"
+  else
+    notify_discord_all "❌ [배포 실패: $BRANCH] $TARGET_SERVICE 배포 실패!"
+    exit 1
+  fi
+done
 
 echo "[INFO] Startup script completed."
