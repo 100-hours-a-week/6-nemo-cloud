@@ -100,4 +100,4 @@ gcloud compute instance-groups managed rolling-action start-update "$MIG_NAME" \
   --version=template="${TEMPLATE_NAME}" \
   --region="${REGION}" \
   --max-surge=2 \
-  --max-unavailable=0
+  --max-unavailable=1
