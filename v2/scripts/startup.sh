@@ -5,6 +5,8 @@ echo "[INFO] Running startup script..."
 SERVICE="$1"   # backend, frontend, ai
 ENV=prod       # dev or prod
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 cd /home/ubuntu/nemo/cloud/v2 || exit 1
 
 echo "[INFO] Pulling latest cloud repo..."
