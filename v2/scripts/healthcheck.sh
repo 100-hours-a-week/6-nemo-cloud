@@ -6,6 +6,7 @@ ENV="$2"       # dev or prod
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATUS_FILE="$SCRIPT_DIR/healthcheck_${SERVICE}.status"
+GCP_PROJECT_ID_PROD=nemo-v2-prod
 
 # 상태 파일 디렉토리 보장
 sudo mkdir -p "$(dirname "$STATUS_FILE")"
