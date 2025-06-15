@@ -26,6 +26,6 @@ echo "[INFO] Pulling latest docker image for $SERVICE..."
 docker compose -f docker-compose.prod.yaml pull "$SERVICE"
 
 echo "[INFO] Starting docker compose for $SERVICE..."
-docker compose -f docker-compose.prod.yaml up -d "$SERVICE"
+docker compose -f docker-compose.prod.yaml up -d --force-recreate "$SERVICE"
 
 echo "[INFO] Startup script completed."
