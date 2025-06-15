@@ -9,6 +9,7 @@ cd /home/ubuntu/nemo/cloud/v2 || exit 1
 
 echo "[INFO] Pulling latest cloud repo..."
 git pull origin develop || echo "[WARN] git pull 실패"
+source "$SCRIPT_DIR/utils.sh"
 
 PROJECT_ID="nemo-v2-prod"
 
