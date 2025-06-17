@@ -1,41 +1,76 @@
-# 환경변수 로드 함수 / $1: 서비스 이름
+#!/bin/bash
+
+# 경로 설정
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ENV_DIR="$ROOT_DIR/envs"
+
+# 환경변수 로드 함수
+# $1: 서비스 이름 (frontend, backend, ai)
+# $2: 환경 (dev, prod)
 load_env() {
-  local SERVICE="$1"
+  local service="$1"
+  local env="$2"
+  local env_file="$ENV_DIR/${service}.${env}.env"
 
-  ENV_FILE="$HOME/nemo/cloud/v2/envs/${SERVICE}.env"
-
-  if [ -f "$ENV_FILE" ]; then
-    set -a
-    source "$ENV_FILE"
-    set +a
+  if [ "$env" == "dev" ]; then
+    if [ -f "$env_file" ]; then
+      set -a
+      source "$env_file"
+      set +a
+    else
+      echo "❌ 환경변수 파일이 존재하지 않습니다: $env_file"
+      exit 1
+    fi
   else
-    echo "❌ 환경변수 파일을 찾을 수 없습니다: $ENV_FILE"
-    exit 1
+    local secret_name="${service}-${env}-env" # Secret Manager 이름
+    echo "🔐 [prod] Secret Manager에서 [$secret_name] 로드 중..."
+    if SECRET_CONTENT=$(gcloud secrets versions access latest \
+      --secret="$secret_name" \
+      --project="${GCP_PROJECT_ID_PROD}"); then
+      export $(echo "$SECRET_CONTENT" | xargs)
+
+      echo "📄 Secret 내용을 env 파일로 저장: $env_file"
+      echo "$SECRET_CONTENT" >"$env_file"
+    else
+      echo "❌ Secret Manager에서 환경변수 로딩 실패"
+      exit 1
+    fi
   fi
 }
 
-# 클라우드 전용 알림 (헬스체크 실패)
-notify_discord_cloud_only() {
-  local message="$1"
+# 공통 디스코드 전송 함수
+send_discord() {
+  local webhook_url="$1"
+  local message="$2"
   curl -s -H "Content-Type: application/json" \
-       -X POST \
-       -d "{\"content\": \"$message\"}" \
-       "$WEBHOOK_CLOUD_URL" > /dev/null
+    -X POST \
+    -d "{\"content\": \"$message\"}" \
+    "$webhook_url" >/dev/null
 }
 
-# 클라우드 + 서비스 알림 (배포/롤백 결과)
-notify_discord_all() {
+# 클라우드 전용 알림
+# $1: 메시지
+notify_discord_cloud_only() {
   local message="$1"
+  send_discord "$WEBHOOK_CLOUD_URL" "$message"
+}
+
+# 클라우드 + 서비스 알림
+# $1: 서비스 이름, $2: 메시지
+notify_discord_all() {
+  local service="$1"
+  local message="$2"
   local webhook_urls=()
 
-  # 클라우드 웹훅 항상 포함
+  # 클라우드 채널
   if [ -n "${WEBHOOK_CLOUD_URL:-}" ]; then
     webhook_urls+=("$WEBHOOK_CLOUD_URL")
   fi
 
-  # 서비스 웹훅 동적 추출 (WEBHOOK_BACKEND_URL 등)
+  # 서비스별 채널 (예: WEBHOOK_BACKEND_URL)
   local upper_service
-  upper_service=$(echo "$SERVICE" | tr '[:lower:]' '[:upper:]')
+  upper_service=$(echo "$service" | tr '[:lower:]' '[:upper:]')
   local service_webhook_var="WEBHOOK_${upper_service}_URL"
   local service_webhook="${!service_webhook_var:-}"
 
@@ -44,9 +79,6 @@ notify_discord_all() {
   fi
 
   for webhook_url in "${webhook_urls[@]}"; do
-    curl -s -H "Content-Type: application/json" \
-         -X POST \
-         -d "{\"content\": \"$message\"}" \
-         "$webhook_url" > /dev/null
+    send_discord "$webhook_url" "$message"
   done
 }
