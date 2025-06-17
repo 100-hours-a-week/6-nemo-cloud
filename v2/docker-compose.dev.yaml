@@ -10,6 +10,23 @@ services:
       - mysql-data:/var/lib/mysql
     networks:
       - nemo-net
+    restart: unless-stopped
+
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    hostname: redis
+    env_file:
+      - ../../cloud/v2/envs/db.env  
+    volumes:
+      - redis-data:/data
+    networks:
+      - nemo-net
+    restart: unless-stopped
+
 
   backend:
     container_name: backend
@@ -17,9 +34,11 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - ../../cloud/v2/envs/backend.env
+      - ../../cloud/v2/envs/backend.dev.env
     networks:
       - nemo-net
+    restart: unless-stopped
+
 
   frontend:
     container_name: frontend
@@ -27,13 +46,14 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ../../cloud/v2/envs/frontend.env
+      - ../../cloud/v2/envs/frontend.dev.env
     networks:
       - nemo-net
+    restart: unless-stopped
 
 networks:
   nemo-net:
 
 volumes:
   mysql-data:
-
+  redis-data:
