@@ -16,7 +16,7 @@ load_env() {
 
   # 하드코딩된 GCP 프로젝트 ID 분기
   if [ "$env" = "dev" ]; then
-    GCP_PROJECT_ID="nemo-v2-dev"
+    GCP_PROJECT_ID="nemo-v2"
   elif [ "$env" = "prod" ]; then
     GCP_PROJECT_ID="nemo-v2-prod"
   else
