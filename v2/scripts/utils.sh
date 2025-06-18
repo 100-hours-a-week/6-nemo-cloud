@@ -19,6 +19,8 @@ load_env() {
     GCP_PROJECT_ID="nemo-v2"
   elif [ "$env" = "prod" ]; then
     GCP_PROJECT_ID="nemo-v2-prod"
+  elif [ "$service" = "ai" ]; then
+    GCP_PROJECT_ID="nemo-v2-ai-461016"
   else
     echo "❌ 지원하지 않는 환경입니다: $env"
     exit 1
