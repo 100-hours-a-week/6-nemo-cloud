@@ -35,7 +35,7 @@ for ((i = 1; i <= MAX_RETRIES; i++)); do
 
     # 복구 감지
     if [ -f "$STATUS_FILE" ] && grep -q "unhealthy" "$STATUS_FILE"; then
-      notify_discord_cloud_only "✅ [헬스체크 복구: $BRANCH] $SERVICE 서비스 복구 완료! (응답: HTTP 200)"
+      notify_discord_cloud_only "✅ [헬스체크 복구: $ENV] $SERVICE 서비스 복구 완료! (응답: HTTP 200)"
     fi
 
     echo "healthy" | sudo tee "$STATUS_FILE" >/dev/null
@@ -53,10 +53,10 @@ else
   STATUS_DESC="HTTP $STATUS"
 fi
 
-echo "❌ [$SERVICE] 서버 비정상 (응답: $STATUS_DESC)"
+echo "❌ [$ENV] $SERVICE 서버 비정상 (응답: $STATUS_DESC)"
 
 if [ ! -f "$STATUS_FILE" ] || grep -q "healthy" "$STATUS_FILE"; then
-  notify_discord_cloud_only "❌ [헬스체크 실패: $BRANCH] $SERVICE 서비스 비정상 상태! (응답: $STATUS_DESC)"
+  notify_discord_cloud_only "❌ [헬스체크 실패: $ENV] $SERVICE 서비스 비정상 상태! (응답: $STATUS_DESC)"
 fi
 
 echo "unhealthy" | sudo tee "$STATUS_FILE" >/dev/null

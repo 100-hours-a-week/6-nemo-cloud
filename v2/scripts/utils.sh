@@ -12,30 +12,30 @@ load_env() {
   local service="$1"
   local env="$2"
   local env_file="$ENV_DIR/${service}.${env}.env"
+  local secret_name="${service}-${env}-env" # ex: backend-dev-env
 
-  if [ "$env" == "dev" ]; then
-    if [ -f "$env_file" ]; then
-      set -a
-      source "$env_file"
-      set +a
-    else
-      echo "❌ 환경변수 파일이 존재하지 않습니다: $env_file"
-      exit 1
-    fi
+  # 하드코딩된 GCP 프로젝트 ID 분기
+  if [ "$env" = "dev" ]; then
+    GCP_PROJECT_ID="nemo-v2-dev"
+  elif [ "$env" = "prod" ]; then
+    GCP_PROJECT_ID="nemo-v2-prod"
   else
-    local secret_name="${service}-${env}-env" # Secret Manager 이름
-    echo "🔐 [prod] Secret Manager에서 [$secret_name] 로드 중..."
-    if SECRET_CONTENT=$(gcloud secrets versions access latest \
-      --secret="$secret_name" \
-      --project="${GCP_PROJECT_ID_PROD}"); then
-      export $(echo "$SECRET_CONTENT" | xargs)
+    echo "❌ 지원하지 않는 환경입니다: $env"
+    exit 1
+  fi
 
-      echo "📄 Secret 내용을 env 파일로 저장: $env_file"
-      echo "$SECRET_CONTENT" >"$env_file"
-    else
-      echo "❌ Secret Manager에서 환경변수 로딩 실패"
-      exit 1
-    fi
+  echo "🔐 [$env] Secret Manager에서 [$secret_name] 로드 중..."
+  if SECRET_CONTENT=$(gcloud secrets versions access latest \
+    --secret="$secret_name" \
+    --project="${GCP_PROJECT_ID}"); then
+
+    export $(echo "$SECRET_CONTENT" | xargs)
+
+    echo "📄 Secret 내용을 env 파일로 저장: $env_file"
+    echo "$SECRET_CONTENT" >"$env_file"
+  else
+    echo "❌ Secret Manager에서 환경변수 로딩 실패"
+    exit 1
   fi
 }
 
