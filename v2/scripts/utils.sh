@@ -29,10 +29,13 @@ load_env() {
     --secret="$secret_name" \
     --project="${GCP_PROJECT_ID}"); then
 
-    export $(echo "$SECRET_CONTENT" | xargs)
-
     echo "📄 Secret 내용을 env 파일로 저장: $env_file"
     echo "$SECRET_CONTENT" >"$env_file"
+
+    set -a
+    source "$env_file"
+    set +a
+
   else
     echo "❌ Secret Manager에서 환경변수 로딩 실패"
     exit 1
