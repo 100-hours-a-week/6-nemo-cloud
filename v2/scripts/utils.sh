@@ -12,7 +12,7 @@ load_env() {
   local service="$1"
   local env="$2"
   local env_file="$ENV_DIR/${service}.${env}.env"
-  local secret_name="${service}-${env}-env" # ex: backend-dev-env
+  local secret_name="${service}-env-${env}" # ex: backend-env-dev
 
   # 하드코딩된 GCP 프로젝트 ID 분기
   if [ "$env" = "dev" ]; then
