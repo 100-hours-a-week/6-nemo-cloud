@@ -15,15 +15,12 @@ load_env() {
   local secret_name="${service}-env-${env}" # ex: backend-env-dev
 
   # 하드코딩된 GCP 프로젝트 ID 분기
-  if [ "$env" = "dev" ]; then
+  if [ "$service" = "ai" ]; then
+    GCP_PROJECT_ID="nemo-v2-ai-461016"
+  elif [ "$env" = "dev" ]; then
     GCP_PROJECT_ID="nemo-v2"
   elif [ "$env" = "prod" ]; then
     GCP_PROJECT_ID="nemo-v2-prod"
-  elif [ "$service" = "ai" ]; then
-    GCP_PROJECT_ID="nemo-v2-ai-461016"
-  else
-    echo "❌ 지원하지 않는 환경입니다: $env"
-    exit 1
   fi
 
   echo "🔐 [$env] Secret Manager에서 [$secret_name] 로드 중..."
