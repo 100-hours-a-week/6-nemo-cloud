@@ -10,7 +10,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 ENV_FILE="$ROOT_DIR/envs/${SERVICE}.${ENV}.env"
 COMPOSE_FILE="docker-compose.${ENV}.yaml"
-IMAGE_FILE="asia-northeast3-docker.pkg.dev/nemo-v2/registry/${SERVICE}:${ENV}-latest"
+
+# 이미지 경로 분기 처리
+if [ "$SERVICE" = "ai" ]; then
+    IMAGE_FILE="asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/${SERVICE}:${ENV}-latest"
+else
+    IMAGE_FILE="asia-northeast3-docker.pkg.dev/nemo-v2/registry/${SERVICE}:${ENV}-latest"
+fi
 
 # 유틸 불러오기
 source "$SCRIPT_DIR/utils.sh"
