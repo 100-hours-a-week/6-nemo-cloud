@@ -8,7 +8,6 @@ ENV="$2"     # dev or prod
 # 경로 설정
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-ENV_FILE="$ROOT_DIR/envs/${SERVICE}.${ENV}.env"
 COMPOSE_FILE="docker-compose.${ENV}.yaml"
 
 # 이미지 경로 분기 처리
