@@ -32,4 +32,4 @@ echo "🐳 도커 컴포즈로 실행 중..."
 docker compose -f "$COMPOSE_FILE" up -d "$SERVICE" || true
 
 # 시작 알림
-notify_discord_cloud_only "☀️ [서버 시작: $ENV] $SERVICE 서버 시작!"
+notify_discord_cloud_only "☀️ [$ENV] $SERVICE 컨테이너 기동 완료!"
