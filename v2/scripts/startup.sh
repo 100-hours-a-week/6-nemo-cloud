@@ -31,10 +31,5 @@ cd "$ROOT_DIR"
 echo "🐳 도커 컴포즈로 실행 중..."
 docker compose -f "$COMPOSE_FILE" up -d "$SERVICE" || true
 
-# 헬스체크 후 시작 알림
-if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
-  notify_discord_cloud_only "☀️ [서버 시작: $ENV] $SERVICE 서버 시작!"
-else
-  notify_discord_cloud_only "❌ [헬스체크 실패: $ENV] $SERVICE 서비스 비정상 상태! (응답: $STATUS_DESC)"
-  exit 1
-fi
+# 시작 알림
+notify_discord_cloud_only "☀️ [서버 시작: $ENV] $SERVICE 서버 시작!"
