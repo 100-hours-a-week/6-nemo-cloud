@@ -26,4 +26,4 @@ else
 fi
 
 # 종료 알림
-notify_discord_cloud_only "🌙 [서버 종료: $ENV] $SERVICE 서버 종료!"
+notify_discord_cloud_only "🌙 [$ENV] $SERVICE 컨테이너 종료!"
