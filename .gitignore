@@ -3,3 +3,11 @@ envs
 .gitignore
 *.status
 **/.terraform/
+
+
+# macOS 시스템 파일
+.DS_Store
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
