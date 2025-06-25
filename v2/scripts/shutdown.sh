@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # 인자 설정
-SERVICE="$1" # backend, frontend, ai
-ENV="$2"     # dev or prod
+RAW_SERVICE="$1"
+ENV="$2"
+SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
 
 # 경로 설정
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

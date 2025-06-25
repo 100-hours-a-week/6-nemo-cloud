@@ -4,11 +4,21 @@ set -euo pipefail
 # 인자 설정
 SERVICE="$1" # backend, frontend, ai
 ENV="$2"     # dev or prod
+SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
 
 # 경로 설정
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-COMPOSE_FILE="docker-compose.${ENV}.yaml"
+
+# AI 분리 로직
+if [ "$SERVICE" = "ai" ]; then
+  COMPOSE_FILE="docker-compose.ai.yaml"
+  SERVICE_NAME="ai-${ENV}"
+else
+  COMPOSE_FILE="docker-compose.${ENV}.yaml"
+  SERVICE_NAME="$RAW_SERVICE"
+fi
+
 ENV_FILE="$ROOT_DIR/envs/${SERVICE}.${ENV}.env"
 
 # 유틸 불러오기
