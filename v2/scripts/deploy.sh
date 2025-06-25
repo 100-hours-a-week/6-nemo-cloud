@@ -10,11 +10,11 @@ SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
 
 # Compose용 실제 서비스명
 if [ "$SERVICE" = "ai" ]; then
-    SERVICE_NAME="ai-${ENV}"              # ai-dev 또는 ai-prod
-    COMPOSE_FILE="docker-compose.ai.yaml" # ✅ AI는 전용 Compose 파일 사용
+    SERVICE_NAME="ai-${ENV}"
+    COMPOSE_FILE="docker-compose.ai.yaml"
 else
     SERVICE_NAME="$RAW_SERVICE"
-    COMPOSE_FILE="docker-compose.${ENV}.yaml" # backend, frontend 등은 기존 방식 유지
+    COMPOSE_FILE="docker-compose.${ENV}.yaml"
 fi
 
 # 경로 설정
