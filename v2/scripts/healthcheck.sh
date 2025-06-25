@@ -11,7 +11,7 @@ STATUS_FILE="$SCRIPT_DIR/healthcheck_${SERVICE}.status"
 
 # 공통 상수
 MAX_RETRIES=20
-RETRY_INTERVAL=10
+RETRY_INTERVAL=15
 STATUS=""
 
 # 상태 파일 디렉토리 보장
