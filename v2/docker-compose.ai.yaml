@@ -1,0 +1,55 @@
+services:
+
+  ai-prod:
+    container_name: ai-prod
+    image: asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/ai:prod-latest
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../../cloud/v2/envs/ai.prod.env
+    volumes:
+      - /home/ubuntu/nemo/cloud/v2/envs/naemo-project-admin-key.json:/app/naemo-project-admin-key.json
+      - /home/ubuntu/models/jina-embeddings-v3:/models/jina-embeddings-v3
+    networks:
+      - nemo-net
+    restart: unless-stopped
+
+  ai-dev:
+    container_name: ai-dev
+    image: asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/ai:dev-latest
+    ports:
+      - "8001:8001"
+    env_file:
+      - ../../cloud/v2/envs/ai.dev.env
+    volumes:
+      - /home/ubuntu/nemo/cloud/v2/envs/naemo-project-admin-key.json:/app/naemo-project-admin-key.json
+      - /home/ubuntu/models/jina-embeddings-v3:/models/jina-embeddings-v3
+    networks:
+      - nemo-net
+    restart: unless-stopped
+
+  vllm:
+    container_name: vllm
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8002:8002"
+    command: >
+      --model /models/nemo-chatbot-v3
+      --host 0.0.0.0
+      --dtype float16
+      --gpu-memory-utilization 0.7
+    runtime: nvidia
+    volumes:
+      - /home/ubuntu/models/nemo-chatbot-v3:/models/nemo-chatbot-v3
+    networks:
+      - nemo-net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    restart: unless-stopped
+
+networks:
+  nemo-net:
+
