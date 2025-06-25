@@ -2,7 +2,7 @@ services:
 
   ai-prod:
     container_name: ai-prod
-    image: asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/ai:prod-latest
+    image: asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/ai-prod:prod-latest
     ports:
       - "8000:8000"
     env_file:
@@ -15,7 +15,7 @@ services:
 
   ai-dev:
     container_name: ai-dev
-    image: asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/ai:dev-latest
+    image: asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/ai-dev:dev-latest
     ports:
       - "8001:8000"
     env_file:
