@@ -9,7 +9,6 @@ services:
       - ../../cloud/v2/envs/ai.prod.env
     volumes:
       - /home/ubuntu/nemo/cloud/v2/envs/naemo-project-admin-key.json:/app/naemo-project-admin-key.json
-      - /home/ubuntu/models/jina-embeddings-v3:/models/jina-embeddings-v3
     networks:
       - nemo-net
     restart: unless-stopped
@@ -23,7 +22,6 @@ services:
       - ../../cloud/v2/envs/ai.dev.env
     volumes:
       - /home/ubuntu/nemo/cloud/v2/envs/naemo-project-admin-key.json:/app/naemo-project-admin-key.json
-      - /home/ubuntu/models/jina-embeddings-v3:/models/jina-embeddings-v3
     networks:
       - nemo-net
     restart: unless-stopped
@@ -32,15 +30,13 @@ services:
     container_name: vllm
     image: vllm/vllm-openai:latest
     ports:
-      - "8002:8002"
+      - "8002:8000"
     command: >
-      --model /models/nemo-chatbot-v3
+      --model chaerheeon/nemo-chatbot-v3
       --host 0.0.0.0
       --dtype float16
       --gpu-memory-utilization 0.7
     runtime: nvidia
-    volumes:
-      - /home/ubuntu/models/nemo-chatbot-v3:/models/nemo-chatbot-v3
     networks:
       - nemo-net
     deploy:
