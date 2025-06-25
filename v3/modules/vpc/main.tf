@@ -87,7 +87,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 }
 
-# NGW  (a)
+# NGW
 resource "aws_nat_gateway" "this" {
   subnet_id     = aws_subnet.public-a.id
   allocation_id = aws_eip.nat.id
@@ -110,7 +110,7 @@ resource "aws_route_table" "private" {
 }
 
 # 라우팅 테이블 설정 (A)
-resource "aws_route_table_association" "privat-a" {
+resource "aws_route_table_association" "private-a" {
   subnet_id      = aws_subnet.private-a.id
   route_table_id = aws_route_table.private.id
 }
