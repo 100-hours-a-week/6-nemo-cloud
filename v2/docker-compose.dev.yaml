@@ -13,7 +13,6 @@ services:
       - nemo-net
     restart: unless-stopped
 
-
   redis:
     container_name: redis
     image: redis:latest
@@ -63,6 +62,26 @@ services:
       - /home/ubuntu/nemo/cloud/v2/envs/naemo-project-admin-key.json:/app/naemo-project-admin-key.json
     networks:
       - nemo-net
+  
+  vllm:
+    container_name: vllm
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8002:8001"
+    command: >
+      --model chaerheeon/nemo-chatbot-v3
+      --host 0.0.0.0
+      --dtype float16
+      --gpu-memory-utilization 0.7
+    runtime: nvidia
+    networks:
+      - nemo-net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    restart: unless-stopped
 
 networks:
   nemo-net:
