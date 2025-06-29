@@ -2,9 +2,8 @@
 set -euo pipefail
 
 # 인자 설정
-RAW_SERVICE="$1"
-ENV="$2"
-SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
+SERVICE="$1" # frontend, backend, ai
+ENV="$2"     # dev or prod
 
 # 경로 설정
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,7 +11,7 @@ STATUS_FILE="$SCRIPT_DIR/healthcheck_${SERVICE}.status"
 
 # 공통 상수
 MAX_RETRIES=20
-RETRY_INTERVAL=15
+RETRY_INTERVAL=10
 STATUS=""
 
 # 상태 파일 디렉토리 보장
