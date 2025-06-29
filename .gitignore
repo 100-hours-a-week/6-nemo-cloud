@@ -2,4 +2,5 @@ envs
 .env
 .gitignore
 *.status
-secret.yaml
+**/secret.yaml
+**/configmap.yaml
