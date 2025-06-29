@@ -3,7 +3,7 @@ controller:
   
   persistence:
     enabled: true
-    storageClass: gp2-csi
+    storageClass: gp3
     size: 5Gi
 
 affinity:
