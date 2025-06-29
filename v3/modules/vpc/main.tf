@@ -21,6 +21,7 @@ resource "aws_subnet" "public-a" {
   }
 }
 
+
 # 퍼블릭 서브넷-c
 resource "aws_subnet" "public-c" {
   cidr_block            = var.public_subnet_cidr[1]
@@ -41,9 +42,18 @@ resource "aws_subnet" "private-a" {
   }
 }
 
-resource "aws_subnet" "private-c" {
+resource "aws_subnet" "private-b" {
   cidr_block            = var.private_subnet_cidr[1]
   availability_zone     = var.subnet_az[1]
+  vpc_id                = aws_vpc.this.id
+  tags = { 
+    Name = "${var.name}-private-bzone-subnet"
+  }
+}
+
+resource "aws_subnet" "private-c" {
+  cidr_block            = var.private_subnet_cidr[2]
+  availability_zone     = var.subnet_az[2]
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-czone-subnet"
@@ -75,6 +85,8 @@ resource "aws_route_table_association" "public_a" {
   subnet_id      = aws_subnet.public-a.id
   route_table_id = aws_route_table.public.id
 }
+
+
 #라우팅 테이블 연결설정 (C)
 resource "aws_route_table_association" "public_c" {
   subnet_id      = aws_subnet.public-c.id
@@ -112,6 +124,12 @@ resource "aws_route_table" "private" {
 # 라우팅 테이블 설정 (A)
 resource "aws_route_table_association" "private-a" {
   subnet_id      = aws_subnet.private-a.id
+  route_table_id = aws_route_table.private.id
+}
+
+# 라우팅 테이블 설정 (B)
+resource "aws_route_table_association" "private-b" {
+  subnet_id      = aws_subnet.private-b.id
   route_table_id = aws_route_table.private.id
 }
 
