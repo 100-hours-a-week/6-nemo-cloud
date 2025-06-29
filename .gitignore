@@ -2,3 +2,4 @@ envs
 .env
 .gitignore
 *.status
+secret.yaml
