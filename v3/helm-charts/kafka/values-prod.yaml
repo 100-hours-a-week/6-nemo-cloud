@@ -19,15 +19,12 @@ service:
   port: 9092
   targetPort: 9092
 
+persistence:
+  storageClass: gp3  # # 이미 존재하는 gp3 StorageClass를 참조만 함
+  size: 10Gi
+
 storageClass:
-  name: gp3
-  provisioner: ebs.csi.aws.com
-  type: gp3
-  fsType: ext4
-  reclaimPolicy: Delete
-  volumeBindingMode:  WaitForFirstConsumer
-  allowVolumeExpansion: true
-  size: 10Gi  # 🔸 StatefulSet에서 사용하는 디스크 크기 기본값
+  create: false  #Kafka Helm Chart에서 StorageClass 생성 시도하지 않도록 차단
 
 affinity:
   podAntiAffinity:
