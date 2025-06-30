@@ -27,6 +27,8 @@ spec:
           env:
             - name: CSI_ENDPOINT
               value: unix:///csi/csi.sock
+            - name: NAME
+              value: ebs.csi.aws.com  
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
