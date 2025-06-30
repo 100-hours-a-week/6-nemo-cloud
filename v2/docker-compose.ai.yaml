@@ -53,5 +53,6 @@ services:
           devices:
             - capabilities: [gpu]
     restart: unless-stopped
+
 networks:
-      - nemo-net
+  nemo-net:
