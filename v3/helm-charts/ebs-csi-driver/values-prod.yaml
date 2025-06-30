@@ -1,11 +1,14 @@
 controller:
+  enabled: true
   serviceAccount:
     create: true
     name: ebs-csi-controller-sa
 
 node:
+  enabled: true
   serviceAccount:
     name: ebs-csi-node-sa
+
 
 storageClass:
   name: gp3
