@@ -28,6 +28,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: KAFKA_CFG_KRAFT_MODE
+              value: "true"
+              
             - name: KAFKA_CFG_PROCESS_ROLES
               value: "controller,broker"
 
