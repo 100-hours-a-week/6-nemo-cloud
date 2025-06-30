@@ -25,16 +25,11 @@ ENV_FILE="$ROOT_DIR/envs/${SERVICE}.${ENV}.env"
 source "$SCRIPT_DIR/utils.sh"
 
 # 환경변수 직접 로드
+cd "$ROOT_DIR"
+
+# 환경변수 로드
 echo "🔧 [$ENV] 환경변수 로드 중..."
-if [ -f "$ENV_FILE" ]; then
-  echo "📄 로컬 .env 파일 로드: $ENV_FILE"
-  set -a
-  source "$ENV_FILE"
-  set +a
-else
-  echo "❌ .env 파일이 존재하지 않음: $ENV_FILE"
-  exit 1
-fi
+load_env "$SERVICE" "$ENV"
 
 # 도커 컴포즈 실행
 cd "$ROOT_DIR"
