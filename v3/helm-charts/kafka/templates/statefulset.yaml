@@ -2,9 +2,11 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Values.statefulset.name }}
+
 spec:
   serviceName: {{ .Values.service.name }}
   replicas: {{ .Values.controller.replicaCount }}
+
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
@@ -12,9 +14,49 @@ spec:
     metadata:
       labels:
         app: {{ .Chart.Name }}
+    
     spec:
       containers:
         - name: kafka
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.container.port }}
+            - containerPort: {{ .Values.container.controllerPort }}
+          
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: "controller,broker"
+
+            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+              value: "{{ .Values.kraft.quorumVoters }}"
+
+            - name: KAFKA_KRAFT_CLUSTER_ID
+              value: "{{ .Values.kraft.clusterId }}"
+
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+
+            - name: KAFKA_CFG_LISTENERS
+              value: "PLAINTEXT://:{{ .Values.container.port }},CONTROLLER://:{{ .Values.container.controllerPort }}"
+
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://$(POD_NAME).{{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.container.port }}"
+          
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami/kafka
+  
+  # Pod당 1개의 PVC
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.storageClass.name }}
+        resources:
+          requests:
+            storage: {{ .Values.storageClass.size | default "10Gi" }}
