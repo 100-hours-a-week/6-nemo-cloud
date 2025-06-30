@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # 인자 설정
-SERVICE="$1" # backend, frontend, ai
-ENV="$2"     # dev or prod
+RAW_SERVICE="$1" # backend, frontend, ai
+ENV="$2"         # dev or prod
 SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
 
 # 경로 설정
