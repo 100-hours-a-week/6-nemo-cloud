@@ -7,14 +7,13 @@ spec:
   project: default
 
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: kafka
-    targetRevision: 26.3.3 # Helm chart 버전
+    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
+    targetRevision: infra/terraform 
+    path: v3/helm-charts/kafka
     helm:
       valueFiles:
-        - k8s/kafka/values-prod.yaml
-      parameters: []
-
+        - values-prod.yaml
+        
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka
