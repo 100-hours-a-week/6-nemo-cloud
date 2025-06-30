@@ -27,6 +27,18 @@ services:
       - nemo-net
     restart: unless-stopped
 
+  redis-exporter:
+    image: bitnami/redis-exporter:latest
+    container_name: redis-exporter
+    restart: unless-stopped
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    ports:
+      - "9121:9121"
+    networks:
+      - nemo-net
+    depends_on:
+      - redis
 
   backend:
     container_name: backend
