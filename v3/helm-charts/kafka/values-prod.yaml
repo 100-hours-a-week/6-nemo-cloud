@@ -25,7 +25,7 @@ storageClass:
   type: gp3
   fsType: ext4
   reclaimPolicy: Delete
-  volumeBindingMode: WaitForFirstConsumer
+  volumeBindingMode: Immediate
   allowVolumeExpansion: true
   size: 10Gi  # 🔸 StatefulSet에서 사용하는 디스크 크기 기본값
 
