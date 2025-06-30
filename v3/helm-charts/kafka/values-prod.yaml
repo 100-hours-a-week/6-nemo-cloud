@@ -1,8 +1,11 @@
 statefulset:
   name: kafka-controller
 
-replicaCount: 3
-containerPort: 9092
+controller:
+  replicaCount: 3
+
+container:
+  port: 9092
   
 image:
   repository: bitnami/kafka
@@ -23,7 +26,7 @@ storageClass:
   reclaimPolicy: Delete
   volumeBindingMode: WaitForFirstConsumer
   allowVolumeExpansion: true
-  
+
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
