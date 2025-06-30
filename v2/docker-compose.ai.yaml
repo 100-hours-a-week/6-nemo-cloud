@@ -32,10 +32,16 @@ services:
     ports:
       - "8002:8000"
     command: >
-      --model chaerheeon/nemo-chatbot-v3
+      --model /model
+      --tokenizer /model
+      --chat-template /model/chat_template.jinja
       --host 0.0.0.0
+      --port 8000
       --dtype float16
       --gpu-memory-utilization 0.7
+    volumes:
+      - /home/ubuntu/models/nemo-chatbot-v3:/model
+
     runtime: nvidia
     networks:
       - nemo-net
@@ -48,4 +54,3 @@ services:
 
 networks:
   nemo-net:
-
