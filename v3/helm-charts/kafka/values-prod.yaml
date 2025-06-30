@@ -6,6 +6,7 @@ controller:
 
 container:
   port: 9092
+  controllerPort: 9093
   
 image:
   repository: bitnami/kafka
@@ -26,6 +27,7 @@ storageClass:
   reclaimPolicy: Delete
   volumeBindingMode: WaitForFirstConsumer
   allowVolumeExpansion: true
+  size: 10Gi  # 🔸 StatefulSet에서 사용하는 디스크 크기 기본값
 
 affinity:
   podAntiAffinity:
@@ -42,3 +44,8 @@ zookeeper:
 
 kraft:
   enabled: true
+  clusterId: "nemo-cluster-123"  # 클러스터 고정 UUID
+  quorumVoters: |
+    0@kafka-controller-0.kafka-headless.kafka.svc.cluster.local:9093,\
+    1@kafka-controller-1.kafka-headless.kafka.svc.cluster.local:9093,\
+    2@kafka-controller-2.kafka-headless.kafka.svc.cluster.local:9093
