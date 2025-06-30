@@ -1,0 +1,41 @@
+statefulset:
+  name: kafka-controller
+
+replicaCount: 3
+containerPort: 9092
+  
+image:
+  repository: bitnami/kafka
+  tag: 3.6.0
+
+
+service:
+  name: kafka
+  type: ClusterIP
+  port: 9092
+  targetPort: 9092
+
+storageClass:
+  name: gp3
+  provisioner: ebs.csi.aws.com
+  type: gp3
+  fsType: ext4
+  reclaimPolicy: Delete
+  volumeBindingMode: WaitForFirstConsumer
+  allowVolumeExpansion: true
+  
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: kafka
+          topologyKey: topology.kubernetes.io/zone
+
+zookeeper:
+  enabled: false
+
+kraft:
+  enabled: true
