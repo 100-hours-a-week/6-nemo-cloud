@@ -23,9 +23,15 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # 이미지 경로 분기 처리
 if [ "$SERVICE" = "ai" ]; then
-    IMAGE_FILE="asia-northeast3-docker.pkg.dev/nemo-v2-ai-461016/registry/${SERVICE}-${ENV}:${ENV}-latest"
+    PROJECT_ID="nemo-v2-ai-461016"
+    IMAGE_FILE="asia-northeast3-docker.pkg.dev/${PROJECT_ID}/registry/${SERVICE}-${ENV}:${ENV}-latest"
 else
-    IMAGE_FILE="asia-northeast3-docker.pkg.dev/nemo-v2/registry/${SERVICE}:${ENV}-latest"
+    if [ "$ENV" = "prod" ]; then
+        PROJECT_ID="nemo-v2-prod"
+    else
+        PROJECT_ID="nemo-v2"
+    fi
+    IMAGE_FILE="asia-northeast3-docker.pkg.dev/${PROJECT_ID}/registry/${SERVICE}:${ENV}-latest"
 fi
 
 # 유틸 스크립트 불러오기
