@@ -27,7 +27,9 @@ resource "aws_eks_node_group" "this" {
   depends_on = [
     aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryReadOnly,
-    aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy
+    aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
+    ##
+    aws_iam_role_policy_attachment.node_AmazonEBSCSIDriverPolicy  
   ]
 }
 
@@ -73,6 +75,12 @@ resource "aws_iam_role" "node" {
 resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodePolicy" {
   role       = aws_iam_role.node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+# 노드 그룹 IAM Role에 AmazonEBSCSIDriverPolicy 추가 
+resource "aws_iam_role_policy_attachment" "node_AmazonEBSCSIDriverPolicy" {
+  role       = aws_iam_role.node.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryReadOnly" {
