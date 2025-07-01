@@ -1,0 +1,42 @@
+{{- if .Values.controller.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebs-csi-controller
+  namespace: kube-system
+  labels:
+    app: ebs-csi-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebs-csi-controller
+  template:
+    metadata:
+      labels:
+        app: ebs-csi-controller
+    spec:
+      serviceAccountName: {{ .Values.controller.serviceAccount.name }}
+      containers:
+        - name: ebs-plugin
+          image: amazon/aws-ebs-csi-driver:latest
+          args:
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--logtostderr"
+            - "--v=5"
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: NAME
+              value: ebs.csi.aws.com 
+            - name: CSI_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName 
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+      volumes:
+        - name: socket-dir
+          emptyDir: {}
+{{- end }}
