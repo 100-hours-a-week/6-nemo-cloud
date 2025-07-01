@@ -7,6 +7,11 @@ subjects:
   - kind: ServiceAccount
     name: ebs-csi-node-sa
     namespace: kube-system
+
+  - kind: ServiceAccount
+    name: ebs-csi-controller-sa
+    namespace: kube-system   
+    
 roleRef:
   kind: ClusterRole
   name: ebs-csi-driver-role
