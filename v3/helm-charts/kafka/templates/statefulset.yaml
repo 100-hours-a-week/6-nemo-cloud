@@ -16,6 +16,19 @@ spec:
         app: {{ .Chart.Name }}
     
     spec:
+      {{- if .Values.volumePermissions.enabled }}
+      initContainers:
+        - name: volume-permissions
+          image: busybox:1.34.1
+          command: ["sh", "-c", "chown -R 1001:1001 /bitnami/kafka"]
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami/kafka
+          securityContext:
+            runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser | default 0 }}
+            runAsGroup: {{ .Values.volumePermissions.securityContext.runAsGroup | default 0 }}
+      {{- end }}
+      
       containers:
         - name: kafka
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
