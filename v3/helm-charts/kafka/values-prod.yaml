@@ -48,7 +48,7 @@ zookeeper:
 
 kraft:
   enabled: true
-  clusterId: "nemo-cluster-123"  # 클러스터 고정 UUID
+  clusterId: 2N0jE9q6QDWYxidBhVkb5w  # 클러스터 고정 UUID
   quorumVoters: |
     0@kafka-controller-0.kafka-headless.kafka.svc.cluster.local:9093,\
     1@kafka-controller-1.kafka-headless.kafka.svc.cluster.local:9093,\
