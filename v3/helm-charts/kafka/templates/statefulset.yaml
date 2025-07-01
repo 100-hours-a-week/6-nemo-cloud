@@ -28,7 +28,7 @@ spec:
             runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser | default 0 }}
             runAsGroup: {{ .Values.volumePermissions.securityContext.runAsGroup | default 0 }}
       {{- end }}
-      
+
       containers:
         - name: kafka
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -41,6 +41,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+
+            - name: KAFKA_CFG_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name 
+
+            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER" 
+
             - name: KAFKA_CFG_KRAFT_MODE
               value: "true"
 
