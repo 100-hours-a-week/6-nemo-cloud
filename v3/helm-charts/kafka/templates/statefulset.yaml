@@ -2,11 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Values.statefulset.name }}
-
 spec:
   serviceName: {{ .Values.service.name }}
   replicas: {{ .Values.controller.replicaCount }}
-
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
@@ -14,7 +12,6 @@ spec:
     metadata:
       labels:
         app: {{ .Chart.Name }}
-    
     spec:
       {{- if .Values.volumePermissions.enabled }}
       initContainers:
@@ -24,6 +21,9 @@ spec:
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami/kafka
+            - name: start-script
+              mountPath: /opt/bitnami/scripts/custom
+              readOnly: true
           securityContext:
             runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser | default 0 }}
             runAsGroup: {{ .Values.volumePermissions.securityContext.runAsGroup | default 0 }}
@@ -32,23 +32,18 @@ spec:
       containers:
         - name: kafka
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["/bin/bash", "/opt/bitnami/scripts/custom/start.sh"]
           ports:
             - containerPort: {{ .Values.container.port }}
             - containerPort: {{ .Values.container.controllerPort }}
-          
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
 
-            - name: KAFKA_CFG_NODE_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name 
-
             - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
-              value: "CONTROLLER" 
+              value: "CONTROLLER"
 
             - name: KAFKA_CFG_KRAFT_MODE
               value: "true"
@@ -70,12 +65,19 @@ spec:
 
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
               value: "PLAINTEXT://$(POD_NAME).{{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.container.port }}"
-          
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami/kafka
-  
-  # Pod당 1개의 PVC
+            - name: start-script
+              mountPath: /opt/bitnami/scripts/custom
+              readOnly: true
+
+      volumes:
+        - name: start-script
+          configMap:
+            name: kafka-start-script
+            defaultMode: 0755
+
   volumeClaimTemplates:
     - metadata:
         name: kafka-data
