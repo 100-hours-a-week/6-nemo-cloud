@@ -30,7 +30,7 @@ spec:
                   fieldPath: metadata.name
             - name: KAFKA_CFG_KRAFT_MODE
               value: "true"
-              
+
             - name: KAFKA_CFG_PROCESS_ROLES
               value: "controller,broker"
 
@@ -59,7 +59,7 @@ spec:
         name: kafka-data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: {{ .Values.storageClass.name }}
+        storageClassName: {{ .Values.persistence.storageClass }}
         resources:
           requests:
-            storage: {{ .Values.storageClass.size | default "10Gi" }}
+            storage: {{ .Values.persistence.size | default "10Gi" }}
