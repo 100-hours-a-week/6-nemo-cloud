@@ -12,29 +12,39 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # AI 분리 로직
 if [ "$SERVICE" = "ai" ]; then
-  COMPOSE_FILE="docker-compose.ai.yaml"
-  SERVICE_NAME="ai-${ENV}"
+  PROJECT_ID="nemo-v2-ai-461016"
+  IMAGE_FILE="asia-northeast3-docker.pkg.dev/${PROJECT_ID}/registry/${SERVICE}-${ENV}:${ENV}-latest"
 else
-  COMPOSE_FILE="docker-compose.${ENV}.yaml"
-  SERVICE_NAME="$RAW_SERVICE"
+  if [ "$ENV" = "prod" ]; then
+    PROJECT_ID="nemo-v2-prod"
+  else
+    PROJECT_ID="nemo-v2"
+  fi
+  IMAGE_FILE="asia-northeast3-docker.pkg.dev/${PROJECT_ID}/registry/${SERVICE}:${ENV}-latest"
 fi
-
-ENV_FILE="$ROOT_DIR/envs/${SERVICE}.${ENV}.env"
 
 # 유틸 불러오기
 source "$SCRIPT_DIR/utils.sh"
 
-# 환경변수 직접 로드
+# 루트 디렉토리 이동
 cd "$ROOT_DIR"
 
 # 환경변수 로드
 echo "🔧 [$ENV] 환경변수 로드 중..."
 load_env "$SERVICE" "$ENV"
 
-# 도커 컴포즈 실행
-cd "$ROOT_DIR"
-echo "🐳 도커 컴포즈로 실행 중..."
-docker compose -f "$COMPOSE_FILE" up -d "$SERVICE" || true
+# 기존 컨테이너 정리
+echo "🐳 도커 컴포즈로 기존 컨테이너 정지 및 제거 중..."
+docker compose -f "$COMPOSE_FILE" stop "$SERVICE_NAME" || true
+docker compose -f "$COMPOSE_FILE" rm -f "$SERVICE_NAME" || true
+
+# 이미지 Pull
+echo "📥 강제 Pull: 최신 이미지 받아오는 중..."
+docker pull "${IMAGE_FILE}"
+
+# 컨테이너 재생성
+echo "🚀 컨테이너 재생성 중..."
+docker compose -f "$COMPOSE_FILE" up -d --force-recreate --remove-orphans "$SERVICE_NAME"
 
 # 시작 알림
 notify_discord_cloud_only "☀️ [$ENV] $SERVICE 컨테이너 기동 완료!"
