@@ -3,6 +3,8 @@ controller:
   serviceAccount:
     create: true
     name: ebs-csi-controller-sa
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::084375578827:role/nemo_EKS_kluster-ebs-csi-driver
 
 node:
   enabled: true
