@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.statefulset.name }}
+spec:
+  serviceName: {{ .Values.service.name }}
+  replicas: {{ .Values.controller.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      {{- if .Values.volumePermissions.enabled }}
+      initContainers:
+        - name: volume-permissions
+          image: busybox:1.34.1
+          command: ["sh", "-c", "chown -R 1001:1001 /bitnami/kafka"]
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami/kafka
+            - name: start-script
+              mountPath: /opt/bitnami/scripts/custom
+              readOnly: true
+          securityContext:
+            runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser | default 0 }}
+            runAsGroup: {{ .Values.volumePermissions.securityContext.runAsGroup | default 0 }}
+      {{- end }}
+
+      containers:
+        - name: kafka
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["/bin/bash", "/opt/bitnami/scripts/custom/start.sh"]
+          ports:
+            - containerPort: {{ .Values.container.port }}
+            - containerPort: {{ .Values.container.controllerPort }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+
+            - name: KAFKA_CFG_KRAFT_MODE
+              value: "true"
+
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: "controller,broker"
+
+            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+              value: "{{ .Values.kraft.quorumVoters }}"
+
+            - name: KAFKA_KRAFT_CLUSTER_ID
+              value: "{{ .Values.kraft.clusterId }}"
+
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+
+            - name: KAFKA_CFG_LISTENERS
+              value: "PLAINTEXT://:{{ .Values.container.port }},CONTROLLER://:{{ .Values.container.controllerPort }}"
+
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://$(POD_NAME).{{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.container.port }}"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami/kafka
+            - name: start-script
+              mountPath: /opt/bitnami/scripts/custom
+              readOnly: true
+
+      volumes:
+        - name: start-script
+          configMap:
+            name: kafka-start-script
+            defaultMode: 0755
+
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.persistence.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | default "10Gi" }}
