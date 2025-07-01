@@ -28,7 +28,11 @@ spec:
             - name: CSI_ENDPOINT
               value: unix:///csi/csi.sock
             - name: NAME
-              value: ebs.csi.aws.com  
+              value: ebs.csi.aws.com 
+            - name: CSI_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName 
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
