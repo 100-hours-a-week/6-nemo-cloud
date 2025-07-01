@@ -1,3 +1,7 @@
+enableVolumeScheduling: true
+enableVolumeResizing: true
+enableVolumeSnapshot: true
+
 controller:
   enabled: true
   serviceAccount:
@@ -14,11 +18,11 @@ node:
 
 
 storageClass:
-  name: gp3
-  provisioner: ebs.csi.aws.com
-  type: gp3
-  fsType: ext4
-  reclaimPolicy: Delete
-  volumeBindingMode: WaitForFirstConsumer
-  allowVolumeExpansion: true
-  size: 10Gi  # 🔸 StatefulSet에서 사용하는 디스크 크기 기본값
+  - name: gp3
+    provisioner: ebs.csi.aws.com
+    parameters:
+      type: gp3
+      fsType: ext4
+    reclaimPolicy: Delete
+    volumeBindingMode: WaitForFirstConsumer
+    allowVolumeExpansion: true

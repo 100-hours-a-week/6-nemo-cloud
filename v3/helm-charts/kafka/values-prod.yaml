@@ -19,6 +19,12 @@ service:
   port: 9092
   targetPort: 9092
 
+volumePermissions:
+  enabled: true
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+
 persistence:
   enabled: true
   storageClass: gp3  # # 이미 존재하는 gp3 StorageClass를 참조만 함
