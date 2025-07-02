@@ -75,6 +75,8 @@ services:
       - nemo-net
     depends_on:
       - db
+    volumes:
+      - ./.my.cnf:/.my.cnf:ro 
 
 networks:
   nemo-net:
