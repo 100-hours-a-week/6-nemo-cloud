@@ -7,11 +7,8 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      if ($request_uri ~* "\\.env$") {
-        return 404;
-      }
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - dev3.nemo.ai.kr
@@ -55,3 +52,24 @@ spec:
                 name: backend
                 port:
                   number: 8080
+          - path: /ai/
+            pathType: Prefix
+            backend:
+              service:
+                name: ai
+                port:
+                  number: 8001
+          - path: /_next/
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000 
