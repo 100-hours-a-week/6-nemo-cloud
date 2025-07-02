@@ -63,6 +63,20 @@ services:
       - nemo-net
     restart: unless-stopped
 
+  
+    mysql-exporter:
+      image: prom/mysqld-exporter
+      container_name: mysql-exporter
+      restart: unless-stopped
+      environment:
+        - DATA_SOURCE_NAME=mysql_exporter:nemo@(db:3306)/
+      ports:
+        - "9104:9104"
+      networks:
+        - nemo-net
+      depends_on:
+        - db
+
 networks:
   nemo-net:
 
