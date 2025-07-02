@@ -4,13 +4,24 @@ set -euo pipefail
 # 인자 설정
 RAW_SERVICE="$1" # backend, frontend, ai
 ENV="$2"         # dev or prod
+
+# 논리 서비스명 추출 (ai-dev → ai)
 SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
+
+# Compose용 실제 서비스명
+if [ "$SERVICE" = "ai" ]; then
+  SERVICE_NAME="ai-${ENV}"
+  COMPOSE_FILE="docker-compose.ai.yaml"
+else
+  SERVICE_NAME="$RAW_SERVICE"
+  COMPOSE_FILE="docker-compose.${ENV}.yaml"
+fi
 
 # 경로 설정
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# AI 분리 로직
+# 이미지 경로 분기 처리
 if [ "$SERVICE" = "ai" ]; then
   PROJECT_ID="nemo-v2-ai-461016"
   IMAGE_FILE="asia-northeast3-docker.pkg.dev/${PROJECT_ID}/registry/${SERVICE}-${ENV}:${ENV}-latest"
@@ -23,10 +34,10 @@ else
   IMAGE_FILE="asia-northeast3-docker.pkg.dev/${PROJECT_ID}/registry/${SERVICE}:${ENV}-latest"
 fi
 
-# 유틸 불러오기
+# 유틸 스크립트 불러오기
 source "$SCRIPT_DIR/utils.sh"
 
-# 루트 디렉토리 이동
+# 루트 디렉토리로 이동
 cd "$ROOT_DIR"
 
 # 환경변수 로드
