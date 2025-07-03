@@ -70,4 +70,4 @@ echo "🚀 컨테이너 재생성 중..."
 docker compose -f "$COMPOSE_FILE" up -d --force-recreate --remove-orphans "$SERVICE_NAME"
 
 # [시작 알림]
-notify_discord_cloud_only "☀️ [$ENV] $SERVICE 컨테이너 기동 완료!"
+# notify_discord_cloud_only "☀️ [$ENV] $SERVICE 컨테이너 기동 완료!"
