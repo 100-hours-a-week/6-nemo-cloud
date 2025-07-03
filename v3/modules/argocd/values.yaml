@@ -1,0 +1,9 @@
+controller:
+  args:
+    - --insecure
+  metrics:
+    enabled: true
+
+server:
+  service:
+    type: LoadBalancer
