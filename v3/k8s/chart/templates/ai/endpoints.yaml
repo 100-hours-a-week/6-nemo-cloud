@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ai
+subsets:
+  - addresses:
+      {{- range .Values.ai.endpoints }}
+      - ip: {{ .ip }}
+      {{- end }}
+    ports:
+      - port: {{ (index .Values.ai.endpoints 0).port }} 

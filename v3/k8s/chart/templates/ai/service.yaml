@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai
+spec:
+  ports:
+    - port: {{ .Values.ai.service.port }}
+      targetPort: {{ .Values.ai.service.targetPort }}
+  clusterIP: None 

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: {{ .Values.namespace.name }}
+spec:
+  serviceName: mysql
+  replicas: {{ .Values.mysql.replicas }}
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: {{ .Values.mysql.image }}
+          ports:
+            - containerPort: 3306
+          envFrom:
+            - secretRef:
+                name: {{ .Values.mysql.secretName }}
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.storageClass.name }}
+        resources:
+          requests:
+            storage: {{ .Values.mysql.storage }} 
