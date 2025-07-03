@@ -23,3 +23,14 @@ module "eks" {
   min_capacity       = 1
   instance_types     = ["t3.large"]
 }
+
+
+module "argocd" {
+  source             = "../../modules/argocd"
+  name                = "argocd"
+  repository          = "https://argoproj.github.io/argo-helm"
+  chart               = "argo-cd"
+  namespace           = "argocd"
+  create_namespace    = true
+  values              = [file("${path.module}/../../modules/argocd/values.yaml")]
+}
