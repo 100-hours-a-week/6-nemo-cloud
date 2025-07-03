@@ -4,3 +4,5 @@ envs
 *.status
 **/secret.yaml
 **/configmap.yaml
+**/values-common.yaml
+**/values-dev.yaml
