@@ -65,10 +65,10 @@ echo "🚀 컨테이너 재생성 중..."
 docker compose -f "$COMPOSE_FILE" up -d --force-recreate --remove-orphans "$SERVICE_NAME"
 
 # [헬스체크 수행]
-# echo "🩺 헬스체크 수행 중..."
-# if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
-#   notify_discord_all "$SERVICE" "✅ [배포 성공: $ENV] $SERVICE 배포 완료!"
-# else
-#   notify_discord_all "$SERVICE" "❌ [배포 실패: $ENV] $SERVICE 배포 실패!"
-#   exit 1
-# fi
+echo "🩺 헬스체크 수행 중..."
+if bash "$SCRIPT_DIR/healthcheck.sh" "$SERVICE" "$ENV"; then
+  notify_discord_all "$SERVICE" "✅ [배포 성공: $ENV] $SERVICE 배포 완료!"
+else
+  notify_discord_all "$SERVICE" "❌ [배포 실패: $ENV] $SERVICE 배포 실패!"
+  exit 1
+fi
