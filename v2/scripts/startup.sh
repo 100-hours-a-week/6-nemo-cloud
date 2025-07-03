@@ -25,6 +25,11 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# [cloud 디렉토리에서 git pull로 최신화]
+cd "$ROOT_DIR"
+git pull
+cd "$SCRIPT_DIR"
+
 # [유틸 스크립트 불러오기]
 source "$SCRIPT_DIR/utils.sh"
 
