@@ -24,7 +24,6 @@ module "eks" {
   instance_types     = ["t3.large"]
 }
 
-
 module "argocd" {
   source             = "../../modules/argocd"
   name                = "argocd"
@@ -34,5 +33,6 @@ module "argocd" {
   create_namespace    = true
   values              = [file("${path.module}/../../modules/argocd/values.yaml")]
 
+  ## 중요 
   depends_on = [null_resource.update_kubeconfig]
 }

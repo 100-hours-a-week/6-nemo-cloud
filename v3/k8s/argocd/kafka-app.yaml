@@ -2,7 +2,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kafka
-  namespace: kafka
+  namespace: argocd
+  ##  이 Application은 argocd 네임스페이스에 존재 -> ArgoCD가 이를 감지하고 UI에 표시함 
 spec:
   project: default
   source:
@@ -16,10 +17,11 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka
-
+    #### 이제 여기서 kafka 네임스페이스를 설치함 
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      ## Kafka 네임스페이스가 없으면 자동으로 생성함 
