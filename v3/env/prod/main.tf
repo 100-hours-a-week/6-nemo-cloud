@@ -33,4 +33,6 @@ module "argocd" {
   namespace           = "argocd"
   create_namespace    = true
   values              = [file("${path.module}/../../modules/argocd/values.yaml")]
+
+  depends_on = [null_resource.update_kubeconfig]
 }
