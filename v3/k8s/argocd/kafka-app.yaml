@@ -2,13 +2,12 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kafka
-  namespace: argocd
+  namespace: kafka
 spec:
   project: default
-
   source:
     repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/terraform 
+    targetRevision: infra/terraform-setting
     path: v3/helm-charts/kafka
     helm:
       valueFiles:

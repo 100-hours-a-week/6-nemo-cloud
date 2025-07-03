@@ -1,0 +1,21 @@
+global:
+  domain: argocd.nemo.com  # 필요 시
+
+server:
+  service:
+    type: LoadBalancer  # 외부 공개 시
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - argocd.nemo.com
+    tls:
+      - hosts:
+          - argocd.nemo.com
+        secretName: argocd-tls
+
+configs:
+  params:
+    server.insecure: true  # HTTP 접속 허용 (테스트용)
+
+# adminPassword: bcrypt 해시도 설정 가능
