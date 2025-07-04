@@ -13,7 +13,7 @@ server:
       - hosts:
           - argocd.nemo.com
         secretName: argocd-tls
-
+        
 configs:
   params:
     server.insecure: true  # HTTP 접속 허용 (테스트용)
