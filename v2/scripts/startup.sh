@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+git reset --hard HEAD && git pull --rebase
+if ! groups "$USER" | grep -q '\bdocker\b'; then alias docker='sudo docker'; fi
+
 # [인자 체크] 서비스명/환경 필수
 if [ $# -lt 2 ]; then
   echo "[startup.sh] 사용법: $0 <서비스명(ai-dev, backend, frontend 등)> <환경(dev, prod)>" >&2
