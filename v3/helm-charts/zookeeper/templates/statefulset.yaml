@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "zookeeper.fullname" . }}
+  name: {{ .Chart.Name }}
   labels:
-    app: {{ include "zookeeper.name" . }}
+    app: {{ .Chart.Name }}
 spec:
   serviceName: {{ .Values.service.name }}-headless
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "zookeeper.name" . }}
+      app: {{ .Chart.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "zookeeper.name" . }}
+        app: {{ .Chart.Name  }}
     spec:
       containers:
         - name: zookeeper
@@ -23,14 +23,16 @@ spec:
             - containerPort: {{ .Values.service.port }}
           env:
             - name: ZOO_SERVERS
-              value: >-
+              value: |-
                 {{- range $i, $e := until (.Values.replicaCount | int) }}
                 server.{{ $i }}={{ $.Values.service.name }}-{{ $i }}.{{ $.Values.service.name }}-headless:2888:3888
                 {{- end }}
-            - name: ZOO_MY_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+          command:
+            - sh
+            - -c
+            - |
+              export ZOO_MY_ID=$(hostname | awk -F '-' '{print $NF}');
+              exec /opt/bitnami/scripts/zookeeper/run.sh
           volumeMounts:
             - name: data
               mountPath: /bitnami/zookeeper
