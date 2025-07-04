@@ -13,4 +13,5 @@ resource "null_resource" "update_kubeconfig" {
   provisioner "local-exec" {
     command = "aws eks update-kubeconfig --name nemo_EKS_kluster --region ap-northeast-2"
   }
+  depends_on = [module.eks]
 }
