@@ -29,7 +29,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT_DIR"
 echo "Git 최신화"
 git fetch origin
-git reset --hard origin/devlop
+git reset --hard origin/develop
 
 # [유틸 스크립트 불러오기]
 source "$SCRIPT_DIR/utils.sh"
