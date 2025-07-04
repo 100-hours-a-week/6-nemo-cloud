@@ -43,8 +43,11 @@ spec:
                   fieldPath: metadata.name
 
             - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-              value: "kafka-zookeeper-headless:2181"  # Assuming Zookeeper is deployed with this name
-              
+              value: >-
+                zookeeper-0.zookeeper-headless.kafka.svc.cluster.local:2181,
+                zookeeper-1.zookeeper-headless.kafka.svc.cluster.local:2181,
+                zookeeper-2.zookeeper-headless.kafka.svc.cluster.local:2181
+                
             - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
               value: "PLAINTEXT:PLAINTEXT"
 
