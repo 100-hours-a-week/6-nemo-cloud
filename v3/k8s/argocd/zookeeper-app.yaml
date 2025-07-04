@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zookeeper
+  ## 이 Application의 이름은 zookeeper -> ArgoCD가 이를 감지하고 UI 
+  namespace: argocd
+  ##  이 Application은 argocd 네임스페이스에 존재 -> ArgoCD가 이를 감지하고 UI에 표시함 
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
+    targetRevision: infra/terraform-setting
+    path: v3/helm-charts/zookeeper
+    helm:
+      valueFiles:
+        - values-prod.yaml
+        
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka
+    #### 이제 여기서 kafka 네임스페이스를 설치함 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      ## Kafka 네임스페이스가 없으면 자동으로 생성함 
