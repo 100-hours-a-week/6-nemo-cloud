@@ -1,9 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-git reset --hard HEAD && git pull --rebase
-if ! groups "$USER" | grep -q '\bdocker\b'; then alias docker='sudo docker'; fi
-
 # [인자 체크] 서비스명/환경 필수
 if [ $# -lt 2 ]; then
   echo "[startup.sh] 사용법: $0 <서비스명(ai-dev, backend, frontend 등)> <환경(dev, prod)>" >&2
@@ -27,6 +24,12 @@ fi
 # [경로 설정]
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# [클라우드 레포 최신화]
+cd "$ROOT_DIR"
+echo "Git 최신화"
+git fetch origin
+git reset --hard origin/devlop
 
 # [유틸 스크립트 불러오기]
 source "$SCRIPT_DIR/utils.sh"
