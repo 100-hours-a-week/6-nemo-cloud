@@ -27,12 +27,12 @@ spec:
                 {{- range $i, $e := until (.Values.replicaCount | int) }}
                 server.{{ $i }}={{ $.Values.service.name }}-{{ $i }}.{{ $.Values.service.name }}-headless:2888:3888
                 {{- end }}
-          command:
-            - sh
-            - -c
-            - |
-              export ZOO_MY_ID=$(hostname | awk -F '-' '{print $NF}');
-              exec /opt/bitnami/scripts/zookeeper/run.sh
+            - name: ZOO_MY_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
           volumeMounts:
             - name: data
               mountPath: /bitnami/zookeeper
