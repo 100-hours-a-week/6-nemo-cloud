@@ -10,6 +10,9 @@ resource "aws_eks_cluster" "this" {
   depends_on = [aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy]
 }
 
+
+
+
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = var.node_group_name
@@ -158,3 +161,4 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
   role       = aws_iam_role.ebs_csi_driver.name
   policy_arn = aws_iam_policy.ebs_csi_driver.arn
 }
+

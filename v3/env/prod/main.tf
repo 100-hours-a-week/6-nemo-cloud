@@ -24,6 +24,7 @@ module "eks" {
   instance_types     = ["t3.large"]
 }
 
+# install ArgoCD as HELM 
 module "argocd" {
   source             = "../../modules/argocd"
   name                = "argocd"
@@ -35,4 +36,27 @@ module "argocd" {
 
   ## 중요 
   depends_on = [null_resource.update_kubeconfig]
+}
+
+
+resource "null_resource" "update_kubeconfig" {
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --name nemo_EKS_kluster --region ap-northeast-2"
+  }
+  ## EKS가 다끝나고 다음 명령어 생성하기 
+  depends_on = [module.eks]
+}
+
+## kubectl apply -f 
+resource "kubernetes_manifest" "argocd_app" {
+  manifest = yamldecode(file("${path.module}/../../k8s/argocd/argocd-app.yaml"))
+  ## argocd가 다 뜰때까지 기다리기 
+  depends_on = [module.argocd]
+}
+
+## kubectl apply -f 
+resource "kubernetes_manifest" "kafka_app" {
+  manifest = yamldecode(file("${path.module}/../../k8s/argocd/kafka-app.yaml"))
+  # argocd가 다 뜰때까지 기다리기 
+  depends_on = [module.argocd]
 }
