@@ -42,23 +42,11 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
 
-            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
-              value: "CONTROLLER"
-
-            - name: KAFKA_CFG_KRAFT_MODE
-              value: "true"
-
-            - name: KAFKA_CFG_PROCESS_ROLES
-              value: "controller,broker"
-
-            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
-              value: "{{ .Values.kraft.quorumVoters }}"
-
-            - name: KAFKA_KRAFT_CLUSTER_ID
-              value: "{{ .Values.kraft.clusterId }}"
-
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "kafka-zookeeper-headless:2181"  # Assuming Zookeeper is deployed with this name
+              
             - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
-              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+              value: "PLAINTEXT:PLAINTEXT"
 
             - name: KAFKA_CFG_LISTENERS
               value: "PLAINTEXT://:{{ .Values.container.port }},CONTROLLER://:{{ .Values.container.controllerPort }}"
