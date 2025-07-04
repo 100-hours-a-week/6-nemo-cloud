@@ -8,4 +8,4 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
   selector:
-    app: {{ include "zookeeper.name" . }}
+    app: {{ .Chart.Name }}

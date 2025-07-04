@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: {{ .Values.service.name }}-headless
   labels:
-    app: {{ include "zookeeper.name" . }}
+    app: {{ .Chart.Name }}
 spec:
   clusterIP: None
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
   selector:
-    app: {{ include "zookeeper.name" . }}
+    app: {{ .Chart.Name }}
