@@ -1,0 +1,27 @@
+replicaCount: 3
+
+image:
+  repository: bitnami/zookeeper
+  tag: 3.8.4
+  pullPolicy: IfNotPresent
+
+service:
+  name: zookeeper
+  type: ClusterIP
+  port: 2181
+  headless: true
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: gp3
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+
