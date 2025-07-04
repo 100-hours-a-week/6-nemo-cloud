@@ -24,6 +24,15 @@ module "eks" {
   instance_types     = ["t3.large"]
 }
 
+module "ebs_csi_driver" {
+  source = "../../modules/ebs"
+  
+  controller_sa_name      = "ebs-csi-controller-sa"
+  controller_sa_role_arn  = "arn:aws:iam::084375578827:role/nemo_EKS_kluster-ebs-csi-driver"
+  node_sa_name            = "ebs-csi-node-sa"
+  kubeconfig_dependency   = null_resource.update_kubeconfig
+}
+
 # install ArgoCD as HELM 
 module "argocd" {
   source             = "../../modules/argocd"
