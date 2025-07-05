@@ -56,16 +56,19 @@ resource "null_resource" "update_kubeconfig" {
   depends_on = [module.eks]
 }
 
-## kubectl apply -f 
-resource "kubernetes_manifest" "argocd_app" {
-  manifest = yamldecode(file("${path.module}/../../k8s/argocd/argocd-app.yaml"))
-  ## argocd가 다 뜰때까지 기다리기 
-  depends_on = [module.argocd]
-}
 
-## kubectl apply -f 
-resource "kubernetes_manifest" "kafka_app" {
-  manifest = yamldecode(file("${path.module}/../../k8s/argocd/kafka-app.yaml"))
-  # argocd가 다 뜰때까지 기다리기 
-  depends_on = [module.argocd]
+module "lambda_ec2_control" {
+  source = "../../modules/lambda"
+
+  lambda_name        = "eks-ec2-startstop"
+  role_name          = "lambda-ec2-control-role"
+  policy_name        = "lambda-ec2-control-policy"
+  runtime            = "nodejs20.x"
+  handler            = "index.handler"
+  lambda_zip_path    = "${path.module}/files/ec2_control_lambda.zip" 
+
+  environment_variables = {
+    ACTION       = "stop"
+    INSTANCE_IDS = "i-0a2523d2264e00cc1,i-0e1b82109a5114d49,i-0eec3bf4bf30a4ddb"
+  }
 }
