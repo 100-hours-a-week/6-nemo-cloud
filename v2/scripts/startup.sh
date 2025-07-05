@@ -17,14 +17,20 @@ ENV="$2"         # dev or prod
 # [논리 서비스명 추출] (ai-dev → ai)
 SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
 
-# [Git Clone]
-echo "[startup.sh] 🔄 Git 리포지토리 클론 중 (develop 브랜치)"
-cd /home/ubuntu
-rm -rf 6-nemo-cloud || true
-git clone -b develop https://github.com/100-hours-a-week/6-nemo-cloud.git
+# [Git Pull 방식으로 cloud 레포 최신화]
+REPO_DIR="$HOME/nemo/cloud"
+if [ -d "$REPO_DIR/.git" ]; then
+  echo "[startup.sh] 🔄 Git Pull로 Cloud 레포 최신화 중..."
+  cd "$REPO_DIR"
+  git fetch origin
+  git reset --hard origin/develop
+else
+  echo "[startup.sh] ⚠️ Git 디렉토리가 존재하지 않음: $REPO_DIR"
+  exit 1
+fi
 
 # [경로 설정] (cloud → ❌, v2 기준)
-ROOT_DIR="/home/ubuntu/6-nemo-cloud/v2"
+ROOT_DIR="$REPO_DIR/v2"
 SCRIPT_DIR="$ROOT_DIR/scripts"
 cd "$ROOT_DIR"
 
