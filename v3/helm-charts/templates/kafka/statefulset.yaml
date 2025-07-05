@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.statefulset.name }}
+  name: {{ .Values.kafka.statefulset.name }}
 spec:
-  serviceName: {{ .Values.service.name }}
-  replicas: {{ .Values.controller.replicaCount }}
+  serviceName: {{ .Values.kafka.service.name }}
+  replicas: {{ .Values.kafka.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
@@ -13,7 +13,7 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
-      {{- if .Values.volumePermissions.enabled }}
+      {{- if .Values.kafka.volumePermissions.enabled }}
       initContainers:
         - name: volume-permissions
           image: busybox:1.34.1
@@ -25,17 +25,17 @@ spec:
               mountPath: /opt/bitnami/scripts/custom
               readOnly: true
           securityContext:
-            runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser | default 0 }}
-            runAsGroup: {{ .Values.volumePermissions.securityContext.runAsGroup | default 0 }}
+            runAsUser: {{ .Values.kafka.volumePermissions.securityContext.runAsUser | default 0 }}
+            runAsGroup: {{ .Values.kafka.volumePermissions.securityContext.runAsGroup | default 0 }}
       {{- end }}
 
       containers:
         - name: kafka
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kakfa.image.tag }}"
           command: ["/bin/bash", "/opt/bitnami/scripts/custom/start.sh"]
           ports:
-            - containerPort: {{ .Values.container.port }}
-            - containerPort: {{ .Values.container.controllerPort }}
+            - containerPort: {{ .Values.kafka.container.port }}
+            - containerPort: {{ .Values.kafka.container.controllerPort }}
           env:
             - name: POD_NAME
               valueFrom:
@@ -52,10 +52,10 @@ spec:
               value: "PLAINTEXT:PLAINTEXT"
 
             - name: KAFKA_CFG_LISTENERS
-              value: "PLAINTEXT://:{{ .Values.container.port }}"
+              value: "PLAINTEXT://:{{ .Values.kafka.container.port }}"
 
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://$(POD_NAME).{{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.container.port }}"
+              value: "PLAINTEXT://$(POD_NAME).{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }}"
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami/kafka
@@ -74,7 +74,7 @@ spec:
         name: kafka-data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: {{ .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.kafka.persistence.storageClass }}
         resources:
           requests:
-            storage: {{ .Values.persistence.size | default "10Gi" }}
+            storage: {{ .Values.kafka.persistence.size | default "10Gi" }}

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: nemo-chart
+description: Nemo 서비스 및 인프라 통합 Helm Chart
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+~                                                                                                                      
+~                                                                                                                      
+~                                    

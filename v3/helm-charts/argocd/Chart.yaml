@@ -1,5 +1,0 @@
-apiVersion: v2
-name: argocd
-description: Argo CD Helm chart wrapper for GitOps
-type: application
-version: 1.0.0
