@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafka.service.name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  clusterIP: None
+  type: {{ .Values.kafka.service.type }}
+  selector:
+    app: {{ .Chart.Name }}
+  ports:
+    - name: kafka
+      port: {{ .Values.kafka.service.port }}
+      targetPort: {{ .Values.kafka.service.targetPort }}
+    - name: controller
+      port: {{ .Values.kafka.container.controllerPort }}
+      targetPort: {{ .Values.kafka.container.controllerPort }}

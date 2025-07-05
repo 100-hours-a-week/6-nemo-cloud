@@ -1,0 +1,91 @@
+zookeeper:
+  replicaCount: 3
+
+  image:
+    repository: bitnami/zookeeper
+    tag: 3.8.4
+    pullPolicy: IfNotPresent
+
+  service:
+    name: zookeeper
+    type: ClusterIP
+    port: 2181
+    headless: true
+
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: gp3
+
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+
+kafka:
+  replicaCount: 3
+  statefulset:
+    name: kafka-controller
+
+  container:
+    port: 9092
+    controllerPort: 9093
+  
+  image:
+    repository: bitnami/kafka
+    tag: 3.6.0
+
+  service:
+    name: kafka-headless
+    type: ClusterIP
+    port: 9092
+    targetPort: 9092
+
+  volumePermissions:
+    enabled: true
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+
+  persistence:
+    enabled: true
+    storageClass: gp3  # # 이미 존재하는 gp3 StorageClass를 참조만 함
+    size: 10Gi
+
+  storageClass:
+    create: false  #Kafka Helm Chart에서 StorageClass 생성 시도하지 않도록 차단
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: kafka
+            topologyKey: topology.kubernetes.io/zone
+
+  zookeeper:
+    enabled: true
+    replicaCount: 3
+    persistence:
+      enabled: true
+      storageClass: gp3
+      size: 10Gi
+
+    
+  kraft:
+    enabled: false
+
+  #kraft:
+  #  enabled: true
+  #  clusterId: 2N0jE9q6QDWYxidBhVkb5w  # 클러스터 고정 UUID
+  #  quorumVoters: |
+  #    0@kafka-controller-0.kafka-headless.kafka.svc.cluster.local:9093,\
+  #    1@kafka-controller-1.kafka-headless.kafka.svc.cluster.local:9093,\
+  #    2@kafka-controller-2.kafka-headless.kafka.svc.cluster.local:9093
+
