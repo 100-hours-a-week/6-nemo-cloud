@@ -1,10 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# 로그 저장 + 출력
-exec > >(tee -a /var/log/startup.log) 2>&1
-echo "[startup.sh] 🟢 시작됨 at $(date)"
-
 # [인자 체크] 서비스명/환경 필수
 if [ $# -lt 2 ]; then
   echo "[startup.sh] 사용법: $0 <서비스명(ai-dev, backend, frontend 등)> <환경(dev, prod)>" >&2
