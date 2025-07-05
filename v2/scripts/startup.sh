@@ -1,16 +1,32 @@
 #!/bin/bash
 set -euo pipefail
 
+# 로그 저장 + 출력
+exec > >(tee -a /var/log/startup.log) 2>&1
+echo "[startup.sh] 🟢 시작됨 at $(date)"
+
 # [인자 체크] 서비스명/환경 필수
 if [ $# -lt 2 ]; then
   echo "[startup.sh] 사용법: $0 <서비스명(ai-dev, backend, frontend 등)> <환경(dev, prod)>" >&2
   exit 1
 fi
+
 RAW_SERVICE="$1" # backend, frontend, ai
 ENV="$2"         # dev or prod
 
 # [논리 서비스명 추출] (ai-dev → ai)
 SERVICE=$(echo "$RAW_SERVICE" | cut -d'-' -f1)
+
+# [Git Clone]
+echo "[startup.sh] 🔄 Git 리포지토리 클론 중 (develop 브랜치)"
+cd /home/ubuntu
+rm -rf 6-nemo-cloud || true
+git clone -b develop https://github.com/100-hours-a-week/6-nemo-cloud.git
+
+# [경로 설정] (cloud → ❌, v2 기준)
+ROOT_DIR="/home/ubuntu/6-nemo-cloud/v2"
+SCRIPT_DIR="$ROOT_DIR/scripts"
+cd "$ROOT_DIR"
 
 # [Compose용 실제 서비스명/컴포즈 파일]
 if [ "$SERVICE" = "ai" ]; then
@@ -20,17 +36,6 @@ else
   SERVICE_NAME="$RAW_SERVICE"
   COMPOSE_FILE="docker-compose.${ENV}.yaml"
 fi
-
-# [경로 설정]
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-# [클라우드 레포 최신화]
-echo "🔄 Git Cloud 저장소 최신화 중..."
-cd "$ROOT_DIR"
-echo "Git 최신화"
-git fetch origin
-git reset --hard origin/develop
 
 # [유틸 스크립트 불러오기]
 source "$SCRIPT_DIR/utils.sh"
@@ -71,5 +76,8 @@ docker pull "${IMAGE_FILE}"
 echo "🚀 컨테이너 재생성 중..."
 docker compose -f "$COMPOSE_FILE" up -d --force-recreate --remove-orphans "$SERVICE_NAME"
 
+echo "[startup.sh] ✅ 완료됨 at $(date)"
+
 # [시작 알림]
 # notify_discord_cloud_only "☀️ [$ENV] $SERVICE 컨테이너 기동 완료!"
+
