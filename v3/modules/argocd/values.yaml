@@ -1,9 +1,22 @@
+server:
+  service:
+    type: LoadBalancer
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - argocd.nemo.com
+    tls:
+      - hosts:
+          - argocd.nemo.com
+        secretName: argocd-tls
+
+configs:
+  params:
+    server.insecure: true  # 테스트용 HTTP 허용 (주의: 운영 환경에선 false)
+
 controller:
   args:
     - --insecure
   metrics:
     enabled: true
-
-server:
-  service:
-    type: LoadBalancer
