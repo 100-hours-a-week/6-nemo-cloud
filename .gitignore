@@ -11,3 +11,8 @@ envs
 # Terraform state files
 *.tfstate
 *.tfstate.backup
+
+v3/env/prod/files/node_modules/
+v3/env/prod/files/package-lock.json
+v3/env/prod/files/package.json
+ 

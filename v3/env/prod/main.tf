@@ -63,12 +63,12 @@ module "lambda_ec2_control" {
   lambda_name        = "eks-ec2-startstop"
   role_name          = "lambda-ec2-control-role"
   policy_name        = "lambda-ec2-control-policy"
-  runtime            = "nodejs20.x"
+  runtime            = "nodejs18.x"
   handler            = "index.handler"
   lambda_zip_path    = "${path.module}/files/ec2_control_lambda.zip" 
 
   environment_variables = {
-    ACTION       = "stop"
+    ACTION       = "start"
     INSTANCE_IDS = "i-0a2523d2264e00cc1,i-0e1b82109a5114d49,i-0eec3bf4bf30a4ddb"
   }
 }
