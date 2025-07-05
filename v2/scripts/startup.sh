@@ -26,6 +26,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # [클라우드 레포 최신화]
+echo "🔄 Git Cloud 저장소 최신화 중..."
 cd "$ROOT_DIR"
 echo "Git 최신화"
 git fetch origin
