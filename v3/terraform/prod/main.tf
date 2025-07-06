@@ -68,7 +68,7 @@ module "lambda_ec2_control" {
   lambda_zip_path    = "${path.module}/files/ec2_control_lambda.zip" 
 
   environment_variables = {
-    ACTION       = "start"
-    INSTANCE_IDS = "i-0a2523d2264e00cc1,i-0e1b82109a5114d49,i-0eec3bf4bf30a4ddb"
+    ACTION       = "stop"
+    INSTANCE_IDS = "i-0a45f6aeac782a703,i-06875a657dcaadcda,i-030643a39030c0999"
   }
 }
