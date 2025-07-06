@@ -102,8 +102,8 @@ backend:
     REDIS_PORT: "6379"
     KAKAO_REDIRECT_URI: https://dev3.nemo.ai.kr/auth/kakao/callback
     BUCKET_NAME: nemo-uploaded-files
-    AWS_REGION: ap-northeast-2T8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
-    WEBHOOK_BACKEND_URL: "https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
+    AWS_REGION: ap-northeast-2
+    WEBHOOK_CLOUD_URL: "https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
     ACCESS_TOKEN_EXPIRATION: "3600000"
     REFRESH_TOKEN_EXPIRATION: "1209600000"
     IMAGE_FILE_BYTE: 10MB
