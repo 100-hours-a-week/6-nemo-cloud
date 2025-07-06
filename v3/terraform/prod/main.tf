@@ -81,3 +81,13 @@ module "secret" {
   oidc_provider_url = "https://oidc.eks.ap-northeast-2.amazonaws.com/id/098789DB07FAD21A75DE61AB5FCDF6A4"
   oidc_provider_arn = "arn:aws:iam::084375578827:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/098789DB07FAD21A75DE61AB5FCDF6A4"
 }
+
+
+module "argocd_image_updater" {
+  source             = "../../modules/argocd_image_updater"
+  kubeconfig_path    = "~/.kube/config"
+  oidc_provider_url  = module.eks.oidc_provider_url
+  oidc_provider_arn  = module.eks.oidc_provider_arn
+  aws_account_id     = "084375578827"
+  region             = "ap-northeast-2"
+}

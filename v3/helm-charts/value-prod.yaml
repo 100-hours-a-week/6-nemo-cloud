@@ -92,8 +92,9 @@ kafka:
 
 
 backend:
-  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend@sha256:ba50b5e246085d48df680e2119a772c50277f750142bf5a02fe811ee527de2af
+  image:
+    repository: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
+    tag: latest  # 초기값. 나중에 prod-yyyymmdd-hhmm 으로 자동 대체됨
   replicas: 1
   imagePullSecrets:
     - name: regcred
-  

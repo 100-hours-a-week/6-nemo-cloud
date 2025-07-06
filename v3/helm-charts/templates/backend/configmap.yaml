@@ -4,7 +4,6 @@ metadata:
   name: backend-config
   namespace: {{ .Values.namespace.name }}
 data:
-{{- range $key, $value := .Values.backend.env }}
+  {{- range $key, $value := .Values.backend.env }}
   {{ $key }}: {{ $value | quote }}
-{{- end }}
-~                   
+  {{- end }}                  
