@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: backend
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Values.backend.namespace.name }}
 spec:
   selector:
     app: backend
@@ -10,4 +10,3 @@ spec:
     - port: 8080
       targetPort: 8080
   type: ClusterIP
-~                      

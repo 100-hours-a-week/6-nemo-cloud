@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Values.backend.namespace.name }}
 spec:
   replicas: {{ .Values.backend.replicas }}
   selector:

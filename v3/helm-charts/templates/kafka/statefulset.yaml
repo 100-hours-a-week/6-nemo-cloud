@@ -31,7 +31,7 @@ spec:
 
       containers:
         - name: kafka
-          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kakfa.image.tag }}"
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kafka.image.tag }}"
           command: ["/bin/bash", "/opt/bitnami/scripts/custom/start.sh"]
           ports:
             - containerPort: {{ .Values.kafka.container.port }}
