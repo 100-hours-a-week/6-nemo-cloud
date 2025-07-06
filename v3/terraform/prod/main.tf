@@ -72,3 +72,12 @@ module "lambda_ec2_control" {
     INSTANCE_IDS = "i-0a45f6aeac782a703,i-06875a657dcaadcda,i-030643a39030c0999"
   }
 }
+
+
+module "secret" {
+  source = "../../modules/secret"
+
+  kubeconfig_path     = "~/.kube/config"
+  oidc_provider_url = "https://oidc.eks.ap-northeast-2.amazonaws.com/id/098789DB07FAD21A75DE61AB5FCDF6A4"
+  oidc_provider_arn = "arn:aws:iam::084375578827:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/098789DB07FAD21A75DE61AB5FCDF6A4"
+}
