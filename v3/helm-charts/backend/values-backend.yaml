@@ -9,3 +9,4 @@ backend:
   replicas: 1
   imagePullSecrets:
     - name: regcred   # ✅ ECR용 이미지 Pull 시크릿
+ 
