@@ -1,0 +1,11 @@
+backend:
+  serviceAccount:
+    name: backend     ## Deployment에서 사용할 ServiceAccount 이름
+  namespace:
+    name: backend     ## 배포될 Namespace 이름
+  image:
+    repository: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
+    tag: latest  # 초기값. 나중에 prod-yyyymmdd-hhmm 으로 자동 대체됨
+  replicas: 1
+  imagePullSecrets:
+    - name: regcred   # ✅ ECR용 이미지 Pull 시크릿
