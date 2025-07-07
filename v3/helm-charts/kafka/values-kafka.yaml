@@ -1,31 +1,3 @@
-zookeeper:
-  replicaCount: 3
-
-  image:
-    repository: bitnami/zookeeper
-    tag: 3.8.4
-    pullPolicy: IfNotPresent
-
-  service:
-    name: zookeeper
-    type: ClusterIP
-    port: 2181
-    headless: true
-
-  persistence:
-    enabled: true
-    size: 5Gi
-    storageClass: gp3
-
-  resources:
-    limits:
-      cpu: 250m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 256Mi
-
-
 kafka:
   replicaCount: 3
   statefulset:
@@ -90,15 +62,3 @@ kafka:
   #    2@kafka-controller-2.kafka-headless.kafka.svc.cluster.local:9093
 
 
-
-backend:
-  serviceAccount:
-    name: backend     ## Deployment에서 사용할 ServiceAccount 이름
-  namespace:
-    name: backend     ## 배포될 Namespace 이름
-  image:
-    repository: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
-    tag: latest  # 초기값. 나중에 prod-yyyymmdd-hhmm 으로 자동 대체됨
-  replicas: 1
-  imagePullSecrets:
-    - name: regcred   # ✅ ECR용 이미지 Pull 시크릿

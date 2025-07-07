@@ -20,7 +20,7 @@ module "eks" {
   node_group_name    = "nemo_node_group"
   desired_capacity   = 3
   max_capacity       = 3
-  min_capacity       = 1
+  min_capacity       = 3
   instance_types     = ["t3.large"]
 }
 
@@ -69,7 +69,7 @@ module "lambda_ec2_control" {
 
   environment_variables = {
     ACTION       = "stop"
-    INSTANCE_IDS = "i-0a45f6aeac782a703,i-06875a657dcaadcda,i-030643a39030c0999"
+    INSTANCE_IDS = "i-0657dd55aea798a8e,i-03596f9222f2ea70b,i-0869ce93a892491b9"
   }
 }
 
