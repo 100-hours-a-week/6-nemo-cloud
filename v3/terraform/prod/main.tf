@@ -18,9 +18,9 @@ module "eks" {
   subnet_ids         = [module.vpc.private_azone_id, module.vpc.private_bzone_id, module.vpc.private_czone_id]
 
   node_group_name    = "nemo_node_group"
-  desired_capacity   = 3
-  max_capacity       = 3
-  min_capacity       = 3
+  desired_capacity   = 0
+  max_capacity       = 1
+  min_capacity       = 0
   instance_types     = ["t3.large"]
 }
 
@@ -73,13 +73,24 @@ module "lambda_ec2_control" {
   }
 }
 
+# EKS 클러스터 정보 가져오기
+data "aws_eks_cluster" "this" {
+  name = "nemo_EKS_kluster"
+}
+
+data "aws_caller_identity" "current" {}
+
+locals {
+  oidc_provider_url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+  oidc_provider_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(local.oidc_provider_url, "https://", "")}"
+}
 
 module "secret" {
   source = "../../modules/secret"
 
   kubeconfig_path     = "~/.kube/config"
-  oidc_provider_url = "https://oidc.eks.ap-northeast-2.amazonaws.com/id/098789DB07FAD21A75DE61AB5FCDF6A4"
-  oidc_provider_arn = "arn:aws:iam::084375578827:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/098789DB07FAD21A75DE61AB5FCDF6A4"
+  oidc_provider_url   = local.oidc_provider_url
+  oidc_provider_arn   = local.oidc_provider_arn
 }
 
 
