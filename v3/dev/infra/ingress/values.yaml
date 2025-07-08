@@ -1,0 +1,30 @@
+ingress:
+  name: main-ingress
+  host: dev3.nemo.ai.kr
+  tlsSecret: dev-nemo-tls
+  clusterIssuer: letsencrypt-dev
+  paths:
+    - path: /auth/
+      serviceName: backend
+      servicePort: 8080
+    - path: /api/
+      serviceName: backend
+      servicePort: 8080
+    - path: /swagger-ui/
+      serviceName: backend
+      servicePort: 8080
+    - path: /v3/
+      serviceName: backend
+      servicePort: 8080
+    - path: /swagger-resources/
+      serviceName: backend
+      servicePort: 8080
+    - path: /ai/
+      serviceName: ai
+      servicePort: 8001
+    - path: /_next/
+      serviceName: frontend
+      servicePort: 3000
+    - path: /
+      serviceName: frontend
+      servicePort: 3000 

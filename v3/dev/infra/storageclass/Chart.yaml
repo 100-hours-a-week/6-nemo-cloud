@@ -1,0 +1,4 @@
+apiVersion: v2
+name: storageclass
+version: 0.1.0
+description: StorageClass Helm chart 
