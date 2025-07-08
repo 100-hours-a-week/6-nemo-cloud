@@ -3,6 +3,11 @@ output "vpc_id" {
   value       = aws_vpc.this.id
 }
 
+output "public_azone_id"{
+  description   = "ID for public_azone_id"
+  value         = aws_subnet.public-a.id
+}
+
 output "private_azone_id" {
   description   = "ID for private_azone_id"
   value         = aws_subnet.private-a.id

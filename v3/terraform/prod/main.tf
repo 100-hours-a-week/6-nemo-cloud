@@ -131,3 +131,17 @@ module "rds" {
   ] # output에서 가지고옴 
   
 }
+
+
+
+
+module "bastion" {
+  source     = "../../modules/bastion"
+
+  vpc_id     = module.vpc.vpc_id
+  instance_type = "t2.medium"
+  subnet_id  = module.vpc.public_azone_id
+  ami_id     = "ami-0662f4965dfc70aca"
+  key_name   = "keypair-kube-master"
+  name       = "v3-prod"
+}
