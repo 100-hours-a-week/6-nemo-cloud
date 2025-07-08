@@ -1,9 +1,3 @@
-provider "helm" {
-  kubernetes = {
-    config_path = var.kubeconfig_path
-    config_context = "arn:aws:eks:ap-northeast-2:084375578827:cluster/nemo_EKS_kluster"
-  }
-}
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
@@ -57,4 +51,15 @@ EOF
   ]
 
   depends_on = [aws_iam_role_policy_attachment.attach_ecr_read]
+}
+
+
+
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.0.0"
+    }
+  }
 }

@@ -18,9 +18,9 @@ module "eks" {
   subnet_ids         = [module.vpc.private_azone_id, module.vpc.private_bzone_id, module.vpc.private_czone_id]
 
   node_group_name    = "nemo_node_group"
-  desired_capacity   = 0
-  max_capacity       = 1
-  min_capacity       = 0
+  desired_capacity   = 3
+  max_capacity       = 3
+  min_capacity       = 3
   instance_types     = ["t3.large"]
 }
 
@@ -68,37 +68,66 @@ module "lambda_ec2_control" {
   lambda_zip_path    = "${path.module}/files/ec2_control_lambda.zip" 
 
   environment_variables = {
-    ACTION       = "stop"
+    ACTION       = "start"
     INSTANCE_IDS = "i-0657dd55aea798a8e,i-03596f9222f2ea70b,i-0869ce93a892491b9"
   }
 }
 
-# EKS 클러스터 정보 가져오기
-data "aws_eks_cluster" "this" {
-  name = "nemo_EKS_kluster"
-}
-
 data "aws_caller_identity" "current" {}
 
-locals {
-  oidc_provider_url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
-  oidc_provider_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(local.oidc_provider_url, "https://", "")}"
-}
 
 module "secret" {
   source = "../../modules/secret"
 
+  providers = {
+    helm = helm
+  }
+
   kubeconfig_path     = "~/.kube/config"
-  oidc_provider_url   = local.oidc_provider_url
-  oidc_provider_arn   = local.oidc_provider_arn
+  oidc_provider_url   = module.eks.oidc_provider_url
+  oidc_provider_arn   = module.eks.oidc_provider_arn
 }
 
 
 module "argocd_image_updater" {
   source             = "../../modules/argocd_image_updater"
+
+  # provider가 모듈내부에 없고
+  providers = {
+    helm = helm
+  }
+
   kubeconfig_path    = "~/.kube/config"
   oidc_provider_url  = module.eks.oidc_provider_url
   oidc_provider_arn  = module.eks.oidc_provider_arn
   aws_account_id     = "084375578827"
   region             = "ap-northeast-2"
+
+}
+
+
+
+
+
+
+module "rds" {
+  source = "../../modules/rds"
+
+
+  name               = "v3-prod-rds"
+  identifier         = "nemo-db-instance"
+  db_name            = "nemo_db"
+  username           = "prod"
+  password           = "prod1234!"             # 보안상 tfvars에서 관리
+  instance_class     = "db.t3.micro"
+  allocated_storage  = 20
+
+  vpc_id             = module.vpc.vpc_id
+
+  subnet_ids = [
+    module.vpc.private_azone_id,
+    module.vpc.private_bzone_id,
+    module.vpc.private_czone_id
+  ] # output에서 가지고옴 
+  
 }

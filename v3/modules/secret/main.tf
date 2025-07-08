@@ -1,9 +1,3 @@
-provider "helm" {
-  kubernetes = {
-    config_path = var.kubeconfig_path
-  }
-}
-
 resource "aws_iam_role" "external_secrets_irsa" {
   name = "external-secrets-irsa"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
@@ -49,4 +43,13 @@ resource "helm_release" "external_secrets" {
   })]
 
   depends_on = [aws_iam_role_policy_attachment.attach]
+}
+
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.0.0"
+    }
+  }
 }
