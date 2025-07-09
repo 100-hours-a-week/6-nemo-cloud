@@ -16,3 +16,10 @@ spec:
     - name: controller
       port: {{ .Values.kafka.container.controllerPort }}
       targetPort: {{ .Values.kafka.container.controllerPort }}
+    - name: external
+      port: {{ .Values.kafka.container.externalPort }}  # 외부 포트 추가
+      targetPort: {{ .Values.kafka.container.externalPort }}  # 외부 포트 추가
+      {{- if eq .Values.kafka.service.type "NodePort" }}
+      nodePort: {{ .Values.kafka.service.externalNodePort }}
+      {{- end }}
+
