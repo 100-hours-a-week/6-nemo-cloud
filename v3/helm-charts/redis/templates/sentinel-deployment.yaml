@@ -16,7 +16,16 @@ spec:
       initContainers:
         - name: wait-for-redis
           image: busybox
-          command: ['sh', '-c', 'until nslookup redis-0.redis-headless.redis.svc.cluster.local; do echo waiting; sleep 2; done']
+          command:
+            - sh
+            - -c
+            - |
+              echo "[Init] Waiting for redis DNS..."
+              until nslookup redis-0.redis-headless.redis.svc.cluster.local > /dev/null 2>&1; do
+                echo "DNS not yet available. Retrying..."
+                sleep 2
+              done
+              echo "[Init] Redis DNS resolved!"
       containers:
         - name: sentinel
           image: redis:7.2
@@ -26,7 +35,28 @@ spec:
             - name: config
               mountPath: /etc/redis
               readOnly: true
-          command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
+          command: ["redis-server", "/etc/redis/sentinel.conf", "--sentinel"]
+          lifecycle:
+            preStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    echo "[PreStart] Waiting for redis to be reachable..."
+                    until nc -z redis-0.redis-headless.redis.svc.cluster.local 6379; do
+                      echo "Redis not yet reachable. Retrying..."
+                      sleep 2
+                    done
+                    echo "[PreStart] Redis is up!"
+          startupProbe:  # ✨ 새로 추가
+            exec:
+              command:
+                - sh
+                - -c
+                - 'nslookup redis-0.redis-headless.redis.svc.cluster.local'
+            failureThreshold: 30
+            periodSeconds: 5
       volumes:
         - name: config
           configMap:
