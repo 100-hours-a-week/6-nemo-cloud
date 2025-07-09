@@ -63,7 +63,7 @@ spec:
                 EXTERNAL://{{ .Values.kafka.externalAdvertisedHost }}:{{ .Values.kafka.container.externalPort }}
             
             - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
-              value: "PLAINTEXT"
+              value: EXTERNAL
 
           volumeMounts:
             - name: kafka-data

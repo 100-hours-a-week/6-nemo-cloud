@@ -5,7 +5,6 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
 spec:
-  clusterIP: None
   type: {{ .Values.kafka.service.type }}
   selector:
     app: {{ .Chart.Name }}
@@ -19,7 +18,3 @@ spec:
     - name: external
       port: {{ .Values.kafka.container.externalPort }}  # 외부 포트 추가
       targetPort: {{ .Values.kafka.container.externalPort }}  # 외부 포트 추가
-      {{- if eq .Values.kafka.service.type "NodePort" }}
-      nodePort: {{ .Values.kafka.service.externalNodePort }}
-      {{- end }}
-
