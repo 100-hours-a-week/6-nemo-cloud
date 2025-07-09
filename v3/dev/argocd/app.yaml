@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: redis-data
+  name: app
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,13 +10,13 @@ spec:
   source:
     repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
     targetRevision: infra/kubeadm
-    path: v3/dev/redis
+    path: v3/dev/app
     helm:
       valueFiles:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: redis
+    namespace: app
   syncPolicy:
     automated:
       prune: true
