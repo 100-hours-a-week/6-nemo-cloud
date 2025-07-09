@@ -4,8 +4,8 @@ metadata:
   name: redis
   namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: redis-headless  # Headless 서비스 이름
-  replicas: 3
+  serviceName: redis-headless
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: redis
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: redis
-          image: redis:7.2
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           ports:
             - containerPort: 6379
           volumeMounts:
@@ -30,22 +30,12 @@ spec:
         - name: config
           configMap:
             name: redis-config
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - redis
-              topologyKey: topology.kubernetes.io/zone
   volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: gp3
-      resources:
-        requests:
-          storage: 5Gi
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
+        storageClassName: {{ .Values.storage.storageClassName }}
