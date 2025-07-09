@@ -17,4 +17,6 @@ storage:
   storageClassName: gp3
   
 redis:
-  masterHost: redis-0.redis-headless.redis.svc.cluster.local
+  config:
+    # redis.conf 안에 replication 관련 설정 포함 가능
+    appendonly: "yes"

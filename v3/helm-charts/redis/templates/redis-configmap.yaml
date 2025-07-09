@@ -1,4 +1,3 @@
-# templates/redis-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,8 +5,4 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   redis.conf: |
-    bind 0.0.0.0
-    port 6379
-    protected-mode no
-    appendonly yes
-    dir /data
+    appendonly {{ .Values.redis.config.appendonly }}
