@@ -9,7 +9,7 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 3306
     protocol    = "tcp"
     ## add my local address
-    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24", "10.0.5.0/24", "211.244.225.211/32"]
+    cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24", "10.0.5.0/24", "10.0.1.0/24"]
   }
 
   egress {
