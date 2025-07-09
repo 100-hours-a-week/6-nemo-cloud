@@ -4,7 +4,7 @@ metadata:
   name: redis-sentinel
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 3
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: redis-sentinel
@@ -13,6 +13,9 @@ spec:
       labels:
         app: redis-sentinel
     spec:
+      dnsPolicy: ClusterFirst
+      affinity: {{- toYaml .Values.affinity | nindent 8 }}
+
       initContainers:
         - name: wait-for-redis
           image: busybox
@@ -20,54 +23,47 @@ spec:
             - sh
             - -c
             - |
-              echo "[Init] Waiting for redis DNS..."
+              echo "[Init] Waiting for redis-0 to be ready..."
               until nslookup redis-0.redis-headless.redis.svc.cluster.local > /dev/null 2>&1; do
-                echo "DNS not yet available. Retrying..."
+                echo "Redis not yet available. Retrying..."
                 sleep 2
               done
               echo "[Init] Redis DNS resolved!"
+
+        - name: copy-sentinel-conf
+          image: busybox
+          command: ["sh", "-c", "cp /config/sentinel.conf /writable/sentinel.conf"]
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: writable-config
+              mountPath: /writable
+
       containers:
         - name: sentinel
-          image: redis:7.2
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["redis-server", "/data/sentinel.conf", "--sentinel"]
           ports:
             - containerPort: 26379
           volumeMounts:
-            - name: config
-              mountPath: /etc/redis
-              readOnly: true
-          command: ["redis-server", "/etc/redis/sentinel.conf", "--sentinel"]
-          lifecycle:
-            preStart:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - |
-                    echo "[PreStart] Waiting for redis to be reachable..."
-                    until nc -z redis-0.redis-headless.redis.svc.cluster.local 6379; do
-                      echo "Redis not yet reachable. Retrying..."
-                      sleep 2
-                    done
-                    echo "[PreStart] Redis is up!"
-          startupProbe:  # ✨ 새로 추가
+            - name: writable-config
+              mountPath: /data
+          startupProbe:
             exec:
               command:
                 - sh
                 - -c
-                - 'nslookup redis-0.redis-headless.redis.svc.cluster.local'
+                - |
+                  until nslookup redis-0.redis-headless.redis.svc.cluster.local; do
+                    echo "Waiting for redis-0 DNS..."
+                    sleep 2
+                  done
             failureThreshold: 30
             periodSeconds: 5
+
       volumes:
         - name: config
           configMap:
             name: sentinel-config
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - redis-sentinel
-              topologyKey: topology.kubernetes.io/zone
+        - name: writable-config
+          emptyDir: {}

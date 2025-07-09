@@ -1,0 +1,33 @@
+replicaCount: 3
+
+image:
+  repository: redis
+  tag: "7.2"
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "300m"
+
+config:
+  sentinel:
+    conf: |
+      port 26379
+      sentinel monitor redis redis-0.redis-headless.redis.svc.cluster.local 6379 2
+      sentinel down-after-milliseconds redis 5000
+      sentinel parallel-syncs redis 1
+      sentinel failover-timeout redis 10000
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - redis-sentinel
+        topologyKey: topology.kubernetes.io/zone
