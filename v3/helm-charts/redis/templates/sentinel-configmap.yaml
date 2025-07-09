@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentinel-config
+  namespace: {{ .Release.Namespace }}
+data:
+  sentinel.conf: |
+    port 26379
+    dir /data
+    sentinel monitor redis {{ .Values.redis.masterHost }} 6379 2
+    sentinel down-after-milliseconds redis 5000
+    sentinel parallel-syncs redis 1
+    sentinel failover-timeout redis 10000     

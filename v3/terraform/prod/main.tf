@@ -116,9 +116,9 @@ module "rds" {
 
   name               = "v3-prod-rds"
   identifier         = "nemo-db-instance"
-  db_name            = "nemo_db"
+  db_name            = "prod_db"
   username           = "prod"
-  password           = "prod1234!"             # 보안상 tfvars에서 관리
+  password           = "Prod1234!"             # 보안상 tfvars에서 관리
   instance_class     = "db.t3.micro"
   allocated_storage  = 20
 
@@ -129,11 +129,8 @@ module "rds" {
     module.vpc.private_bzone_id,
     module.vpc.private_czone_id
   ] # output에서 가지고옴 
-  
+
 }
-
-
-
 
 module "bastion" {
   source     = "../../modules/bastion"
