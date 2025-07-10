@@ -42,6 +42,20 @@ config:
       credentials:
         use_aws_sdk: true
 
+  git:
+    writeBranch: infra/application
+    user:
+      name: halfmoon01
+      email: onurivit01@gmail.com
+    commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
+    pgpSign: false
+    
+secret:
+  create: true
+  name: argocd-image-updater-secret
+  data:
+    github.token: ${var.github_pat}
+
 serviceAccount:
   create: true
   name: argocd-image-updater
