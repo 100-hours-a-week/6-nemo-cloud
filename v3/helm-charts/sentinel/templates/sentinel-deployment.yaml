@@ -30,24 +30,16 @@ spec:
               done
               echo "[Init] Redis DNS resolved!"
 
-        - name: copy-sentinel-conf
-          image: busybox
-          command: ["sh", "-c", "cp /config/sentinel.conf /writable/sentinel.conf"]
-          volumeMounts:
-            - name: config
-              mountPath: /config
-            - name: writable-config
-              mountPath: /writable
 
       containers:
         - name: sentinel
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          command: ["redis-server", "/data/sentinel.conf", "--sentinel"]
+          command: ["redis-server", "/config/sentinel.conf", "--sentinel"]
           ports:
             - containerPort: 26379
           volumeMounts:
-            - name: writable-config
-              mountPath: /data
+            - name: config
+              mountPath: /config
           startupProbe:
             exec:
               command:
@@ -65,5 +57,3 @@ spec:
         - name: config
           configMap:
             name: sentinel-config
-        - name: writable-config
-          emptyDir: {}
