@@ -102,7 +102,7 @@ module "argocd_image_updater" {
   oidc_provider_arn  = module.eks.oidc_provider_arn
   aws_account_id     = "084375578827"
   region             = "ap-northeast-2"
-
+  github_pat         = var.github_pat
 }
 
 
