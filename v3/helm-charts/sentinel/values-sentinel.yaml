@@ -16,7 +16,7 @@ config:
   sentinel:
     conf: |
       port 26379
-      sentinel monitor redis redis-0.redis-headless.redis.svc.cluster.local 6379 2
+      sentinel monitor redis redis-0.redis-headless.redis.svc.redis.cluster.local 6379 2
       sentinel down-after-milliseconds redis 5000
       sentinel parallel-syncs redis 1
       sentinel failover-timeout redis 10000
