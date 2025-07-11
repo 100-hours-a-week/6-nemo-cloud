@@ -29,3 +29,8 @@ variable "github_pat" {
   type      = string
   sensitive = true
 }
+
+variable "role_arn" {
+  type        = string
+  description = "IAM Role ARN for IRSA"
+}

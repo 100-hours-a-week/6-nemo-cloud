@@ -1,22 +1,33 @@
 controller:
-  extraArgs: []
+  extraArgs:
+    - --registries-conf-path=/app/config/registries.conf.yaml
+
+  extraVolumes:
+    - name: registry-config
+      configMap:
+        name: argocd-image-updater-registry
+
+  extraVolumeMounts:
+    - name: registry-config
+      mountPath: /app/config/registries.conf.yaml
+      subPath: registries.conf.yaml
 
 config:
-  registries:
-    - name: aws
-      prefix: ${aws_account_id}.dkr.ecr.${region}.amazonaws.com
-      api_url: https://${aws_account_id}.dkr.ecr.${region}.amazonaws.com
+  registriesConf:
+    aws:
+      prefix: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
+      api_url: https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
       ping: true
       credentials:
         use_aws_sdk: true
 
-  git:
-    writeBranch: infra/application
-    user:
-      name: halfmoon01
-      email: onurivit01@gmail.com
-    commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
-    pgpSign: false
+git:
+  writeBranch: infra/application
+  user:
+    name: halfmoon01
+    email: onurivit01@gmail.com
+  commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
+  pgpSign: false
 
 webhook:
   enabled: true

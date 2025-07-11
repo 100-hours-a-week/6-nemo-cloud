@@ -64,6 +64,9 @@ resource "kubernetes_config_map" "argocd_image_updater_registry" {
   }
 
   data = {
-    "registries.conf.yaml" = file("${path.module}/../../helm-charts/argocd-image-updater/registries.conf.yaml")
+    "registries.conf.yaml" = templatefile("${path.module}/registries.conf.yaml.tpl", {
+      aws_account_id = var.aws_account_id,
+      region         = var.region
+    })
   }
 }
