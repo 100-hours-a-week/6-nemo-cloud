@@ -29,42 +29,21 @@ resource "helm_release" "argocd_image_updater" {
   namespace  = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argocd-image-updater"
-  version    = "0.9.2"
+  version    = "0.12.2"
   create_namespace = false
 
-  values = [<<EOF
-config:
-  registriesConf: |
-    - name: aws
-      prefix: ${var.aws_account_id}.dkr.ecr.${var.region}.amazonaws.com
-      api_url: https://${var.aws_account_id}.dkr.ecr.${var.region}.amazonaws.com
-      ping: true
-      credentials:
-        use_aws_sdk: true
-
-  git:
-    writeBranch: infra/application
-    user:
-      name: halfmoon01
-      email: onurivit01@gmail.com
-    commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
-    pgpSign: false
-    
-secret:
-  create: true
-  name: argocd-image-updater-secret
-  data:
-    github.token: ${var.github_pat}
-
-serviceAccount:
-  create: true
-  name: argocd-image-updater
-  annotations:
-    eks.amazonaws.com/role-arn: ${aws_iam_role.argocd_image_updater_irsa.arn}
-EOF
+  values = [
+    templatefile("${path.module}/values.yaml.tpl", {
+      aws_account_id = var.aws_account_id,
+      region         = var.region,
+      github_pat     = var.github_pat,
+      role_arn       = aws_iam_role.argocd_image_updater_irsa.arn
+    })
   ]
 
-  depends_on = [aws_iam_role_policy_attachment.attach_ecr_read]
+  depends_on = [
+    aws_iam_role_policy_attachment.attach_ecr_read,
+    kubernetes_config_map.argocd_image_updater_registry]
 }
 
 
@@ -75,5 +54,16 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.0.0"
     }
+  }
+}
+
+resource "kubernetes_config_map" "argocd_image_updater_registry" {
+  metadata {
+    name      = "argocd-image-updater-registry"
+    namespace = "argocd"
+  }
+
+  data = {
+    "registries.conf.yaml" = file("${path.module}/../../helm-charts/argocd-image-updater/registries.conf.yaml")
   }
 }

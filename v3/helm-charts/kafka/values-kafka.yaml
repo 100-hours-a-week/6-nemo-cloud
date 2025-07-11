@@ -3,11 +3,20 @@ kafka:
   statefulset:
     name: kafka-controller
 
+  externalAccess:
+    enabled: true
+    service:
+      type: LoadBalancer
+    autoDiscovery:
+      enabled: true
+    servicePerBroker: true  # <-- 핵심 설정!
+
+
   container:
     port: 9092
     controllerPort: 9093
     externalPort: 9094  # 외부에서 접근할 포트
-  externalAdvertisedHost: a1fea77a8ae4b44148ca9853dbf320e3-5176641.ap-northeast-2.elb.amazonaws.com
+  # externalAdvertisedHost: a1fea77a8ae4b44148ca9853dbf320e3-5176641.ap-northeast-2.elb.amazonaws.com
 
 
   image:
