@@ -1,0 +1,32 @@
+namespace:
+  name: backend
+
+backend:
+  replicas: 3
+  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:latest
+  imagePullSecrets:
+    - name: gcp-artifact-registry
+  
+  # Resource limits
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  
+  # Health check
+  livenessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 8080
+    initialDelaySeconds: 60
+    periodSeconds: 30
+  
+  readinessProbe:
+    httpGet:
+      path: /actuator/health
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10 
