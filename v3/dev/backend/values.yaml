@@ -1,5 +1,4 @@
-namespace: backend
-
+---
 backend:
   imageRegistry: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
   image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:dev-latest
