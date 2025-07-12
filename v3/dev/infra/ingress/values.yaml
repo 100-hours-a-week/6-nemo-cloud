@@ -7,7 +7,7 @@ service:
 
 externalServices:
   - name: ai
-    namespace: ai
+    namespace: ingress-nginx
     externalName: 10.30.2.3
     ports:
       - name: http
@@ -16,7 +16,7 @@ externalServices:
 
 ingresses:
   - name: argocd-ingress
-    namespace: argocd
+    namespace: ingress-nginx
     host: argocd.dev3.nemo.ai.kr
     tlsSecret: argocd-tls
     paths:
@@ -25,7 +25,7 @@ ingresses:
         servicePort: 80
 
   - name: main-ingress
-    namespace: default
+    namespace: ingress-nginx
     host: dev3.nemo.ai.kr
     tlsSecret: dev-nemo-tls
     annotations:
@@ -56,7 +56,7 @@ ingresses:
         servicePort: 8001
 
   - name: websocket-ingress
-    namespace: ai
+    namespace: ingress-nginx
     host: dev3.nemo.ai.kr
     tlsSecret: dev-nemo-tls
     annotations:
@@ -72,7 +72,7 @@ ingresses:
         servicePort: 8001
 
   - name: sse-ingress
-    namespace: backend
+    namespace: ingress-nginx
     host: dev3.nemo.ai.kr
     tlsSecret: dev-nemo-tls
     annotations:
