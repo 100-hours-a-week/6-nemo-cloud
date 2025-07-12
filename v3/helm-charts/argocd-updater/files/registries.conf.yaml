@@ -1,0 +1,8 @@
+registries:
+  - name: aws
+    prefix: "084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
+    api_url: "https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
+    ping: true
+    credentials:
+      use_aws_sdk: "true"
+

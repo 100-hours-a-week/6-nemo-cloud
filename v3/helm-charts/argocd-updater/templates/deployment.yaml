@@ -30,8 +30,8 @@ spec:
             {{- end }}
           volumeMounts:
             - name: registry-config
-              mountPath: /app/config/registries.conf.yaml
-              subPath: registries.conf.yaml
+              mountPath: /app/config/registries.conf
+              subPath: registries.conf
             # ssh 볼륨 mount 필요하면 추가 가능
           env:
             - name: GITHUB_TOKEN
@@ -39,6 +39,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: github.token
+            - name: AWS_REGION
+              value: ap-northeast-2
+            - name: AWS_DEFAULT_REGION
+              value: ap-northeast-2
       volumes:
         - name: registry-config
           configMap:
