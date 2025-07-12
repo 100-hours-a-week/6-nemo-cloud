@@ -7,7 +7,6 @@ backend:
   imagePullSecrets:
     - name: gcp-artifact-registry
   
-  # Resource limits
   resources:
     requests:
       memory: "512Mi"
@@ -16,7 +15,6 @@ backend:
       memory: "1Gi"
       cpu: "500m"
   
-  # Health check
   livenessProbe:
     httpGet:
       path: /actuator/health
