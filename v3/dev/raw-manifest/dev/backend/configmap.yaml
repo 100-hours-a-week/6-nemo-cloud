@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: dev
+data:
+  DB_URL: mysql:3306/dev_db
+  REDIS_URL: redis
+  REDIS_PORT: "6379"
+  KAKAO_REDIRECT_URI: https://dev3.nemo.ai.kr/auth/kakao/callback
+  BUCKET_NAME: nemo-uploaded-files
+  AWS_REGION: ap-northeast-2
+  AI_SERVICE_URL: http://10.30.2.3:8001
+  WEBHOOK_CLOUD_URL: "https://discord.com/api/webhooks/1372113045471498250/al6sPD-f9AzhQiQslu3EjnsSq8iK1aEQJMT8vqLLEbGiPg2I53O_2Xx60PcxVTqmELio"
+  WEBHOOK_BACKEND_URL: "https://discord.com/api/webhooks/1372140999526055946/TrJvSiBpJzR5ufVpqYLatHQlcwzCqCxd0mWg2aWM2quwpKPN1SU0VeZLM3Z_nrKSujub"
+  ACCESS_TOKEN_EXPIRATION: "3600000"
+  REFRESH_TOKEN_EXPIRATION: "1209600000"
+  IMAGE_FILE_BYTE: 10MB
+  IMAGE_REQUEST_BYTE: 10MB
+  HEALTHCHECK_URL: "http://localhost:8080/actuator/health"
+  SENTRY_ENV: v3-dev
+  SENTRY_RELEASE: 2.0.5
+  SENTRY_SAMPLE_RATE: "1.0"
+  SENTRY_SEND_PII: "true"
+  SPRING_PROFILES_ACTIVE: dev 
