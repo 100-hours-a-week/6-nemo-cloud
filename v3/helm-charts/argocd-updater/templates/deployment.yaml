@@ -30,8 +30,8 @@ spec:
             {{- end }}
           volumeMounts:
             - name: registry-config
-              mountPath: /app/config 
-              readonly: true
+              mountPath: /app/config/registries.conf.yaml
+              subPath: registries.conf.yaml
             # ssh 볼륨 mount 필요하면 추가 가능
           env:
             - name: GITHUB_TOKEN

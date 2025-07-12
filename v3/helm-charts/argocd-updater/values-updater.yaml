@@ -1,6 +1,6 @@
 controller:
   extraArgs:
-    - --registries-conf-path=/app/config/registries.conf.yaml
+    - run
 
   extraVolumes:
     - name: registry-config
@@ -9,17 +9,18 @@ controller:
 
   extraVolumeMounts:
     - name: registry-config
-      mountPath: /app/config/registries.conf.yaml
-      subPath: registries.conf.yaml
+      mountPath: /app/config/registries.conf
+      subPath: registries.conf
 
 config:
-  registriesConf:
-    aws:
-      prefix: "084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
-      api_url: "https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
-      ping: true
-      credentials:
-        use_aws_sdk: true
+  registriesConfText: |
+    registries: 
+      - name: aws
+        prefix: "084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
+        api_url: "https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
+        ping: true
+        credentials:
+          use_aws_sdk: true
 
 git:
   writeBranch: infra/application
