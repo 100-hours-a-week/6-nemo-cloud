@@ -7,8 +7,8 @@ data:
   registries.conf.yaml: |
     registries:
       - name: aws
-        prefix: {{ .Values.config.registriesConf.aws.prefix }}
-        api_url: {{ .Values.config.registriesConf.aws.api_url }}
+        prefix: {{ .Values.config.registriesConf.aws.prefix | quote}}
+        api_url: {{ .Values.config.registriesConf.aws.api_url | quote}}
         ping: true
         credentials:
           use_aws_sdk: true

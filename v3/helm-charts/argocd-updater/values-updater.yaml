@@ -15,8 +15,8 @@ controller:
 config:
   registriesConf:
     aws:
-      prefix: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
-      api_url: https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
+      prefix: "084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
+      api_url: "https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com"
       ping: true
       credentials:
         use_aws_sdk: true
@@ -41,13 +41,15 @@ webhook:
     }
 
 secret:
-  create: true
+  create: false
   name: argocd-image-updater-secret
-  data:
-    github.token: ${github_pat}
 
 serviceAccount:
   create: true
   name: argocd-image-updater
   annotations:
     eks.amazonaws.com/role-arn: ${role_arn}
+
+image:
+  pullSecrets:
+    - name: ghcr-secret  # GitHub Container Registry Pull Secret
