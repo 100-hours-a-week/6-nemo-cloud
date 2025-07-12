@@ -4,10 +4,6 @@ kind: Deployment
 metadata:
   name: backend
   namespace: {{.Release.Namespace}}
-  annotations:
-    argocd-image-updater.argoproj.io/image.backend: {{.Values.backend.imageRegistry}}
-    argocd-image-updater.argoproj.io/backend.pull-secret: gcp-artifact-registry
-    argocd-image-updater.argoproj.io/backend.update-strategy: latest
 spec:
   replicas: {{.Values.backend.replicas}}
   selector:
@@ -24,26 +20,7 @@ spec:
         - name: backend
           image: {{.Values.backend.image}}
           ports:
-            - containerPort: 8080
-          resources:
-            requests:
-              memory: {{.Values.backend.resources.requests.memory}}
-              cpu: {{.Values.backend.resources.requests.cpu}}
-            limits:
-              memory: {{.Values.backend.resources.limits.memory}}
-              cpu: {{.Values.backend.resources.limits.cpu}}
-          livenessProbe:
-            httpGet:
-              path: {{.Values.backend.livenessProbe.httpGet.path}}
-              port: {{.Values.backend.livenessProbe.httpGet.port}}
-            initialDelaySeconds: {{.Values.backend.livenessProbe.initialDelaySeconds}}
-            periodSeconds: {{.Values.backend.livenessProbe.periodSeconds}}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.backend.readinessProbe.httpGet.path}}
-              port: {{.Values.backend.readinessProbe.httpGet.port}}
-            initialDelaySeconds: {{.Values.backend.readinessProbe.initialDelaySeconds}}
-            periodSeconds: {{.Values.backend.readinessProbe.periodSeconds}}
+            - containerPort:8080
           envFrom:
             - secretRef:
                 name: backend-secret
