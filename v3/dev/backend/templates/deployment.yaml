@@ -18,24 +18,31 @@ spec:
         app: backend
     spec:
       imagePullSecrets:
-        {{- toYaml .Values.backend.imagePullSecrets | nindent 8 }}
+        - name: {{ .Values.backend.imagePullSecrets.0.name }}
       containers:
         - name: backend
           image: {{ .Values.backend.image }}
           ports:
             - containerPort: 8080
-          {{- if .Values.backend.resources }}
           resources:
-            {{- toYaml .Values.backend.resources | nindent 12 }}
-          {{- end }}
-          {{- if .Values.backend.livenessProbe }}
+            requests:
+              memory: {{ .Values.backend.resources.requests.memory }}
+              cpu: {{ .Values.backend.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.backend.resources.limits.memory }}
+              cpu: {{ .Values.backend.resources.limits.cpu }}
           livenessProbe:
-            {{- toYaml .Values.backend.livenessProbe | nindent 12 }}
-          {{- end }}
-          {{- if .Values.backend.readinessProbe }}
+            httpGet:
+              path: {{ .Values.backend.livenessProbe.httpGet.path }}
+              port: {{ .Values.backend.livenessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.backend.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.livenessProbe.periodSeconds }}
           readinessProbe:
-            {{- toYaml .Values.backend.readinessProbe | nindent 12 }}
-          {{- end }}
+            httpGet:
+              path: {{ .Values.backend.readinessProbe.httpGet.path }}
+              port: {{ .Values.backend.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.backend.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.readinessProbe.periodSeconds }}
           envFrom:
             - configMapRef:
                 name: backend-config
