@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
+  namespace: {{ .Release.Namespace }}
   annotations:
     argocd-image-updater.argoproj.io/image.backend: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
     argocd-image-updater.argoproj.io/backend.pull-secret: gcp-artifact-registry
