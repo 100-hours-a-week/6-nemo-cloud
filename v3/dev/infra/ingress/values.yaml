@@ -1,10 +1,3 @@
-service:
-  type: NodePort
-  httpPort: 80
-  httpNodePort: 30615
-  httpsPort: 443
-  httpsNodePort: 31230
-
 ingress:
   name: main-ingress
   host: dev3.nemo.ai.kr
