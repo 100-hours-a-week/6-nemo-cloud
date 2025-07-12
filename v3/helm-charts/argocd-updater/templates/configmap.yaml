@@ -4,5 +4,5 @@ metadata:
   name: argocd-image-updater-registry
   namespace: argocd
 data:
-  registries.conf: |
-{{ .Files.Get "files/registries.conf.yaml" | nindent 4 }}
+  registries.conf: |-
+{{ .Files.Get "files/registries.conf" | indent 4 }}

@@ -10,11 +10,11 @@ controller:
 
   extraVolumeMounts:
     - name: registry-config
-      mountPath: /app/config/registries.conf.yaml
-      subPath: registries.conf.yaml
+      mountPath: /app/config/registries.conf
+      subPath: registries.conf
 
 git:
-  writeBranch: infra/application
+  writeBranch: infra/image-updater
   user:
     name: halfmoon01
     email: onurivit01@gmail.com
@@ -40,7 +40,7 @@ serviceAccount:
   create: true
   name: argocd-image-updater
   annotations:
-    eks.amazonaws.com/role-arn: ${role_arn}
+    eks.amazonaws.com/role-arn: $arn:aws:iam::084375578827:role/argocd-image-updater-irsa
 
 image:
   pullSecrets:
