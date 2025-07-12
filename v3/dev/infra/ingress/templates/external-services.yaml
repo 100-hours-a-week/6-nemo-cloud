@@ -5,15 +5,13 @@ kind: Service
 metadata:
   name: {{ .name }}
   namespace: {{ .namespace }}
-  labels:
-    app: {{ .name }}
-    type: external-service
 spec:
-  type: ExternalName
-  externalName: {{ .externalName }}
+  type: ClusterIP
+  clusterIP: None
   ports:
-  {{- range .ports }}
-    - name: {{ .name }}
+    - name: http
       port: {{ .port }}
-  {{- end }}
+      targetPort: {{ .port }}
+  externalIPs:
+    - {{ .externalIP }}
 {{- end }}

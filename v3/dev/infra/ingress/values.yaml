@@ -1,92 +1,63 @@
-service:
-  type: NodePort
-  httpPort: 80
-  httpNodePort: 31230
-  httpsPort: 443
-  httpsNodePort: 30615
-
-externalServices:
-  - name: ai
-    namespace: ingress-nginx
-    externalName: 10.30.2.3
-    ports:
-      - name: http
-        port: 8001
-        targetPort: 8001
-
 ingresses:
-  - name: argocd-ingress
-    namespace: ingress-nginx
-    host: argocd.dev3.nemo.ai.kr
-    tlsSecret: argocd-tls
-    paths:
-      - path: /
-        serviceName: argocd-server
-        servicePort: 80
-
   - name: main-ingress
-    namespace: ingress-nginx
+    namespace: dev
     host: dev3.nemo.ai.kr
     tlsSecret: dev-nemo-tls
     annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: 10m
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/client-max-body-size: "10M"
-      nginx.ingress.kubernetes.io/proxy-body-size: "10M"
     paths:
+      # Frontend SSR + Healthcheck
       - path: /
         serviceName: frontend
         servicePort: 3000
+
+      - path: /api/healthcheck
+        serviceName: frontend
+        servicePort: 3000
+
+      # Backend API
       - path: /auth/
         serviceName: backend
         servicePort: 8080
+
       - path: /api/
         serviceName: backend
         servicePort: 8080
+
       - path: /swagger-ui/
         serviceName: backend
         servicePort: 8080
-      - path: /v3/
-        serviceName: backend
-        servicePort: 8080
+
       - path: /swagger-resources/
         serviceName: backend
         servicePort: 8080
+
+      - path: /v3/
+        serviceName: backend
+        servicePort: 8080
+
+      # SSE
+      - path: /api/v2/groups/recommendations/chatbot/stream
+        serviceName: backend
+        servicePort: 8080
+
+      # WebSocket
+      - path: /ai/v2/chatbot/
+        serviceName: ai-direct
+        servicePort: 8000
+
+      # AI API
       - path: /ai/
         serviceName: ai
         servicePort: 8001
 
-  - name: websocket-ingress
-    namespace: ingress-nginx
-    host: dev3.nemo.ai.kr
-    tlsSecret: dev-nemo-tls
-    annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/enable-websocket: "true"
-      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
-      nginx.ingress.kubernetes.io/proxy-set-headers: |
-        Upgrade $http_upgrade
-        Connection "upgrade"
-    paths:
-      - path: /ai/v2/chatbot/
-        serviceName: ai
-        servicePort: 8001
-
-  - name: sse-ingress
-    namespace: ingress-nginx
-    host: dev3.nemo.ai.kr
-    tlsSecret: dev-nemo-tls
-    annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/proxy-cache-off: "true"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
-      nginx.ingress.kubernetes.io/proxy-set-headers: |
-        Connection ""
-      nginx.ingress.kubernetes.io/configuration-snippet: |
-        add_header Content-Type text/event-stream;
-        add_header Cache-Control no-cache;
-    paths:
-      - path: /api/v2/groups/recommendations/chatbot/stream
-        serviceName: backend
-        servicePort: 8080
+# 외부 AI 서버에 직접 연결
+externalServices:
+  - name: ai
+    namespace: ai
+    externalIP: 10.30.2.3
+    port: 8000

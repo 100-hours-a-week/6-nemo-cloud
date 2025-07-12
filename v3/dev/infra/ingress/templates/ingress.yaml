@@ -6,11 +6,8 @@ metadata:
   name: {{ .name }}
   namespace: {{ .namespace }}
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    {{- if .annotations }}
     {{- range $k, $v := .annotations }}
     {{ $k }}: {{ $v | quote }}
-    {{- end }}
     {{- end }}
 spec:
   ingressClassName: nginx
@@ -31,4 +28,4 @@ spec:
                 port:
                   number: {{ .servicePort }}
         {{- end }}
-{{- end }} 
+{{- end }}
