@@ -3,14 +3,17 @@ kind: Application
 metadata:
   name: backend
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
+    repoURL: "https://github.com/100-hours-a-week/6-nemo-cloud.git"
     targetRevision: infra/kubeadm
     path: v3/dev/backend
-    directory:
-      recurse: true
+    helm:
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: backend
@@ -19,5 +22,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true 
+      - CreateNamespace=true

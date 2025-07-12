@@ -3,9 +3,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: {{ .Release.Namespace }}
+  namespace: { { .Release.Namespace } }
 spec:
-  replicas: {{ .Values.backend.replicas }}
+  replicas: { { .Values.backend.replicas } }
   selector:
     matchLabels:
       app: backend
@@ -15,31 +15,33 @@ spec:
         app: backend
     spec:
       imagePullSecrets:
-        - name: {{ .Values.backend.imagePullSecretName }}
+        - name: { { .Values.backend.imagePullSecretName } }
       containers:
         - name: backend
-          image: {{ .Values.backend.image }}
+          image: { { .Values.backend.image } }
           ports:
-            - containerPort: {{ .Values.backend.containerPort }}
+            - containerPort: { { .Values.backend.containerPort } }
           resources:
             requests:
-              memory: {{ .Values.backend.resources.requests.memory }}
-              cpu: {{ .Values.backend.resources.requests.cpu }}
+              memory: { { .Values.backend.resources.requests.memory } }
+              cpu: { { .Values.backend.resources.requests.cpu } }
             limits:
-              memory: {{ .Values.backend.resources.limits.memory }}
-              cpu: {{ .Values.backend.resources.limits.cpu }}
+              memory: { { .Values.backend.resources.limits.memory } }
+              cpu: { { .Values.backend.resources.limits.cpu } }
           livenessProbe:
             httpGet:
-              path: {{ .Values.backend.livenessProbe.httpGet.path }}
-              port: {{ .Values.backend.livenessProbe.httpGet.port }}
-            initialDelaySeconds: {{ .Values.backend.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.backend.livenessProbe.periodSeconds }}
+              path: { { .Values.backend.livenessProbe.httpGet.path } }
+              port: { { .Values.backend.livenessProbe.httpGet.port } }
+            initialDelaySeconds:
+              { { .Values.backend.livenessProbe.initialDelaySeconds } }
+            periodSeconds: { { .Values.backend.livenessProbe.periodSeconds } }
           readinessProbe:
             httpGet:
-              path: {{ .Values.backend.readinessProbe.httpGet.path }}
-              port: {{ .Values.backend.readinessProbe.httpGet.port }}
-            initialDelaySeconds: {{ .Values.backend.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.backend.readinessProbe.periodSeconds }}
+              path: { { .Values.backend.readinessProbe.httpGet.path } }
+              port: { { .Values.backend.readinessProbe.httpGet.port } }
+            initialDelaySeconds:
+              { { .Values.backend.readinessProbe.initialDelaySeconds } }
+            periodSeconds: { { .Values.backend.readinessProbe.periodSeconds } }
           envFrom:
             - secretRef:
-                name: {{ .Values.backend.secret }}
+                name: { { .Values.backend.secret } }
