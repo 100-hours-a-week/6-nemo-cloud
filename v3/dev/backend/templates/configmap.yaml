@@ -4,18 +4,18 @@ metadata:
   name: backend-config
   namespace: {{ .Release.Namespace }}
 data:
-  DB_URL: mysql.mysql.svc.cluster.local:3306/dev_db
-  REDIS_URL: redis.redis.svc.cluster.local
-  REDIS_PORT: 6379
-  SPRING_PROFILES_ACTIVE: dev
-  KAKAO_REDIRECT_URI: https://dev3.nemo.ai.kr/auth/kakao/callback
-  BUCKET_NAME: nemo-uploaded-files
-  AWS_REGION: ap-northeast-2
-  AI_SERVICE_URL: http://10.30.2.3:8001
-  GROUP_CHATBOT_URI: ws://10.30.2.3:8001/ai/v2/chatbot
-  ACCESS_TOKEN_EXPIRATION: 3600000
-  REFRESH_TOKEN_EXPIRATION: 1209600000
-  IMAGE_FILE_BYTE: 10MB
-  IMAGE_REQUEST_BYTE: 10MB
-  HEALTHCHECK_URL: http://localhost:8080/actuator/health
-  REGISTRY_URL: asia-northeast3-docker.pkg.dev/nemo-v2/registry 
+  DB_URL: "mysql.mysql.svc.cluster.local:3306/dev_db"
+  REDIS_URL: "redis.redis.svc.cluster.local"
+  REDIS_PORT: "6379"
+  SPRING_PROFILES_ACTIVE: "dev"
+  KAKAO_REDIRECT_URI: "https://dev3.nemo.ai.kr/auth/kakao/callback"
+  BUCKET_NAME: "nemo-uploaded-files"
+  AWS_REGION: "ap-northeast-2"
+  AI_SERVICE_URL: "http://10.30.2.3:8001"
+  GROUP_CHATBOT_URI: "ws://10.30.2.3:8001/ai/v2/chatbot"
+  ACCESS_TOKEN_EXPIRATION: "3600000"
+  REFRESH_TOKEN_EXPIRATION: "1209600000"
+  IMAGE_FILE_BYTE: "10MB"
+  IMAGE_REQUEST_BYTE: "10MB"
+  HEALTHCHECK_URL: "http://localhost:8080/actuator/health"
+  REGISTRY_URL: "asia-northeast3-docker.pkg.dev/nemo-v2/registry"
