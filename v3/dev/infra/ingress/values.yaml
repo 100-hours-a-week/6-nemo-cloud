@@ -1,9 +1,9 @@
 service:
   type: NodePort
   httpPort: 80
-  httpNodePort: 30080
+  httpNodePort: 31934
   httpsPort: 443
-  httpsNodePort: 30443
+  httpsNodePort: 30419
 
 ingress:
   name: main-ingress
