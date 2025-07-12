@@ -1,0 +1,19 @@
+{{- range .Values.externalServices }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+  labels:
+    app: {{ .name }}
+    type: external-service
+spec:
+  type: ExternalName
+  externalName: {{ .externalName }}
+  ports:
+  {{- range .ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+  {{- end }}
+{{- end }}

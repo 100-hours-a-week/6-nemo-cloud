@@ -5,62 +5,88 @@ service:
   httpsPort: 443
   httpsNodePort: 30615
 
-ingress:
-  name: main-ingress
-  host: dev3.nemo.ai.kr
-  tlsSecret: dev-nemo-tls
-  clusterIssuer: letsencrypt-dev
-  paths:
-    # Spring Boot 백엔드
-    - path: /auth/
-      serviceName: backend
-      servicePort: 8080
-    - path: /api/
-      serviceName: backend
-      servicePort: 8080
-    - path: /swagger-ui/
-      serviceName: backend
-      servicePort: 8080
-      pathRewrite: /swagger-ui/(.*) /swagger-ui/$1
-    - path: /v3/
-      serviceName: backend
-      servicePort: 8080
-      pathRewrite: /v3/(.*) /v3/$1
-    - path: /swagger-resources/
-      serviceName: backend
-      servicePort: 8080
-      pathRewrite: /swagger-resources/(.*) /swagger-resources/$1
-    - path: /api/v2/groups/recommendations/chatbot/stream
-      serviceName: backend
-      servicePort: 8080
-      customAnnotations:
-        nginx.ingress.kubernetes.io/proxy-buffering: "off"
-        nginx.ingress.kubernetes.io/proxy-cache-off: "true"
-        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          add_header Content-Type text/event-stream;
-          add_header Cache-Control no-cache;
+externalServices:
+  - name: ai
+    namespace: ai
+    externalName: 10.30.2.3
+    ports:
+      - name: http
+        port: 8001
+        targetPort: 8001
 
-    # WebSocket (AI 챗봇)
-    - path: /ai/v2/chatbot/
-      serviceName: ai
-      servicePort: 8001
-      pathRewrite: /ai/v2/chatbot/(.*) /ai/v2/chatbot/$1
-      customAnnotations:
-        nginx.ingress.kubernetes.io/enable-websocket: "true"
+ingresses:
+  - name: argocd-ingress
+    namespace: argocd
+    host: argocd.dev3.nemo.ai.kr
+    tlsSecret: argocd-tls
+    paths:
+      - path: /
+        serviceName: argocd-server
+        servicePort: 80
 
-    # AI 서비스 (FastAPI)
-    - path: /ai/
-      serviceName: ai
-      servicePort: 8001
+  - name: main-ingress
+    namespace: default
+    host: dev3.nemo.ai.kr
+    tlsSecret: dev-nemo-tls
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/client-max-body-size: "10M"
+      nginx.ingress.kubernetes.io/proxy-body-size: "10M"
+    paths:
+      - path: /
+        serviceName: frontend
+        servicePort: 3000
+      - path: /auth/
+        serviceName: backend
+        servicePort: 8080
+      - path: /api/
+        serviceName: backend
+        servicePort: 8080
+      - path: /swagger-ui/
+        serviceName: backend
+        servicePort: 8080
+      - path: /v3/
+        serviceName: backend
+        servicePort: 8080
+      - path: /swagger-resources/
+        serviceName: backend
+        servicePort: 8080
+      - path: /ai/
+        serviceName: ai
+        servicePort: 8001
 
-    # frontend 헬스체크 추가
-    - path: /api/healthcheck
-      serviceName: frontend
-      servicePort: 3000
-      pathType: Exact
+  - name: websocket-ingress
+    namespace: ai
+    host: dev3.nemo.ai.kr
+    tlsSecret: dev-nemo-tls
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/enable-websocket: "true"
+      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+      nginx.ingress.kubernetes.io/proxy-set-headers: |
+        Upgrade $http_upgrade
+        Connection "upgrade"
+    paths:
+      - path: /ai/v2/chatbot/
+        serviceName: ai
+        servicePort: 8001
 
-    # Next.js SSR 및 정적 리소스
-    - path: /
-      serviceName: frontend
-      servicePort: 3000
+  - name: sse-ingress
+    namespace: backend
+    host: dev3.nemo.ai.kr
+    tlsSecret: dev-nemo-tls
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-cache-off: "true"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+      nginx.ingress.kubernetes.io/proxy-set-headers: |
+        Connection ""
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        add_header Content-Type text/event-stream;
+        add_header Cache-Control no-cache;
+    paths:
+      - path: /api/v2/groups/recommendations/chatbot/stream
+        serviceName: backend
+        servicePort: 8080
