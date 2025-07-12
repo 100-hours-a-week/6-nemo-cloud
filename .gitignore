@@ -17,3 +17,5 @@ v3/terraform/prod/files/package-lock.json
 v3/terraform/prod/files/package.json
  
  v3/modules/argocd_image_updater/terraform.tfstate
+
+ *.tfvars

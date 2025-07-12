@@ -7,11 +7,11 @@ spec:
   project: default
   source:
     repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/terraform-setting
-    path: v3/helm-charts/argocd
+    targetRevision: infra/applications
+    path: v3/helm-charts/argocd-updater
     helm:
       valueFiles:
-        - values-prod.yaml
+        - values-updater.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

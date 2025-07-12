@@ -1,0 +1,6 @@
+apiVersion: v2
+name: argocd-image-updater
+description: Helm chart for ArgoCD Image Updater deployment
+type: application
+version: 0.1.0
+appVersion: "0.16.0"
