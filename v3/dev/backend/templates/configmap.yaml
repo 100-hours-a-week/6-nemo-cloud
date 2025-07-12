@@ -19,3 +19,4 @@ data:
   IMAGE_REQUEST_BYTE: "10MB"
   HEALTHCHECK_URL: "http://localhost:8080/actuator/health"
   REGISTRY_URL: "asia-northeast3-docker.pkg.dev/nemo-v2/registry"
+
