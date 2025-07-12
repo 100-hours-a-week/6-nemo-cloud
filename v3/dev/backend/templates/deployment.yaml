@@ -45,7 +45,5 @@ spec:
             initialDelaySeconds: {{.Values.backend.readinessProbe.initialDelaySeconds}}
             periodSeconds: {{.Values.backend.readinessProbe.periodSeconds}}
           envFrom:
-            - configMapRef:
-                name: backend-config
             - secretRef:
                 name: backend-secret
