@@ -1,0 +1,53 @@
+ingresses:
+  - name: nemo-main-ingress
+    namespace: default
+    host: test.nemo.ai.kr
+    tlsSecret: test-nemo-tls
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~ /\.env { deny all; return 404; }
+    paths:
+      - path: /auth/
+        serviceName: backend
+        servicePort: 8080
+      - path: /api/
+        serviceName: backend
+        servicePort: 8080
+      - path: /swagger-ui/
+        serviceName: backend
+        servicePort: 8080
+      - path: /v3/
+        serviceName: backend
+        servicePort: 8080
+      - path: /swagger-resources/
+        serviceName: backend
+        servicePort: 8080
+      - path: /ai/v2/chatbot/
+        serviceName: ai
+        servicePort: 8000
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      - path: /api/v2/groups/recommendations/chatbot/stream
+        serviceName: backend
+        servicePort: 8080
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-buffering: "off"
+          nginx.ingress.kubernetes.io/configuration-snippet: |
+            add_header Cache-Control no-cache;
+            add_header Content-Type text/event-stream;
+      - path: /ai/
+        serviceName: ai
+        servicePort: 8000
+      - path: /
+        serviceName: frontend
+        servicePort: 3000
+
+externalServices:
+  - name: ai
+    namespace: ai
+    externalIP: 10.30.2.3
+    port: 8000

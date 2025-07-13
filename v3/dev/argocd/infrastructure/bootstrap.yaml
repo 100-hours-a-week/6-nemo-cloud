@@ -1,23 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager-infra
+  name: bootstrap
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
     targetRevision: infra/kubeadm
-    path: v3/dev/infra/cert-manager
-    helm:
-      valueFiles:
-        - values.yaml
+    path: v3/dev/infrastructure/networking/bootstrap
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: kube-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true 
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true 
