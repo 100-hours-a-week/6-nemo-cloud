@@ -1,7 +1,0 @@
-redis:
-  replicas: 1
-  image: redis:7.2
-  secretName: redis-secret
-  storage: 1Gi
-storageClass:
-  name: local-path

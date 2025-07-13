@@ -1,6 +1,0 @@
-clusterIssuer:
-  name: letsencrypt-dev
-  email: mskim.glenn@gmail.com
-  server: https://acme-v02.api.letsencrypt.org/directory
-  privateKeySecretRef: letsencrypt-dev
-  ingressClass: nginx 

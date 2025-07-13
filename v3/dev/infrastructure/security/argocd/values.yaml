@@ -1,5 +1,0 @@
-argocd:
-  name: argocd-server
-  host: argocd.dev3.nemo.ai.kr
-  tlsSecret: argocd-tls
-  clusterIssuer: letsencrypt-dev 
