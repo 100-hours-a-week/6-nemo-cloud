@@ -1,0 +1,5 @@
+ai:
+  service:
+    port: 8001
+    targetPort: 8001
+  externalIP: "10.30.2.3" 

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: argocd
+version: 0.1.0
+description: ArgoCD Helm chart 
