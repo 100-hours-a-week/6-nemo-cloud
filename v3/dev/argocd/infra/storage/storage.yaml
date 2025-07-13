@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
     targetRevision: infra/kubeadm
-    path: charts/infra/storage/storage
+    path: v3/dev/charts/infra/storage/storage
     helm:
       valueFiles:
         - values.yaml
