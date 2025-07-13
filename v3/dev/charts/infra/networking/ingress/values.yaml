@@ -1,29 +1,31 @@
-# 공식 ingress-nginx Helm chart values.yaml
-# 이 파일은 참고용이며, 실제 설정은 ArgoCD Application의 values 섹션에서 관리됩니다.
-
-controller:
-  # NodePort 서비스 설정
-  service:
-    type: NodePort
-    nodePorts:
-      http: 31320
-      https: 30615
-  
-  # 컨트롤러 설정
-  config:
-    proxy-body-size: "10m"
-    server-snippet: |
-        location ~ /\.env { deny all; return 404; }
-  
-  # 리소스 설정
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
-
-# 기본 ingress 설정
-defaultBackend:
-  enabled: false
+namespace: app
+host: dev3.nemo.ai.kr
+tlsSecret: dev-nemo-tls
+rules:
+  - path: /auth/
+    service: backend
+    port: 8080
+  - path: /api/
+    service: backend
+    port: 8080
+  - path: /swagger-ui/
+    service: backend
+    port: 8080
+  - path: /v3/
+    service: backend
+    port: 8080
+  - path: /swagger-resources/
+    service: backend
+    port: 8080
+  - path: /ai/v2/chatbot/
+    service: ai
+    port: 8001
+  - path: /api/v2/groups/recommendations/chatbot/stream
+    service: backend
+    port: 8080
+  - path: /ai/
+    service: ai
+    port: 8001
+  - path: /
+    service: frontend
+    port: 3000

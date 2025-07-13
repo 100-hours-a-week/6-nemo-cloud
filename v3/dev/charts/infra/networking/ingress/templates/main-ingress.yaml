@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: main-ingress
-  namespace: app
+  namespace: {{ .Values.namespace }}
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -19,72 +19,18 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - dev3.nemo.ai.kr
-      secretName: dev-nemo-tls 
+        - {{ .Values.host }}
+      secretName: {{ .Values.tlsSecret }}
   rules:
-    - host: dev3.nemo.ai.kr
+    - host: {{ .Values.host }}
       http:
         paths:
-          - path: /auth/
+{{- range .Values.rules }}
+          - path: {{ .path }}
             pathType: Prefix
             backend:
               service:
-                name: backend
+                name: {{ .service }}
                 port:
-                  number: 8080
-          - path: /api/
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 8080
-          - path: /swagger-ui/
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 8080
-          - path: /v3/
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 8080
-          - path: /swagger-resources/
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 8080
-          - path: /ai/v2/chatbot/
-            pathType: Prefix
-            backend:
-              service:
-                name: ai
-                port:
-                  number: 8001
-          - path: /api/v2/groups/recommendations/chatbot/stream
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 8080
-          - path: /ai/
-            pathType: Prefix
-            backend:
-              service:
-                name: ai
-                port:
-                  number: 8001
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend
-                port:
-                  number: 3000 
+                  number: {{ .port }}
+{{- end }} 
