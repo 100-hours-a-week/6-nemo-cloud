@@ -2,7 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-image-updater-registry
-  namespace: argocd
+  namespace: {{ .Release.Namespace }}
 data:
-  registries.conf: |-
-{{ .Files.Get "files/registries.conf" | indent 4 }}
+  registries.conf: |
+    registries:
+      - name: aws
+        prefix: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
+        use_aws_sdk: true

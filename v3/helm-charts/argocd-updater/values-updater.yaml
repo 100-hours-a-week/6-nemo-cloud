@@ -1,17 +1,8 @@
 controller:
   extraArgs:
-    - run
-    - --registries-conf-path=/app/config/registries.conf
+    - "run"
+    - "--registries-conf-path=/app/config/registries.conf"
 
-  extraVolumes:
-    - name: registry-config
-      configMap:
-        name: argocd-image-updater-registry
-
-  extraVolumeMounts:
-    - name: registry-config
-      mountPath: /app/config/registries.conf
-      subPath: registries.conf
 
 git:
   writeBranch: infra/image-updater
@@ -20,6 +11,7 @@ git:
     email: onurivit01@gmail.com
   commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
   pgpSign: false
+
 
 webhook:
   enabled: true
@@ -37,11 +29,11 @@ secret:
   name: argocd-image-updater-secret
 
 serviceAccount:
-  create: true
   name: argocd-image-updater
-  annotations:
-    eks.amazonaws.com/role-arn: $arn:aws:iam::084375578827:role/argocd-image-updater-irsa
+
+secret:
+  name: argocd-image-updater-secret
 
 image:
-  pullSecrets:
-    - name: ghcr-secret  # GitHub Container Registry Pull Secret
+  repository: docker.io/argoprojlabs/argocd-image-updater
+  tag: v0.11.3
