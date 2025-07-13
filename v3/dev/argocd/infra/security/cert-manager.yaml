@@ -6,15 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
-    targetRevision: infra/kubeadm
-    path: v3/dev/charts/infra/security/cert-manager
+    repoURL: https://charts.jetstack.io
+    chart: cert-manager
+    targetRevision: v1.14.3
     helm:
-      valueFiles:
-        - values.yaml
+      values: |
+        installCRDs: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: infra
+    namespace: cert-manager
   syncPolicy:
     automated:
       prune: true
