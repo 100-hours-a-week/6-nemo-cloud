@@ -1,3 +1,10 @@
+service:
+  type: NodePort
+  httpPort: 80
+  httpsPort: 443
+  httpNodePort: 31320
+  httpsNodePort: 30615
+
 ingresses:
   - name: nemo-main-ingress
     namespace: default
