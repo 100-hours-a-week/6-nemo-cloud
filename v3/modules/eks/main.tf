@@ -162,3 +162,63 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
   policy_arn = aws_iam_policy.ebs_csi_driver.arn
 }
 
+
+########## ECR ###########
+
+########## ECR ###########
+
+resource "aws_iam_role" "argocd_image_updater" {
+  name = "${var.cluster_name}-argocd-image-updater"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.this.arn
+        },
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Condition = {
+          StringEquals = {
+            "${replace(aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}:sub" = "system:serviceaccount:argocd:argocd-image-updater-sa"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "argocd_image_updater_ecr" {
+  name        = "${var.cluster_name}-argocd-image-updater-ecr"
+  description = "ECR access for ArgoCD Image Updater"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:DescribeImages"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "argocd_image_updater_ecr" {
+  role       = aws_iam_role.argocd_image_updater.name
+  policy_arn = aws_iam_policy.argocd_image_updater_ecr.arn
+}
+
+resource "aws_iam_role_policy_attachment" "argocd_image_updater_ecr_readonly" {
+  role       = aws_iam_role.argocd_image_updater.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}

@@ -1,3 +1,13 @@
+# 0. ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-image-updater-sa
+  namespace: argocd
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::084375578827:role/nemo_EKS_kluster-argocd-image-updater-ecr
+
+# 1. ArgoCD Application
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -6,12 +16,32 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/applications
-    path: v3/helm-charts/argocd-updater
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argocd-image-updater
+    targetRevision: 0.12.2
     helm:
-      valueFiles:
-        - values-updater.yaml
+      values: |
+        configs:
+          registries:
+            - name: aws
+              prefix: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
+              useAwsSdk: true
+              default: true
+
+        serviceAccount:
+          create: false
+          name: argocd-image-updater-sa
+
+        env:
+          - name: AWS_REGION
+            value: ap-northeast-2
+          - name: GITHUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: argocd-image-updater-secret
+                key: github.token
+
+        
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -19,5 +49,32 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+---
+# 2. ClusterRole (권한 정의)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-image-updater
+rules:
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+---
+# 3. ClusterRoleBinding (권한 부여)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-image-updater-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argocd-image-updater
+subjects:
+  - kind: ServiceAccount
+    name: argocd-image-updater-sa
+    namespace: argocd
+
+argocd:
+  serverAddress: argocd-server.argocd.svc  # 또는 외부 주소
+  insecure: false
+  grpcWeb: true
