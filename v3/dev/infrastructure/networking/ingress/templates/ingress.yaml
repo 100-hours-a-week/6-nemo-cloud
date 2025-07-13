@@ -11,8 +11,8 @@ metadata:
     {{- end }}
     {{- $configSnippets := list }}
     {{- range .paths }}
-      {{- if and .annotations .annotations."nginx.ingress.kubernetes.io/configuration-snippet" }}
-        {{- $configSnippets = append $configSnippets .annotations."nginx.ingress.kubernetes.io/configuration-snippet" }}
+      {{- if and .annotations (index .annotations "nginx.ingress.kubernetes.io/configuration-snippet") }}
+        {{- $configSnippets = append $configSnippets (index .annotations "nginx.ingress.kubernetes.io/configuration-snippet") }}
       {{- end }}
     {{- end }}
     {{- if gt (len $configSnippets) 0 }}
@@ -39,11 +39,5 @@ spec:
                 name: {{ .serviceName }}
                 port:
                   number: {{ .servicePort }}
-            {{- if .annotations }}
-            {{- range $k, $v := .annotations }}
-            {{- if ne $k "nginx.ingress.kubernetes.io/configuration-snippet" }}
-            {{- end }}
-            {{- end }}
-            {{- end }}
         {{- end }}
 {{- end }}

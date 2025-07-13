@@ -1,7 +1,7 @@
 ingresses:
   - name: nemo-main-ingress
     namespace: default
-    host: test.nemo.ai.kr
+    host: dev3.nemo.ai.kr
     tlsSecret: test-nemo-tls
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: "10m"
@@ -45,6 +45,17 @@ ingresses:
       - path: /
         serviceName: frontend
         servicePort: 3000
+  - name: argocd-ingress
+    namespace: argocd
+    host: argocd.dev3.nemo.ai.kr
+    tlsSecret: argocd-tls
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    paths:
+      - path: /
+        serviceName: argocd-server
+        servicePort: 443
 
 externalServices:
   - name: ai
