@@ -8,11 +8,11 @@ spec:
   source:
     repoURL: https://projectcalico.docs.tigera.io/charts
     chart: tigera-operator
-    targetRevision: v3.20.0
+    targetRevision: v3.30.2
     helm:
       values: |
         installation:
-          kubernetesProvider: "kubeadm"
+          kubernetesProvider: ""
   destination:
     server: https://kubernetes.default.svc
     namespace: tigera-operator
