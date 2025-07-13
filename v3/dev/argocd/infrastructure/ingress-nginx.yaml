@@ -6,12 +6,32 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
-    targetRevision: infra/kubeadm
-    path: v3/dev/infrastructure/networking/ingress
+    repoURL: 'https://kubernetes.github.io/ingress-nginx'
+    targetRevision: 4.7.1
+    chart: ingress-nginx
     helm:
       valueFiles:
         - values.yaml
+      values: |
+        controller:
+          service:
+            type: NodePort
+            nodePorts:
+              http: 31320
+              https: 30615
+          config:
+            proxy-body-size: "10m"
+            server-snippet: |
+              location ~ /\.env { deny all; return 404; }
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+        defaultBackend:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx

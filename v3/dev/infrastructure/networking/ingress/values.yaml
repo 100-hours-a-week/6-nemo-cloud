@@ -1,71 +1,29 @@
-service:
-  type: NodePort
-  httpPort: 80
-  httpsPort: 443
-  httpNodePort: 31320
-  httpsNodePort: 30615
+# 공식 ingress-nginx Helm chart values.yaml
+# 이 파일은 참고용이며, 실제 설정은 ArgoCD Application의 values 섹션에서 관리됩니다.
 
-ingresses:
-  - name: nemo-main-ingress
-    namespace: default
-    host: dev3.nemo.ai.kr
-    tlsSecret: test-nemo-tls
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/server-snippet: |
-        location ~ /\.env { deny all; return 404; }
-    paths:
-      - path: /auth/
-        serviceName: backend
-        servicePort: 8080
-      - path: /api/
-        serviceName: backend
-        servicePort: 8080
-      - path: /swagger-ui/
-        serviceName: backend
-        servicePort: 8080
-      - path: /v3/
-        serviceName: backend
-        servicePort: 8080
-      - path: /swagger-resources/
-        serviceName: backend
-        servicePort: 8080
-      - path: /ai/v2/chatbot/
-        serviceName: ai
-        servicePort: 8000
-        annotations:
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-      - path: /api/v2/groups/recommendations/chatbot/stream
-        serviceName: backend
-        servicePort: 8080
-        annotations:
-          nginx.ingress.kubernetes.io/proxy-buffering: "off"
-          nginx.ingress.kubernetes.io/configuration-snippet: |
-            add_header Cache-Control no-cache;
-            add_header Content-Type text/event-stream;
-      - path: /ai/
-        serviceName: ai
-        servicePort: 8000
-      - path: /
-        serviceName: frontend
-        servicePort: 3000
-  - name: argocd-ingress
-    namespace: argocd
-    host: argocd.dev3.nemo.ai.kr
-    tlsSecret: argocd-tls
-    annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    paths:
-      - path: /
-        serviceName: argocd-server
-        servicePort: 443
+controller:
+  # NodePort 서비스 설정
+  service:
+    type: NodePort
+    nodePorts:
+      http: 31320
+      https: 30615
+  
+  # 컨트롤러 설정
+  config:
+    proxy-body-size: "10m"
+    server-snippet: |
+      location ~ /\.env { deny all; return 404; }
+  
+  # 리소스 설정
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
-externalServices:
-  - name: ai
-    namespace: ai
-    externalIP: 10.30.2.3
-    port: 8000
+# 기본 ingress 설정
+defaultBackend:
+  enabled: false
