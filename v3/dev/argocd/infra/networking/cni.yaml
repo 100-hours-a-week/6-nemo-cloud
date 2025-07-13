@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cni
+  name: cni-flannel
   namespace: argocd
 spec:
   project: default
@@ -9,15 +9,10 @@ spec:
     repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
     targetRevision: infra/kubeadm
     path: charts/infra/networking/cni
-    helm:
-      valueFiles:
-        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: infra
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true 
+      selfHeal: true 
