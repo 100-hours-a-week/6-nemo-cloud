@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: calico
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://projectcalico.docs.tigera.io/charts
+    chart: tigera-operator
+    targetRevision: v3.20.0
+    helm:
+      values: |
+        installation:
+          kubernetesProvider: "kubeadm"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tigera-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
