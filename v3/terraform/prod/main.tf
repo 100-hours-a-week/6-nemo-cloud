@@ -142,3 +142,12 @@ module "bastion" {
   key_name   = "keypair-kube-master"
   name       = "v3-prod"
 }
+
+module "route53" {
+  source      = "../../modules/route53"
+  domain_name = "onurvit01.shop"
+}
+
+output "ns" {
+  value = module.route53.ns
+}

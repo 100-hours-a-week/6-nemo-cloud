@@ -16,7 +16,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: frontend.nemo-cloud.com
+    - host: onurvit01.shop
       paths:
         - path: /
           pathType: Prefix
