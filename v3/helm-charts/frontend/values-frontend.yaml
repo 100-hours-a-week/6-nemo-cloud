@@ -1,0 +1,23 @@
+replicaCount: 3
+
+image:
+  repository: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/frontend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: frontend.nemo-cloud.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

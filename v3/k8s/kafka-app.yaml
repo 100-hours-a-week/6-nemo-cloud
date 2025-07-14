@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/application
+    targetRevision: infra/applications
     path: v3/helm-charts/kafka
     helm:
       valueFiles:
