@@ -12,11 +12,15 @@ service:
 
 ingress:
   enabled: true
-  className: "nginx"
+  className: alb
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /health
   hosts:
-    - host: onurvit01.shop
+    - host: onurvit01.store
       paths:
         - path: /
           pathType: Prefix

@@ -89,26 +89,6 @@ module "secret" {
 }
 
 
-module "argocd_image_updater" {
-  source             = "../../modules/argocd_image_updater"
-
-  # provider가 모듈내부에 없고
-  providers = {
-    helm = helm
-  }
-
-  kubeconfig_path    = "~/.kube/config"
-  oidc_provider_url  = module.eks.oidc_provider_url
-  oidc_provider_arn  = module.eks.oidc_provider_arn
-  aws_account_id     = "084375578827"
-  region             = "ap-northeast-2"
-  github_pat         = var.github_pat
-}
-
-
-
-
-
 
 module "rds" {
   source = "../../modules/rds"
@@ -145,9 +125,18 @@ module "bastion" {
 
 module "route53" {
   source      = "../../modules/route53"
-  domain_name = "onurvit01.shop"
+  domain_name = "onurvit01.store"
 }
 
 output "ns" {
   value = module.route53.ns
+}
+
+
+module "alb_ingress_controller" {
+  source            = "../../modules/ALB"
+  cluster_name      = "nemo_EKS_kluster"
+  region            = "ap-northeast-2"
+  vpc_id            = module.vpc.vpc_id
+  oidc_provider_arn = module.eks.oidc_provider_arn
 }
