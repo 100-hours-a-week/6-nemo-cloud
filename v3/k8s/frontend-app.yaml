@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: frontend
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
+    targetRevision: infra/applications
+    path:  v3/helm-charts/frontend
+    helm:
+      valueFiles:
+        - values-frontend.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: frontend
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
