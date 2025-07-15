@@ -222,3 +222,71 @@ resource "aws_iam_role_policy_attachment" "argocd_image_updater_ecr_readonly" {
   role       = aws_iam_role.argocd_image_updater.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
+
+
+
+#### KAFKA
+
+
+resource "aws_iam_role" "kafka_irsa" {
+  name = "${var.cluster_name}-kafka-irsa"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Federated = aws_iam_openid_connect_provider.this.arn
+      },
+      Action = "sts:AssumeRoleWithWebIdentity",
+      Condition = {
+        "StringEquals": {
+          "oidc.eks.ap-northeast-2.amazonaws.com/id/80CB163B0ECA65A67FEAA81099E5C9DB:sub": "system:serviceaccount:kafka:kafka-sa"
+        }
+      }
+    }]
+  })
+}
+
+
+resource "aws_iam_role_policy" "kafka_irsa_policy" {
+  name = "kafka-ecr-policy"
+  role = aws_iam_role.kafka_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ],
+        Resource: "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "kafka_s3_policy" {
+  name = "${var.cluster_name}-kafka-s3-access"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      Resource = "*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "kafka_s3_attach" {
+  role       = aws_iam_role.kafka_irsa.name
+  policy_arn = aws_iam_policy.kafka_s3_policy.arn
+}

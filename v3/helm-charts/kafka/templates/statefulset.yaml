@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   name: {{ .Values.kafka.statefulset.name }}
 spec:
+  serviceAccountName: {{ .Values.serviceAccount.name }}
   serviceName: {{ .Values.kafka.service.name }}
   replicas: {{ .Values.kafka.replicaCount }}
   selector:
@@ -54,9 +55,11 @@ spec:
 
             - name: KAFKA_CFG_LISTENERS
               value: "PLAINTEXT://:{{ .Values.kafka.container.port }},EXTERNAL://:{{ .Values.kafka.container.externalPort }}"
-              
+
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://$(POD_NAME).{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }},EXTERNAL://{{ .Values.kafka.externalAdvertisedHost }}:{{ .Values.kafka.container.externalPort }}"
+              value: >-
+                PLAINTEXT://$(POD_NAME).{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }},
+                EXTERNAL://kafka-external-$(BROKER_ID_SUFFIX).{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.externalPort }}
             
             - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
               value: EXTERNAL

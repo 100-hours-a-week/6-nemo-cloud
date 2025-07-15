@@ -6,6 +6,10 @@ metadata:
 data:
   start.sh: |
     #!/bin/bash
-    NODE_ID=$(hostname | grep -o '[0-9]*')
+    set -e
+
+    HOSTNAME=$(hostname)
+    NODE_ID=$(echo "${HOSTNAME}" | grep -o '[0-9]*')
     export KAFKA_CFG_NODE_ID=$NODE_ID
+    export KAFKA_CFG_ADVERTISED_LISTENERS="PLAINTEXT://${HOSTNAME}.{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }},EXTERNAL://kafka-external-${NODE_ID}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.externalPort }}"
     exec /opt/bitnami/scripts/kafka/entrypoint.sh /opt/bitnami/scripts/kafka/run.sh

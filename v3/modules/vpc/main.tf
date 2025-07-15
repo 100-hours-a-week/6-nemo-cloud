@@ -18,6 +18,8 @@ resource "aws_subnet" "public-a" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-public-azone-subnet"
+    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -29,6 +31,9 @@ resource "aws_subnet" "public-c" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-public-czone-subnet"
+    # 원하는 서브넷에 추가하기
+    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 

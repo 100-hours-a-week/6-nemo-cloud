@@ -1,23 +1,26 @@
+serviceAccount:
+  create: false
+  name: kafka-sa
+
 kafka:
   externalAdvertisedHost: a1fea77a8ae4b44148ca9853dbf320e3-5176641.ap-northeast-2.elb.amazonaws.com
   replicaCount: 3
+
   statefulset:
-    name: kafka-controller
+    name: kafka
 
   container:
     port: 9092
     controllerPort: 9093
     externalPort: 9094  # 외부에서 접근할 포트
   
-
-
   image:
     repository: bitnami/kafka
     tag: 3.6.0
 
   service:
     name: kafka-headless
-    type: LoadBalancer  # 외부에서 접근 가능하도록 LoadBalancer 타입 사용
+    type: ClusterIP
     port: 9092
     targetPort: 9092
 
@@ -65,4 +68,14 @@ kafka:
   #    1@kafka-controller-1.kafka-headless.kafka.svc.cluster.local:9093,\
   #    2@kafka-controller-2.kafka-headless.kafka.svc.cluster.local:9093
 
+
+
+  externalAccess:
+    enabled: true
+    service:
+      type: LoadBalancer
+      ports:
+        external: 9094
+    autoDiscovery:
+      enabled: true
 
