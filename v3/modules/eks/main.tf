@@ -240,8 +240,8 @@ resource "aws_iam_role" "kafka_irsa" {
       },
       Action = "sts:AssumeRoleWithWebIdentity",
       Condition = {
-        "StringEquals": {
-          "oidc.eks.ap-northeast-2.amazonaws.com/id/80CB163B0ECA65A67FEAA81099E5C9DB:sub": "system:serviceaccount:kafka:kafka-sa"
+        StringEquals = {
+          "${replace(aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")}:sub" = "system:serviceaccount:kafka:kafka-sa"
         }
       }
     }]

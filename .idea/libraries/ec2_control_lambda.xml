@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ec2_control_lambda">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/v3/terraform/prod/files/ec2_control_lambda.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

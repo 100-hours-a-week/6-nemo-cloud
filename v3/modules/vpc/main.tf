@@ -44,6 +44,8 @@ resource "aws_subnet" "private-a" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-azone-subnet"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -53,6 +55,8 @@ resource "aws_subnet" "private-b" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-bzone-subnet"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -62,6 +66,8 @@ resource "aws_subnet" "private-c" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-czone-subnet"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 

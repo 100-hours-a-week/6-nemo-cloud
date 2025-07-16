@@ -7,7 +7,6 @@ module "vpc" {
   subnet_az = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
 }
 
-
 module "eks" {
   source             = "../../modules/eks"
   cluster_name       = "nemo_EKS_kluster"
@@ -139,4 +138,5 @@ module "alb_ingress_controller" {
   region            = "ap-northeast-2"
   vpc_id            = module.vpc.vpc_id
   oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_issuer_url   = module.eks.oidc_issuer_url
 }

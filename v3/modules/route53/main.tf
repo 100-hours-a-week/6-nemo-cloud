@@ -3,8 +3,8 @@ resource "aws_route53_zone" "main" {
 }
 
 resource "aws_route53_record" "frontend_alias" {
-  zone_id = "Z09133841Z94Z8Z7ECYRA"         
-  name    = var.domain_name  # 하드코딩 대신 변수 사용
+  zone_id = aws_route53_zone.main.zone_id  # 생성된 Zone ID 참조
+  name    = var.domain_name
   type    = "A"
 
   alias {
