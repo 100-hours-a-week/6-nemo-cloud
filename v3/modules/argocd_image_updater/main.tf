@@ -43,7 +43,7 @@ config:
         use_aws_sdk: true
 
   git:
-    writeBranch: infra/application
+    writeBranch: infra/image-updater
     user:
       name: halfmoon01
       email: onurivit01@gmail.com

@@ -174,12 +174,3 @@ data:
       send:
       - app-sync-succeeded
       when: app.status.operationState.phase in ['Succeeded']
-
-  # 구독 설정 (모든 앱에 적용)
-  subscriptions: |
-    - recipients:
-      - discord
-      triggers:
-      - on-deployed
-      - on-health-degraded
-      - on-sync-succeeded
