@@ -7,15 +7,20 @@ metadata:
   annotations:
     #ArgoCD Image Updater가 감시할 이미지 주소 (ECR 리포지토리)
     argocd-image-updater.argoproj.io/image-list: backend=084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
-    argocd-image-updater.argoproj.io/update-strategy.backend: latest
-    argocd-image-updater.argoproj.io/allow-tags.backend: ^prod-.*
+    argocd-image-updater.argoproj.io/backend.update-strategy: alphabetical
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^prod-20.*
+    argocd-image-updater.argoproj.io/backend.sort-tags: alphabetical:desc
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/git-branch: infra/image-updater
+    # Discord 알림 구독
+    notifications.argoproj.io/subscribe.on-deployed.discord: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.discord: ""
+    notifications.argoproj.io/subscribe.on-sync-succeeded.discord: ""
 spec:
   project: default
   source:
     repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/applications
+    targetRevision: infra/image-updater
     path: v3/helm-charts/backend
     helm:
       valueFiles:

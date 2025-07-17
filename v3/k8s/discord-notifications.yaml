@@ -1,0 +1,185 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-notifications
+    app.kubernetes.io/part-of: argocd
+data:
+  # Discord 서비스 설정
+  service.webhook.discord: |
+    url: https://discord.com/api/webhooks/1392729701843341313/ppziPHdh0eWfrh29DhEX8f8iOFOKfMvzt9UFnERIYo-lCLeLiNyvg5-xONBZWifFZAaG
+    headers:
+    - name: Content-Type
+      value: application/json
+
+  # 알림 템플릿
+  template.app-deployed: |
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "content": "🚀 **Application Deployed Successfully!**",
+            "embeds": [
+              {
+                "title": "ArgoCD Deployment Notification",
+                "description": "Application has been successfully deployed",
+                "color": 3066993,
+                "fields": [
+                  {
+                    "name": "Application",
+                    "value": "{{.app.metadata.name}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Sync Status",
+                    "value": "{{.app.status.sync.status}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Health Status", 
+                    "value": "{{.app.status.health.status}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Repository",
+                    "value": "{{.app.spec.source.repoURL}}",
+                    "inline": false
+                  },
+                  {
+                    "name": "Revision",
+                    "value": "{{.app.status.sync.revision}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Deployed At",
+                    "value": "{{.app.status.operationState.finishedAt}}",
+                    "inline": true
+                  }
+                ],
+                "footer": {
+                  "text": "ArgoCD Notifications",
+                  "icon_url": "https://argo-cd.readthedocs.io/en/stable/assets/logo.png"
+                },
+                "timestamp": "{{.app.status.operationState.finishedAt}}"
+              }
+            ]
+          }
+
+  template.app-health-degraded: |
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "content": "⚠️ **Application Health Degraded!**",
+            "embeds": [
+              {
+                "title": "ArgoCD Health Alert",
+                "description": "Application health has degraded",
+                "color": 15158332,
+                "fields": [
+                  {
+                    "name": "Application",
+                    "value": "{{.app.metadata.name}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Health Status",
+                    "value": "{{.app.status.health.status}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Sync Status",
+                    "value": "{{.app.status.sync.status}}",
+                    "inline": true
+                  }
+                ],
+                "footer": {
+                  "text": "ArgoCD Notifications"
+                }
+              }
+            ]
+          }
+
+  template.app-sync-succeeded: |
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "content": "✅ **Sync Completed Successfully!**",
+            "embeds": [
+              {
+                "title": "ArgoCD Sync Notification",
+                "description": "Application sync completed successfully",
+                "color": 65280,
+                "fields": [
+                  {
+                    "name": "Application",
+                    "value": "{{.app.metadata.name}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Sync Status",
+                    "value": "{{.app.status.sync.status}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Health Status",
+                    "value": "{{.app.status.health.status}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Repository",
+                    "value": "{{.app.spec.source.repoURL}}",
+                    "inline": false
+                  },
+                  {
+                    "name": "Target Revision", 
+                    "value": "{{.app.spec.source.targetRevision}}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Sync Revision",
+                    "value": "{{.app.status.sync.revision}}",
+                    "inline": true
+                  }
+                ],
+                "footer": {
+                  "text": "ArgoCD Notifications",
+                  "icon_url": "https://argo-cd.readthedocs.io/en/stable/assets/logo.png"
+                }
+              }
+            ]
+          }
+
+  # 트리거 조건
+  trigger.on-deployed: |
+    - description: Application is synced and healthy
+      send:
+      - app-deployed
+      when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+
+  trigger.on-health-degraded: |
+    - description: Application has degraded
+      send:
+      - app-health-degraded
+      when: app.status.health.status == 'Degraded'
+
+  trigger.on-sync-succeeded: |
+    - description: Application syncing has succeeded
+      send:
+      - app-sync-succeeded
+      when: app.status.operationState.phase in ['Succeeded']
+
+  # 구독 설정 (모든 앱에 적용)
+  subscriptions: |
+    - recipients:
+      - discord
+      triggers:
+      - on-deployed
+      - on-health-degraded
+      - on-sync-succeeded
