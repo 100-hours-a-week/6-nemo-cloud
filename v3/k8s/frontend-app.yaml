@@ -20,7 +20,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/applications
+    targetRevision: infra/image-updater
     path:  v3/helm-charts/frontend
     helm:
       valueFiles:
