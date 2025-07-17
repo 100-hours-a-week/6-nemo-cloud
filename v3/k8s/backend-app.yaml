@@ -12,6 +12,7 @@ metadata:
     argocd-image-updater.argoproj.io/backend.sort-tags: alphabetical:desc
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/git-branch: infra/image-updater
+    argocd-image-updater.argoproj.io/git-commit-message: "Chore: update backend image to {{.NewTag}}"
     # Discord 알림 구독
     notifications.argoproj.io/subscribe.on-deployed.discord: ""
     notifications.argoproj.io/subscribe.on-health-degraded.discord: ""
