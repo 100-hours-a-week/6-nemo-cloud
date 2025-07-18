@@ -22,10 +22,7 @@ spec:
             - containerPort: 3000
           env:
             - name: NEXT_PUBLIC_API_URL
-              valueFrom:
-                secretKeyRef:
-                  name: frontend-secret
-                  key: NEXT_PUBLIC_API_URL
+              value: "https://onurivit01.store/api"
             - name: NEXT_PUBLIC_KAKAO_REDIRECT_URI
               valueFrom:
                 secretKeyRef:

@@ -124,7 +124,9 @@ module "bastion" {
 
 module "route53" {
   source      = "../../modules/route53"
-  domain_name = "onurivit01.store"
+  domain_name = "onurivit.store"
+  alb_dns_name = "k8s-frontend-frontend-af87f59743-573931732.ap-northeast-2.elb.amazonaws.com"
+  alb_zone_id  = "ZWKZPGTI48KDX"
 }
 
 output "ns" {
