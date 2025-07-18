@@ -8,7 +8,7 @@ resource "aws_route53_record" "frontend_alias" {
   type    = "A"
 
   alias {
-    name                   = "k8s-frontend-frontend-af87f59743-182877957.ap-northeast-2.elb.amazonaws.com"
+    name                   = "k8s-frontend-frontend-af87f59743-573931732.ap-northeast-2.elb.amazonaws.com"
     zone_id                = "ZWKZPGTI48KDX"
     evaluate_target_health = true
   }
