@@ -19,7 +19,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: backend
+                name: backend-proxy
                 port:
                   number: 8080
           # Frontend paths
