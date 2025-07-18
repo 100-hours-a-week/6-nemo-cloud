@@ -127,6 +127,7 @@ resource "aws_route_table" "private" {
     cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.this.id
   }
+  # VPC 내부 통신 허용 (기본적으로 VPC CIDR은 로컬 라우팅됨)
   tags = {
     Name = "${var.name}-private-RT"
   }

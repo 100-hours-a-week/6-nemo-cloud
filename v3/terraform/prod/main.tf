@@ -124,7 +124,7 @@ module "bastion" {
 
 module "route53" {
   source      = "../../modules/route53"
-  domain_name = "onurvit01.store"
+  domain_name = "onurivit01.store"
 }
 
 output "ns" {
