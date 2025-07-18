@@ -5,6 +5,9 @@ image:
   tag: prod-20250718-1040
   pullPolicy: IfNotPresent
 
+env:
+  NEXT_PUBLIC_API_URL: "/api"
+
 service:
   type: ClusterIP
   port: 80
