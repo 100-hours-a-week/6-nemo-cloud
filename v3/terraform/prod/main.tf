@@ -140,3 +140,16 @@ module "alb_ingress_controller" {
   oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_issuer_url   = module.eks.oidc_issuer_url
 }
+
+module "argocd_image_updater" {
+  source = "../../modules/argocd_image_updater"
+  
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+  aws_account_id    = data.aws_caller_identity.current.account_id
+  region            = "ap-northeast-2"
+  github_pat        = var.github_pat
+  kubeconfig_path   = "~/.kube/config"
+  
+  depends_on = [module.argocd]
+}

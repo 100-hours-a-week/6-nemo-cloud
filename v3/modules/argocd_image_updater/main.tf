@@ -34,22 +34,27 @@ resource "helm_release" "argocd_image_updater" {
 
   values = [<<EOF
 config:
-  registriesConf: |
-    - name: aws
+  registries:
+    - name: aws-ecr
       prefix: ${var.aws_account_id}.dkr.ecr.${var.region}.amazonaws.com
       api_url: https://${var.aws_account_id}.dkr.ecr.${var.region}.amazonaws.com
-      ping: true
-      credentials:
-        use_aws_sdk: true
+      ping: yes
+      credentials: ext:/scripts/ecr-login.sh
+      credsexpire: 10h
 
   git:
-    writeBranch: infra/image-updater
-    user:
-      name: halfmoon01
-      email: onurivit01@gmail.com
+    branch: infra/applications
+    email: onurivit01@gmail.com
+    user: halfmoon01
     commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
-    pgpSign: false
-    
+
+authScripts:
+  enabled: true
+  scripts:
+    ecr-login.sh: |
+      #!/bin/sh
+      echo "AWS:$(aws ecr get-login-password --region ${var.region})"
+
 secret:
   create: true
   name: argocd-image-updater-secret
