@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-ingress
+  namespace: {{ .Values.backend.namespace.name }}
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  # 프론트엔드 네임스페이스에서의 트래픽 허용
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: frontend
+    ports:
+    - protocol: TCP
+      port: 8080
+  # ingress-nginx 네임스페이스에서의 트래픽 허용
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+  # ALB에서 직접 오는 트래픽 허용 (외부 로드밸런서)
+  - from: []
+    ports:
+    - protocol: TCP
+      port: 8080

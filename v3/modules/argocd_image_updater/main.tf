@@ -1,4 +1,3 @@
-
 data "aws_iam_policy_document" "assume_role" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -46,13 +45,18 @@ config:
     branch: infra/applications
     email: onurivit01@gmail.com
     user: halfmoon01
-    commitMessageTemplate: "Chore: update image to {{ .NewImage }}"
+    commitMessageTemplate: "🚀 Backend: update image to {{.NewTag}}"
 
 authScripts:
   enabled: true
   scripts:
     ecr-login.sh: |
       #!/bin/sh
+      # Read-only 파일시스템에서 AWS 설정을 임시 디렉토리로 변경
+      export AWS_CONFIG_FILE=/tmp/aws-config
+      export AWS_SHARED_CREDENTIALS_FILE=/tmp/aws-credentials
+      
+      # ECR 로그인 토큰 생성 및 반환
       echo "AWS:$(aws ecr get-login-password --region ${var.region})"
 
 secret:
@@ -66,13 +70,36 @@ serviceAccount:
   name: argocd-image-updater
   annotations:
     eks.amazonaws.com/role-arn: ${aws_iam_role.argocd_image_updater_irsa.arn}
+
+# Pod 설정에 임시 디렉토리 마운트 추가
+podSpec:
+  volumes:
+    - name: tmp-dir
+      emptyDir: {}
+  containers:
+    - name: argocd-image-updater
+      volumeMounts:
+        - name: tmp-dir
+          mountPath: /tmp
+      env:
+        - name: AWS_CONFIG_FILE
+          value: /tmp/aws-config
+        - name: AWS_SHARED_CREDENTIALS_FILE
+          value: /tmp/aws-credentials
+        - name: AWS_REGION
+          value: ${var.region}
+        - name: AWS_ROLE_ARN
+          value: ${aws_iam_role.argocd_image_updater_irsa.arn}
+        - name: AWS_WEB_IDENTITY_TOKEN_FILE
+          value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+
+# 로그 레벨을 debug로 설정하여 디버깅 용이하게 함
+logLevel: debug
 EOF
   ]
 
   depends_on = [aws_iam_role_policy_attachment.attach_ecr_read]
 }
-
-
 
 terraform {
   required_providers {

@@ -22,7 +22,63 @@ spec:
                 name: backend-proxy
                 port:
                   number: 8080
-          # Frontend paths
+          # Health check path for ALB (redirect to frontend)
+          - path: /actuator/health
+            pathType: Exact
+            backend:
+              service:
+                name: {{ $.Release.Name }}
+                port:
+                  number: {{ $.Values.service.port }}
+          # Backend healthcheck path
+          - path: /api/healthcheck
+            pathType: Exact
+            backend:
+              service:
+                name: backend-proxy
+                port:
+                  number: 8080
+          # Auth paths (backend)
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-proxy
+                port:
+                  number: 8080
+          # Swagger UI paths (backend)
+          - path: /swagger-ui
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-proxy
+                port:
+                  number: 8080
+          # Swagger resources paths (backend)  
+          - path: /swagger-resources
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-proxy
+                port:
+                  number: 8080
+          # V3 API docs paths (backend)
+          - path: /v3
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-proxy
+                port:
+                  number: 8080
+          # Static images (frontend)
+          - path: /images
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Release.Name }}
+                port:
+                  number: {{ $.Values.service.port }}
+          # Frontend paths (catch-all, must be last)
           {{- range .paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
