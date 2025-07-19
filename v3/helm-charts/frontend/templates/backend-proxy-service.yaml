@@ -3,9 +3,6 @@ kind: Service
 metadata:
   name: backend-proxy
   namespace: {{ .Release.Namespace }}
-  annotations:
-    # 크로스 네임스페이스 서비스 참조를 위한 어노테이션
-    service.kubernetes.io/cross-namespace: "true"
 spec:
   type: ExternalName
   externalName: backend.backend.svc.cluster.local
