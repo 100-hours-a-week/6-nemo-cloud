@@ -25,10 +25,10 @@ spec:
             # deployment.yaml에서 Secret을 참조하는 방법
             - secretRef:
                 name: backend-secret
-          # 헬스체크 추가
+          # 헬스체크 (올바른 경로로 수정)
           livenessProbe:
             httpGet:
-              path: /api/v1/health
+              path: /actuator/health
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -36,7 +36,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /api/v1/health
+              path: /actuator/health
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
