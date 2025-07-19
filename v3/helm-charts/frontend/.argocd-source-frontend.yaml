@@ -1,11 +1,8 @@
 helm:
   parameters:
-  - name: image.repository
+  - name: image.name
     value: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/frontend
     forcestring: true
   - name: image.tag
     value: prod-20250719-1550
-    forcestring: true
-  - name: image.name
-    value: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/frontend
     forcestring: true
