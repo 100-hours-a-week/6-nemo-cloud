@@ -10,13 +10,35 @@ spec:
     chart: argocd-image-updater
     targetRevision: 0.12.2 
     helm:
-      valueFiles:
-        - argocd-applications/infrastructure/argocd-image-updater-values.yaml
       parameters:
         - name: "argocd.serverAddress"
           value: "argocd-server.argocd.svc"
-        - name: "image.pullSecrets[0].name"
+        - name: "config.registries[0].name"
+          value: "gcp"
+        - name: "config.registries[0].prefix"
+          value: "asia-northeast3-docker.pkg.dev"
+        - name: "config.registries[0].api_url"
+          value: "https://asia-northeast3-docker.pkg.dev"
+        - name: "config.registries[0].credentials"
+          value: "/image-updater/.docker/config.json"
+        - name: "config.registries[0].default"
+          value: "true"
+        - name: "extraEnv[0].name"
+          value: "DOCKER_CONFIG"
+        - name: "extraEnv[0].value"
+          value: "/image-updater/.docker/"
+        - name: "extraVolumeMounts[0].name"
+          value: "docker-config"
+        - name: "extraVolumeMounts[0].mountPath"
+          value: "/image-updater/.docker/"
+        - name: "extraVolumes[0].name"
+          value: "docker-config"
+        - name: "extraVolumes[0].secret.secretName"
           value: "gcp-artifact-registry"
+        - name: "extraVolumes[0].secret.items[0].key"
+          value: ".dockerconfigjson"
+        - name: "extraVolumes[0].secret.items[0].path"
+          value: "config.json"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
