@@ -17,7 +17,7 @@ spec:
         - name: {{ .Values.frontend.imagePullSecretName }}
       containers:
         - name: frontend
-          image: {{ .Values.frontend.image }}
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
           ports:
             - containerPort: {{ .Values.frontend.containerPort }}
           resources:
