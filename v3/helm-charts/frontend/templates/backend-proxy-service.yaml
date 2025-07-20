@@ -3,13 +3,10 @@ kind: Service
 metadata:
   name: backend-proxy
   namespace: {{ .Release.Namespace }}
-  annotations:
-    service.kubernetes.io/cross-namespace: "true"
 spec:
   type: ExternalName
   externalName: backend.backend.svc.cluster.local
   ports:
   - port: 8080
-    targetPort: 8080
     protocol: TCP
     name: http
