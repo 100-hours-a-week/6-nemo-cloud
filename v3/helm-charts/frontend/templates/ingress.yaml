@@ -14,22 +14,14 @@ spec:
     - host: {{ .host }}
       http:
         paths:
-          # API paths (backend)
-          - path: /api
-            pathType: Prefix
+          - path: /api/healthcheck
+            pathType: Exact  # 또는 Prefix
             backend:
               service:
-                name: backend-proxy
+                name: frontend
                 port:
-                  number: 8080
-          # Health check path for ALB (redirect to frontend)
-          - path: /actuator/health
-            pathType: Exact
-            backend:
-              service:
-                name: {{ $.Release.Name }}
-                port:
-                  number: {{ $.Values.service.port }}
+                  number: 80
+
           # Backend actuator health path (direct access)
           - path: /actuator/health
             pathType: Exact
@@ -38,6 +30,16 @@ spec:
                 name: backend-proxy
                 port:
                   number: 8080
+
+          # API paths (backend)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-proxy
+                port:
+                  number: 8080
+
           # Auth paths (backend)
           - path: /auth
             pathType: Prefix
@@ -46,6 +48,7 @@ spec:
                 name: backend-proxy
                 port:
                   number: 8080
+
           # Swagger UI paths (backend)
           - path: /swagger-ui
             pathType: Prefix
@@ -54,6 +57,7 @@ spec:
                 name: backend-proxy
                 port:
                   number: 8080
+
           # Swagger resources paths (backend)  
           - path: /swagger-resources
             pathType: Prefix
@@ -62,6 +66,7 @@ spec:
                 name: backend-proxy
                 port:
                   number: 8080
+
           # V3 API docs paths (backend)
           - path: /v3
             pathType: Prefix
@@ -78,6 +83,7 @@ spec:
                 name: {{ $.Release.Name }}
                 port:
                   number: {{ $.Values.service.port }}
+
           # Frontend paths (catch-all, must be last)
           {{- range .paths }}
           - path: {{ .path }}
