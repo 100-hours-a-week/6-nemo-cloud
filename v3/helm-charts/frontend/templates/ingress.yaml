@@ -22,57 +22,57 @@ spec:
                 port:
                   number: 80
 
-          # Backend actuator health path (direct access)
+          # Backend actuator health path (direct cross-namespace reference)
           - path: /actuator/health
             pathType: Exact
             backend:
               service:
-                name: backend-proxy
+                name: backend.backend
                 port:
                   number: 8080
 
-          # API paths (backend)
+          # API paths (backend cross-namespace)
           - path: /api
             pathType: Prefix
             backend:
               service:
-                name: backend-proxy
+                name: backend.backend
                 port:
                   number: 8080
 
-          # Auth paths (backend)
+          # Auth paths (backend cross-namespace)
           - path: /auth
             pathType: Prefix
             backend:
               service:
-                name: backend-proxy
+                name: backend.backend
                 port:
                   number: 8080
 
-          # Swagger UI paths (backend)
+          # Swagger UI paths (backend cross-namespace)
           - path: /swagger-ui
             pathType: Prefix
             backend:
               service:
-                name: backend-proxy
+                name: backend.backend
                 port:
                   number: 8080
 
-          # Swagger resources paths (backend)  
+          # Swagger resources paths (backend cross-namespace)  
           - path: /swagger-resources
             pathType: Prefix
             backend:
               service:
-                name: backend-proxy
+                name: backend.backend
                 port:
                   number: 8080
 
-          # V3 API docs paths (backend)
+          # V3 API docs paths (backend cross-namespace)
           - path: /v3
             pathType: Prefix
             backend:
               service:
-                name: backend-proxy
+                name: backend.backend
                 port:
                   number: 8080
           # Static images (frontend)

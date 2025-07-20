@@ -15,6 +15,9 @@ spec:
     - namespaceSelector:
         matchLabels:
           name: frontend
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: frontend
     ports:
     - protocol: TCP
       port: 8080
@@ -23,6 +26,20 @@ spec:
     - namespaceSelector:
         matchLabels:
           name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+  # 같은 네임스페이스 내 트래픽 허용
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: backend
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: backend
     ports:
     - protocol: TCP
       port: 8080
