@@ -114,7 +114,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 # 6. 네트워크 플러그인(flannel 등) 설치
 echo "🌐 flannel 네트워크 플러그인 설치..."
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
-FLANNEL_YAML="$SCRIPT_DIR/../infra/bootstrap/kube-flannel.yml"
+FLANNEL_YAML="$SCRIPT_DIR/../bootstrap/flannel.yaml"
 
 # kube-apiserver가 뜰 때까지 대기
 echo "⏳ kube-apiserver 준비 대기 중..."

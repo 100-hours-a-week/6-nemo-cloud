@@ -1,0 +1,4 @@
+apiVersion: v2
+name: argocd-ingress
+version: 0.1.0
+description: ArgoCD Ingress Helm chart 

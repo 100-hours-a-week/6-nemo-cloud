@@ -1,0 +1,5 @@
+name: letsencrypt-dev
+email: mskim.glenn@gmail.com
+server: https://acme-v02.api.letsencrypt.org/directory
+privateKeySecret: letsencrypt-dev
+ingressClassName: nginx 

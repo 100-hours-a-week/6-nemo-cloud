@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ingress-nginx
+description: NGINX Ingress Controller (공식 Helm chart)
+type: application
+version: 1.0.0 

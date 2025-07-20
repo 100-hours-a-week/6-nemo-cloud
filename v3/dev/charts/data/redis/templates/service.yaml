@@ -4,9 +4,9 @@ metadata:
   name: redis
   namespace: {{ .Release.Namespace }}
 spec:
+  selector:
+    app: redis
   ports:
     - port: 6379
       targetPort: 6379
-  selector:
-    app: redis
   type: ClusterIP 

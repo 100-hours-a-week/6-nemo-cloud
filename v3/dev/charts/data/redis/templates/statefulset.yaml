@@ -4,7 +4,7 @@ metadata:
   name: redis
   namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: "redis"
+  serviceName: redis
   replicas: {{ .Values.redis.replicas }}
   selector:
     matchLabels:
@@ -15,29 +15,35 @@ spec:
         app: redis
     spec:
       containers:
-      - name: redis
-        image: {{ .Values.redis.image }}
-        ports:
-        - containerPort: 6379
-        env:
-        - name: REDIS_URL
-          value: redis
-        - name: REDIS_PORT
-          value: "6379"
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.redis.secretName }}
-              key: redis-password
-        volumeMounts:
-        - name: redis-data
-          mountPath: /data
+        - name: redis
+          image: {{ .Values.redis.image }}
+          ports:
+            - containerPort: 6379
+          env:
+            - name: REDIS_URL
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.secretName }}
+                  key: redis-password
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
   volumeClaimTemplates:
-  - metadata:
-      name: redis-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: {{ .Values.storageClass.name }}
-      resources:
-        requests:
-          storage: {{ .Values.redis.storage }} 
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.storageClass.name }}
+        resources:
+          requests:
+            storage: {{ .Values.redis.storage }} 

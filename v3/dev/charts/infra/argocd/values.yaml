@@ -1,0 +1,4 @@
+fullnameOverride: argocd
+server:
+  service:
+    type: ClusterIP 

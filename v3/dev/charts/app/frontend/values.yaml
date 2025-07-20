@@ -9,11 +9,12 @@ frontend:
   servicePort: 3000
   resources:
     requests:
-      memory: "1Gi"
+      memory: "1.5Gi"
       cpu: "0.5"
     limits:
-      memory: "2Gi"
+      memory: "2.5Gi"
       cpu: "1"
+
   livenessProbe:
     httpGet:
       path: /api/healthcheck

@@ -1,0 +1,6 @@
+namespace: argocd
+host: argocd.dev3.nemo.ai.kr
+tlsSecret: argocd-tls
+service: argocd-server
+port: 443
+path: / 

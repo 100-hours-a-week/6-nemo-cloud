@@ -1,0 +1,49 @@
+# Bitnami Kafka Helm 차트 values.yaml (개발 환경 기본)
+# 운영 환경에서 변경이 필요한 부분은 주석으로 안내
+
+replicaCount: 1  # 운영: 3 이상 권장
+
+controller:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+broker:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+resources:
+  requests:
+    cpu: 100m      # 운영: 1 이상 권장
+    memory: 256Mi  # 운영: 2Gi 이상 권장
+  limits:
+    cpu: 200m      # 운영: 2 이상 권장
+    memory: 512Mi  # 운영: 4Gi 이상 권장
+
+service:
+  type: ClusterIP  # 운영: 외부 접근 필요시 LoadBalancer/Ingress 등 추가
+
+configurationOverrides:
+  auto.create.topics.enable: "true"   # 운영: false 권장
+  delete.topic.enable: "true"         # 운영: false 권장
+  # 운영: advertised.listeners, listener.security.protocol.map 등 환경에 맞게 추가
+
+# 인증/암호화(운영 환경 필수)
+auth:
+  clientProtocol: plaintext  # 운영: sasl 또는 tls
+  interBrokerProtocol: plaintext  # 운영: sasl 또는 tls
+  # 운영: 아래 sasl, tls 등 보안 옵션 활성화 필요
+  # sasl:
+  #   mechanisms: scram-sha-256
+  #   interBrokerMechanism: scram-sha-256
+  #   jaas:
+  #     clientUsers: [user1]
+  #     clientPasswords: [<운영용 강력한 비밀번호>]
+  #     interBrokerUser: inter_broker_user
+  #     interBrokerPassword: <운영용 강력한 비밀번호>
+  # tls:
+  #   type: JKS
+  #   existingSecret: <tls-secret-name> 

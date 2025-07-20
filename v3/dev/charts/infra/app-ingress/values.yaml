@@ -1,0 +1,31 @@
+namespace: app
+host: dev3.nemo.ai.kr
+tlsSecret: dev-nemo-tls
+rules:
+  - path: /auth/
+    service: backend
+    port: 8080
+  - path: /api/
+    service: backend
+    port: 8080
+  - path: /swagger-ui/
+    service: backend
+    port: 8080
+  - path: /v3/
+    service: backend
+    port: 8080
+  - path: /swagger-resources/
+    service: backend
+    port: 8080
+  - path: /ai/v2/chatbot/
+    service: ai
+    port: 8001
+  - path: /api/v2/groups/recommendations/chatbot/stream
+    service: backend
+    port: 8080
+  - path: /ai/
+    service: ai
+    port: 8001
+  - path: /
+    service: frontend
+    port: 3000 
