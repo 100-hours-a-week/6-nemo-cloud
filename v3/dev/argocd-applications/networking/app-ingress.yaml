@@ -1,24 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: app-ingress
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io/foreground
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
-    targetRevision: v1.14.2
+    repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
+    targetRevision: infra/kubeadm
+    path: v3/dev/charts/infra/app-ingress
     helm:
-      values: |
-        installCRDs: true
-        # 강제 재설치를 위한 설정
-        force: true
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: app
   syncPolicy:
     automated:
       prune: true
