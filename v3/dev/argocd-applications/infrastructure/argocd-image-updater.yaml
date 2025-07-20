@@ -6,15 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://argoproj.github.io/argo-helm
-    chart: argocd-image-updater
-    targetRevision: 0.12.2 
+    repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
+    targetRevision: infra/kubeadm
+    path: v3/dev/charts/infra/argocd-image-updater
     helm:
+      valueFiles:
+        - values.yaml
       parameters:
         - name: "argocd.serverAddress"
           value: "argocd-server.argocd.svc"
-        - name: "image.pullSecrets[0].name"
-          value: "gcp-artifact-registry"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
