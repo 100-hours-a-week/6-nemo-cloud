@@ -2,7 +2,7 @@ backend:
   serviceAccount:
     name: backend     ## Deployment에서 사용할 ServiceAccount 이름
   namespace:
-    name: backend     ## 배포될 Namespace 이름
+    name: frontend    ## 배포될 Namespace 이름 (backend → frontend로 변경)
   image:
     repository: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
     tag: prod-20250714-1752

@@ -1,5 +1,3 @@
-# This file is no longer needed as we use direct cross-namespace service references in Ingress
-# The backend service is referenced directly as "backend.backend" from the frontend Ingress
-# 
-# Previous approach with backend-proxy service had ALB compatibility issues
-# Direct cross-namespace references work better with AWS Load Balancer Controller
+# This file is no longer needed
+# Backend service is now deployed in the same namespace (frontend)
+# Ingress can directly reference the backend service without cross-namespace proxy

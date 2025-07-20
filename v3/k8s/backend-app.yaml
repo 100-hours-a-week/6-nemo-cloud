@@ -28,7 +28,7 @@ spec:
         - values-backend.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: backend
+    namespace: frontend
   syncPolicy:
     automated:
       prune: true

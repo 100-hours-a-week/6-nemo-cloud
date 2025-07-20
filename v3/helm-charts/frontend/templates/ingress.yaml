@@ -22,57 +22,57 @@ spec:
                 port:
                   number: 80
 
-          # Backend actuator health path (direct cross-namespace reference)
+          # Backend actuator health path (same namespace)
           - path: /actuator/health
             pathType: Exact
             backend:
               service:
-                name: backend.backend
+                name: backend
                 port:
                   number: 8080
 
-          # API paths (backend cross-namespace)
+          # API paths (same namespace backend)
           - path: /api
             pathType: Prefix
             backend:
               service:
-                name: backend.backend
+                name: backend
                 port:
                   number: 8080
 
-          # Auth paths (backend cross-namespace)
+          # Auth paths (same namespace backend)
           - path: /auth
             pathType: Prefix
             backend:
               service:
-                name: backend.backend
+                name: backend
                 port:
                   number: 8080
 
-          # Swagger UI paths (backend cross-namespace)
+          # Swagger UI paths (same namespace backend)
           - path: /swagger-ui
             pathType: Prefix
             backend:
               service:
-                name: backend.backend
+                name: backend
                 port:
                   number: 8080
 
-          # Swagger resources paths (backend cross-namespace)  
+          # Swagger resources paths (same namespace backend)  
           - path: /swagger-resources
             pathType: Prefix
             backend:
               service:
-                name: backend.backend
+                name: backend
                 port:
                   number: 8080
 
-          # V3 API docs paths (backend cross-namespace)
+          # V3 API docs paths (same namespace backend)
           - path: /v3
             pathType: Prefix
             backend:
               service:
-                name: backend.backend
+                name: backend
                 port:
                   number: 8080
           # Static images (frontend)
