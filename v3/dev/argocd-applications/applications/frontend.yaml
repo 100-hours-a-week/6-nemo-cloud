@@ -5,6 +5,10 @@ metadata:
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: frontend=asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
+    argocd-image-updater.argoproj.io/frontend.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/write-back-method: git
 spec:
   project: default
   source:
@@ -22,9 +26,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-  metadata:
-    annotations:
-      argocd-image-updater.argoproj.io/image-list: frontend=asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
-      argocd-image-updater.argoproj.io/frontend.update-strategy: newest-build
-      argocd-image-updater.argoproj.io/write-back-method: git 
+      - CreateNamespace=true 
