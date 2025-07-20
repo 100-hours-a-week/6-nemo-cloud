@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: backend
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: backend=asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+    argocd-image-updater.argoproj.io/write-back-method: git
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
