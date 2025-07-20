@@ -10,6 +10,8 @@ spec:
     chart: argocd-image-updater
     targetRevision: 0.12.2 
     helm:
+      valueFiles:
+        - argocd-applications/infrastructure/argocd-image-updater-values.yaml
       parameters:
         - name: "argocd.serverAddress"
           value: "argocd-server.argocd.svc"
