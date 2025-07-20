@@ -1,7 +1,9 @@
 ---
 frontend:
   imageRegistry: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
-  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev3 # 추후 변경 필요
+  image:
+    name: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
+    tag: dev3
   replicas: 2
   imagePullSecretName: gcp-artifact-registry
   secret: frontend-secret
