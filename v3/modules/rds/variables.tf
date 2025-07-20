@@ -46,6 +46,12 @@ variable "security_groups" {
 }
 
 
+variable "eks_security_group_id" {
+  description = "EKS cluster security group ID for RDS access"
+  type        = string
+  default     = ""
+}
+
 variable "vpc_id"{
     description =  "id for VPC"
     type        =  string

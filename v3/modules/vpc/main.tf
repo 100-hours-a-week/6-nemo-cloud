@@ -86,6 +86,11 @@ resource "aws_route_table" "public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.this.id
   }
+  # VPC 내부 모든 서브넷 간 통신 허용
+  route {
+    cidr_block = var.vpc_cidr
+    gateway_id = "local"
+  }
   tags = {
     Name = "${var.name}-public-RT"
   }
@@ -127,7 +132,11 @@ resource "aws_route_table" "private" {
     cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.this.id
   }
-  # VPC 내부 통신 허용 (기본적으로 VPC CIDR은 로컬 라우팅됨)
+  # VPC 내부 모든 서브넷 간 통신 허용
+  route {
+    cidr_block = var.vpc_cidr
+    gateway_id = "local"
+  }
   tags = {
     Name = "${var.name}-private-RT"
   }

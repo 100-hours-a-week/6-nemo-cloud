@@ -102,6 +102,7 @@ module "rds" {
   allocated_storage  = 20
 
   vpc_id             = module.vpc.vpc_id
+  eks_security_group_id = module.eks.cluster_security_group_id
 
   subnet_ids = [
     module.vpc.private_azone_id,
@@ -125,7 +126,7 @@ module "bastion" {
 module "route53" {
   source      = "../../modules/route53"
   domain_name = "onurivit01.store"
-  alb_dns_name = "k8s-frontend-frontend-af87f59743-573931732.ap-northeast-2.elb.amazonaws.com"
+  alb_dns_name = "k8s-frontend-frontend-af87f59743-171113497.ap-northeast-2.elb.amazonaws.com"
   alb_zone_id  = "ZWKZPGTI48KDX"
 }
 
