@@ -1,9 +1,8 @@
 ---
-image:
-  name: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
-  tag: dev3
 frontend:
-  replicas: 2
+  imageRegistry: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
+  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev3 # 추후 변경 필요
+  replicas: 3
   imagePullSecretName: gcp-artifact-registry
   secret: frontend-secret
   containerPort: 3000
@@ -15,6 +14,7 @@ frontend:
     limits:
       memory: "2.5Gi"
       cpu: "1"
+
   livenessProbe:
     httpGet:
       path: /api/healthcheck
