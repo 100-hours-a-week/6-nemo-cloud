@@ -6,9 +6,10 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: backend=asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
+    argocd-image-updater.argoproj.io/image-list: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
     argocd-image-updater.argoproj.io/backend.update-strategy: newest-build
     argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/backend.pull-secret: pullsecret:argocd/gcp-artifact-registry
 spec:
   project: default
   source:
