@@ -4,5 +4,5 @@ helm:
     value: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
     forcestring: true
   - name: image.tag
-    value: prod-20250721-1503
+    value: prod-20250721-1633
     forcestring: true
