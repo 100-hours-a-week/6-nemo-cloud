@@ -25,7 +25,7 @@ spec:
             - name: KAFKA_BROKERCONNECT
               value: "{{ .Values.kafka.brokerConnect }}"
             - name: KAFKA_PROPERTIES
-              value: |
-                {{ .Values.kafka.properties | nindent 16 }}
+              value: |-
+{{ .Values.kafka.properties | indent 16 }}
             - name: KAFKA_SASL_JAAS_CONFIG
-              value: "{{ .Values.kafka.saslJaasConfig }}" 
+              value: "{{ .Values.kafka.saslJaasConfig }}"
