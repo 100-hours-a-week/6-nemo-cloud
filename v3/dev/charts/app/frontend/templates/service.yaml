@@ -8,6 +8,6 @@ spec:
   selector:
     app: frontend
   ports:
-    - port: {{ .Values.frontend.servicePort }}
-      targetPort: {{ .Values.frontend.containerPort }}
+    - port: {{ .Values.servicePort }}
+      targetPort: {{ .Values.containerPort }}
   type: ClusterIP
