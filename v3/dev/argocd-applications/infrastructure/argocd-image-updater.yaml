@@ -47,4 +47,28 @@ data:
         credentials: pullsecret:app/gar-helm-repo
         default: true
         name: gcp
-        prefix: asia-northeast3-docker.pkg.dev 
+        prefix: asia-northeast3-docker.pkg.dev
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: image-updater-secret-reader
+  namespace: app
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: image-updater-secret-reader-binding
+  namespace: app
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: image-updater-secret-reader
+subjects:
+- kind: ServiceAccount
+  name: argocd-image-updater
+  namespace: argocd 

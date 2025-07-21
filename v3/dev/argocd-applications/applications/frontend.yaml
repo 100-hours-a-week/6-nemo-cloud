@@ -9,7 +9,7 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: frontend=asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
     argocd-image-updater.argoproj.io/frontend.pull-secret: app/gar-helm-repo
     argocd-image-updater.argoproj.io/frontend.update-strategy: newest-build
-    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^dev3$
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^dev-[0-9]{8}-[0-9]{4}$
     argocd-image-updater.argoproj.io/frontend.values: image.tag
 spec:
   project: default
