@@ -1,9 +1,7 @@
 ---
 frontend:
   imageRegistry: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
-  image:
-    name: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend
-    tag: dev3
+  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/frontend:dev3
   replicas: 2
   imagePullSecretName: gcp-artifact-registry
   secret: frontend-secret
@@ -28,3 +26,5 @@ frontend:
       port: 3000
     initialDelaySeconds: 10
     periodSeconds: 10
+
+    mo-v2/registry/frontend tag:dev3]
