@@ -10,6 +10,7 @@ metadata:
     argocd-image-updater.argoproj.io/backend.update-strategy: newest-build
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/backend.pull-secret: pullsecret:argocd/gcp-artifact-registry
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^dev-202
 spec:
   project: default
   source:
