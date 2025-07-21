@@ -1,7 +1,7 @@
 ---
 backend:
   imageRegistry: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
-  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:dev-latest
+  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:dev-20250721-1407
   replicas: 3
   imagePullSecretName: gcp-artifact-registry
   secret: backend-secret
