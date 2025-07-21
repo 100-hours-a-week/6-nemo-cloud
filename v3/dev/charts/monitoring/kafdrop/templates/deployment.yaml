@@ -2,8 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafdrop
+  namespace: kafka
+  labels:
+    app: kafdrop
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: kafdrop
@@ -21,3 +24,8 @@ spec:
           env:
             - name: KAFKA_BROKERCONNECT
               value: "{{ .Values.kafka.brokerConnect }}"
+            - name: KAFKA_PROPERTIES
+              value: |
+                {{ .Values.kafka.properties | nindent 16 }}
+            - name: KAFKA_SASL_JAAS_CONFIG
+              value: "{{ .Values.kafka.saslJaasConfig }}" 

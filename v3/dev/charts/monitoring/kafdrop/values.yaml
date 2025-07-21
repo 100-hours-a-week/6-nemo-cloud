@@ -1,18 +1,17 @@
+replicaCount: 1
 image:
   repository: obsidiandynamics/kafdrop
-  tag: "4.0.1"
+  tag: "3.30.0"
   pullPolicy: IfNotPresent
-
-kafka:
-  brokerConnect: kafka.kafka.svc.cluster.local:9092
 
 service:
   type: NodePort
   port: 9000
   nodePort: 30900
 
-ingress:
-  enabled: true
-  className: nginx
-  host: kafdrop.dev3.nemo.ai.kr
-  tlsSecret: kafdrop-tls
+kafka:
+  brokerConnect: "kafka.kafka.svc.cluster.local:9092"
+  properties: |
+    security.protocol=SASL_PLAINTEXT
+    sasl.mechanism=PLAIN
+  saslJaasConfig: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"user1\" password=\"Pcu0zU6C8A\";" 
