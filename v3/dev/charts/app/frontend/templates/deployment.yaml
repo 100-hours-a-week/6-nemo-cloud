@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
-  replicas: {{ .Values.frontend.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: frontend
@@ -14,33 +14,31 @@ spec:
         app: frontend
     spec:
       imagePullSecrets:
-        - name: {{ .Values.frontend.imagePullSecretName }}
+        - name: {{ .Values.imagePullSecretName }}
       containers:
         - name: frontend
-          image: {{ .Values.frontend.image }}
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
           ports:
-            - containerPort: {{ .Values.frontend.containerPort }}
+            - containerPort: {{ .Values.containerPort }}
           resources:
             requests:
-              memory: {{ .Values.frontend.resources.requests.memory }}
-              cpu: {{ .Values.frontend.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
             limits:
-              memory: {{ .Values.frontend.resources.limits.memory }}
-              cpu: {{ .Values.frontend.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.frontend.livenessProbe.httpGet.path }}
-              port: {{ .Values.frontend.livenessProbe.httpGet.port }}
-            initialDelaySeconds:
-              {{ .Values.frontend.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.frontend.livenessProbe.periodSeconds }}
+              path: {{ .Values.livenessProbe.httpGet.path }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.frontend.readinessProbe.httpGet.path }}
-              port: {{ .Values.frontend.readinessProbe.httpGet.port }}
-            initialDelaySeconds:
-              {{ .Values.frontend.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.frontend.readinessProbe.periodSeconds }}
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           envFrom:
             - secretRef:
-                name: {{ .Values.frontend.secret }}
+                name: {{ .Values.secret }}

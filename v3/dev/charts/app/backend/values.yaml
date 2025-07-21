@@ -1,28 +1,28 @@
 ---
-backend:
-  imageRegistry: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
-  image: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend:dev-20250721-1407
-  replicas: 3
-  imagePullSecretName: gcp-artifact-registry
-  secret: backend-secret
-  containerPort: 8080
-  servicePort: 8080
-  resources:
-    requests:
-      memory: "2Gi"
-      cpu: "0.5"
-    limits:
-      memory: "3Gi"
-      cpu: "1"
-  livenessProbe:
-    httpGet:
-      path: /actuator/health
-      port: 8080
-    initialDelaySeconds: 60
-    periodSeconds: 30
-  readinessProbe:
-    httpGet:
-      path: /actuator/health
-      port: 8080
-    initialDelaySeconds: 30
-    periodSeconds: 10
+image:
+  name: asia-northeast3-docker.pkg.dev/nemo-v2/registry/backend
+  tag: dev-20250721-1407
+replicas: 3
+imagePullSecretName: gcp-artifact-registry
+secret: backend-secret
+containerPort: 8080
+servicePort: 8080
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "0.5"
+  limits:
+    memory: "3Gi"
+    cpu: "1"
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 30
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
