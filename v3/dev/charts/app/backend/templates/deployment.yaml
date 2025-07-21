@@ -17,7 +17,7 @@ spec:
         - name: {{ .Values.backend.imagePullSecretName }}
       containers:
         - name: backend
-          image: {{ .Values.backend.image }}
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
           ports:
             - containerPort: {{ .Values.backend.containerPort }}
           resources:
