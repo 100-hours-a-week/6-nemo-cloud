@@ -11,5 +11,20 @@ data:
     HOSTNAME=$(hostname)
     NODE_ID=$(echo "${HOSTNAME}" | grep -o '[0-9]*')
     export KAFKA_CFG_NODE_ID=$NODE_ID
-    export KAFKA_CFG_ADVERTISED_LISTENERS="PLAINTEXT://${HOSTNAME}.{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }},EXTERNAL://kafka-external-${NODE_ID}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.externalPort }}"
+    # Get external LoadBalancer hostname for this specific broker
+    EXTERNAL_HOSTNAME=""
+    while [ -z "$EXTERNAL_HOSTNAME" ]; do
+      echo "Waiting for LoadBalancer hostname for kafka-external-${NODE_ID}..."
+      EXTERNAL_HOSTNAME=$(kubectl get svc kafka-external-${NODE_ID} -n {{ .Release.Namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+      if [ -z "$EXTERNAL_HOSTNAME" ]; then
+        EXTERNAL_HOSTNAME=$(kubectl get svc kafka-external-${NODE_ID} -n {{ .Release.Namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
+      fi
+      if [ -z "$EXTERNAL_HOSTNAME" ]; then
+        echo "No external hostname/IP found, retrying in 10 seconds..."
+        sleep 10
+      fi
+    done
+    
+    echo "Using external hostname: $EXTERNAL_HOSTNAME"
+    export KAFKA_CFG_ADVERTISED_LISTENERS="PLAINTEXT://${HOSTNAME}.{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }},EXTERNAL://${EXTERNAL_HOSTNAME}:{{ .Values.kafka.container.externalPort }}"
     exec /opt/bitnami/scripts/kafka/entrypoint.sh /opt/bitnami/scripts/kafka/run.sh

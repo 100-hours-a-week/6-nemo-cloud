@@ -2,18 +2,21 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Values.kafka.statefulset.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: kafka
 spec:
-  serviceAccountName: {{ .Values.serviceAccount.name }}
   serviceName: {{ .Values.kafka.service.name }}
   replicas: {{ .Values.kafka.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app.kubernetes.io/name: kafka
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app.kubernetes.io/name: kafka
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- if .Values.kafka.volumePermissions.enabled }}
       initContainers:
         - name: volume-permissions
@@ -22,9 +25,6 @@ spec:
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami/kafka
-            - name: start-script
-              mountPath: /opt/bitnami/scripts/custom
-              readOnly: true
           securityContext:
             runAsUser: {{ .Values.kafka.volumePermissions.securityContext.runAsUser | default 0 }}
             runAsGroup: {{ .Values.kafka.volumePermissions.securityContext.runAsGroup | default 0 }}
@@ -36,14 +36,12 @@ spec:
           command: ["/bin/bash", "/opt/bitnami/scripts/custom/start.sh"]
           ports:
             - containerPort: {{ .Values.kafka.container.port }}
+              name: kafka
             - containerPort: {{ .Values.kafka.container.controllerPort }}
-            - containerPort: {{ .Values.kafka.container.externalPort }} # 👈 외부 포트 추가
+              name: controller
+            - containerPort: {{ .Values.kafka.container.externalPort }}
+              name: external
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-
             - name: KAFKA_CFG_ZOOKEEPER_CONNECT
               value: >-
                 zookeeper-0.zookeeper-headless.kafka.svc.cluster.local:2181,
@@ -56,13 +54,8 @@ spec:
             - name: KAFKA_CFG_LISTENERS
               value: "PLAINTEXT://:{{ .Values.kafka.container.port }},EXTERNAL://:{{ .Values.kafka.container.externalPort }}"
 
-            - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: >-
-                PLAINTEXT://$(POD_NAME).{{ .Values.kafka.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.port }},
-                EXTERNAL://kafka-external-$(BROKER_ID_SUFFIX).{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.kafka.container.externalPort }}
-            
             - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
-              value: EXTERNAL
+              value: "PLAINTEXT"
 
           volumeMounts:
             - name: kafka-data
