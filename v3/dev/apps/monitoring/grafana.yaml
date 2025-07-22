@@ -12,3 +12,10 @@ spec:
     helm:
       values: |
         # 공식 기본값 사용 (별도 설정 없음) 
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true 
