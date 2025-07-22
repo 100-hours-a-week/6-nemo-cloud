@@ -1,0 +1,22 @@
+{{- if .Values.kafka.nodePortAccess.enabled }}
+{{- range $i := until (.Values.kafka.replicaCount | int) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-nodeport-{{ $i }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: kafka
+spec:
+  type: NodePort
+  selector:
+    statefulset.kubernetes.io/pod-name: kafka-{{ $i }}
+  ports:
+    - name: external
+      port: {{ $.Values.kafka.container.externalPort }}
+      targetPort: {{ $.Values.kafka.container.externalPort }}
+      nodePort: {{ add 30094 $i }}
+      protocol: TCP
+{{- end }}
+{{- end }}

@@ -10,9 +10,6 @@ resource "aws_eks_cluster" "this" {
   depends_on = [aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy]
 }
 
-
-
-
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = var.node_group_name
@@ -27,11 +24,86 @@ resource "aws_eks_node_group" "this" {
   # ??? instance_type 는 복수형 배열만 지원됩니다
   instance_types = var.instance_types
 
+  # 보안 그룹 추가 (조건부로 SSH 키 설정)
+  dynamic "remote_access" {
+    for_each = var.key_pair_name != "" ? [1] : []
+    content {
+      ec2_ssh_key = var.key_pair_name
+      source_security_group_ids = [aws_security_group.node_group.id]
+    }
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryReadOnly,
     aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy
   ]
+}
+
+# EKS 노드 그룹용 보안 그룹
+resource "aws_security_group" "node_group" {
+  name        = "${var.cluster_name}-node-group-sg"
+  description = "Security group for EKS node group"
+  vpc_id      = var.vpc_id
+
+  # Kafka NodePort 접근 허용 (AI 인스턴스에서)
+  ingress {
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "NodePort range for Kafka external access"
+  }
+
+  # 클러스터 내부 통신
+  ingress {
+    from_port = 0
+    to_port   = 65535
+    protocol  = "tcp"
+    self      = true
+    description = "All traffic from same security group"
+  }
+
+  # HTTPS
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS"
+  }
+
+  # SSH (옵션)
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "SSH from VPC"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "All outbound traffic"
+  }
+
+  tags = {
+    Name = "${var.cluster_name}-node-group-sg"
+  }
+}
+
+# 알려진 EKS remote access 보안 그룹에 직접 NodePort 규칙 추가
+resource "aws_security_group_rule" "eks_remote_access_nodeport_direct" {
+  type              = "ingress"
+  from_port         = 30000
+  to_port           = 32767
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr]
+  security_group_id = "sg-0fff56975bae37153"  # 확인된 EKS remote access 보안 그룹 ID
+  description       = "NodePort range for Kafka external access"
 }
 
 ######################################

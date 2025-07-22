@@ -1,0 +1,22 @@
+{{- if .Values.kafka.singleExternalAccess.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-external-single
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: kafka
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: kafka  # 모든 Kafka Pod 선택
+  ports:
+    - name: kafka
+      port: 9092
+      targetPort: 9092
+      protocol: TCP
+{{- end }}

@@ -71,11 +71,17 @@ kafka:
 
 
   externalAccess:
-    enabled: true
+    enabled: false  # 기존 multi-LoadBalancer 비활성화
     service:
       type: LoadBalancer
       ports:
         external: 9094
     autoDiscovery:
       enabled: true
+
+  singleExternalAccess:
+    enabled: true   # 단일 LoadBalancer 활성화
+
+  nodePortAccess:
+    enabled: true
 

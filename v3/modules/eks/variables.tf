@@ -33,3 +33,14 @@ variable "min_capacity" {
 variable "instance_types" {
   type    = list(string)
 }
+
+variable "vpc_cidr" {
+  type        = string
+  description = "VPC CIDR block for security group rules"
+}
+
+variable "key_pair_name" {
+  type        = string
+  description = "EC2 Key Pair name for SSH access"
+  default     = ""
+}

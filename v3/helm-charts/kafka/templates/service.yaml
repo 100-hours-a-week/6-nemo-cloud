@@ -32,14 +32,21 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     app.kubernetes.io/name: kafka
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    # Static IP 할당 (Elastic IP 사용)
+    service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "{{ index $.Values.kafka.externalAccess.elasticIPs $i }}"
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  externalTrafficPolicy: Local
   selector:
     statefulset.kubernetes.io/pod-name: kafka-{{ $i }}
   ports:
     - name: external
       port: {{ $.Values.kafka.container.externalPort }}
       targetPort: {{ $.Values.kafka.container.externalPort }}
+      protocol: TCP
 {{- end }}
 {{- end }}

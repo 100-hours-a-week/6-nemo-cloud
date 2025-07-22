@@ -14,6 +14,7 @@ module "eks" {
 
   # 이렇게 변수를 가지고 오고싶을때는 VPC 모듈에서 output으로 가지고 와야함. 
   vpc_id             = module.vpc.vpc_id
+  vpc_cidr           = "10.0.0.0/16"
   subnet_ids         = [module.vpc.private_azone_id, module.vpc.private_bzone_id, module.vpc.private_czone_id]
 
   node_group_name    = "nemo_node_group"
@@ -21,6 +22,7 @@ module "eks" {
   max_capacity       = 3
   min_capacity       = 3
   instance_types     = ["t3.large"]
+  key_pair_name      = "keypair-kube-master"  # SSH 접근용 키페어
 }
 
 module "ebs_csi_driver" {
