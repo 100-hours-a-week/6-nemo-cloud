@@ -14,13 +14,17 @@ spec:
     helm:
       values: |
         replicaCount: 3
+        # SASL 인증을 비활성화하고 PLAINTEXT를 사용합니다.
+        auth:
+          enabled: false
         global:
           storageClass: local-path
-        controller:
-          persistence:
-            enabled: true
-            size: 8Gi
-            storageClass: local-path
+        # Broker(StatefulSet)의 데이터 저장 설정
+        persistence:
+          enabled: true
+          size: 8Gi
+          storageClass: local-path
+        # Zookeeper 설정
         zookeeper:
           replicaCount: 3
           persistence:
