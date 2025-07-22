@@ -6,15 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/kubeadm
-    path: v3/dev
-    helm:
-      repoURL: https://prometheus-community.github.io/helm-charts
-      chart: prometheus
-      targetRevision: 25.8.0
-      valueFiles:
-        - v3/dev/charts/monitoring/prometheus.values.yaml
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus
+    targetRevision: 25.8.0
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

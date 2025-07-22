@@ -6,15 +6,17 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/kubeadm
-    path: v3/dev
+    repoURL: https://grafana.github.io/helm-charts
+    chart: loki
+    targetRevision: 6.6.2
     helm:
-      repoURL: https://grafana.github.io/helm-charts
-      chart: loki
-      targetRevision: 6.6.2
-      valueFiles:
-        - v3/dev/charts/logging/loki.values.yaml
+      values: |
+        loki:
+          storage:
+            type: filesystem
+            filesystem:
+              chunks_directory: /var/loki/chunks
+              rules_directory: /var/loki/rules
   destination:
     server: https://kubernetes.default.svc
     namespace: logging

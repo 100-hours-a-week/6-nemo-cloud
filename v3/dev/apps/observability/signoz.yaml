@@ -6,15 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/kubeadm
-    path: v3/dev
-    helm:
-      repoURL: https://charts.signoz.io
-      chart: signoz
-      targetRevision: 0.36.1
-      valueFiles:
-        - v3/dev/charts/observability/signoz.values.yaml
+    repoURL: https://charts.signoz.io
+    chart: signoz
+    targetRevision: 0.35.0
   destination:
     server: https://kubernetes.default.svc
     namespace: observability

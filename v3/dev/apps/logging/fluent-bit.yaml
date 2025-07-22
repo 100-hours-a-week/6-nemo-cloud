@@ -6,15 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
-    targetRevision: infra/kubeadm
-    path: v3/dev
-    helm:
-      repoURL: https://fluent.github.io/helm-charts
-      chart: fluent-bit
-      targetRevision: 0.46.8
-      valueFiles:
-        - v3/dev/charts/logging/fluent-bit.values.yaml
+    repoURL: https://fluent.github.io/helm-charts
+    chart: fluent-bit
+    targetRevision: 0.46.8
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
