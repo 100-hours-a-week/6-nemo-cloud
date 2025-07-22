@@ -18,19 +18,19 @@ spec:
         auth:
           enabled: false
         global:
-          storageClass: local-path
+          storageClass: hostpath
         # Broker(StatefulSet)의 데이터 저장 설정
         persistence:
           enabled: true
           size: 8Gi
-          storageClass: local-path
+          storageClass: hostpath
         # Zookeeper 설정
         zookeeper:
           replicaCount: 3
           persistence:
             enabled: true
             size: 8Gi
-            storageClass: local-path
+            storageClass: hostpath
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka

@@ -2,6 +2,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: hostpath
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
 provisioner: kubernetes.io/hostpath
 volumeBindingMode: WaitForFirstConsumer
 reclaimPolicy: Delete 

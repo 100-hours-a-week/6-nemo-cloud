@@ -4,7 +4,7 @@ mysql:
   secretName: mysql-secret
   storage: 5Gi
 storageClass:
-  name: local-path
+  name: hostpath
 
 resources:
   requests:

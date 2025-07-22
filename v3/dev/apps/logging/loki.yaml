@@ -20,7 +20,7 @@ spec:
         persistence:
           enabled: true
           size: 10Gi
-          storageClassName: local-path
+          storageClassName: hostpath
   destination:
     server: https://kubernetes.default.svc
     namespace: logging

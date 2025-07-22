@@ -34,8 +34,7 @@ spec:
       name: redis-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: local-path
+      storageClassName: hostpath
       resources:
         requests:
-          storage: 1Gi
-      storageClassName: local-path 
+          storage: 1Gi 
