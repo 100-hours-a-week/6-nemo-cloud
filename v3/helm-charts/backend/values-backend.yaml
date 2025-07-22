@@ -9,3 +9,8 @@ backend:
   replicas: 3
   imagePullSecrets:
     - name: regcred   # ✅ ECR용 이미지 Pull 시크릿
+
+  # 카프카 내부 접근용 환경변수 추가
+  env:
+    KAFKA_BOOTSTRAP_SERVERS: "kafka-headless.kafka.svc.cluster.local:9092"
+    SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-headless.kafka.svc.cluster.local:9092"

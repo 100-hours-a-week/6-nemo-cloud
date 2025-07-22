@@ -55,6 +55,15 @@ resource "aws_security_group" "node_group" {
     description = "NodePort range for Kafka external access"
   }
 
+  # Kafka external port 접근 허용
+  ingress {
+    from_port   = 9094
+    to_port     = 9094
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "Kafka external access port"
+  }
+
   # 클러스터 내부 통신
   ingress {
     from_port = 0
@@ -104,6 +113,17 @@ resource "aws_security_group_rule" "eks_remote_access_nodeport_direct" {
   cidr_blocks       = [var.vpc_cidr]
   security_group_id = "sg-0fff56975bae37153"  # 확인된 EKS remote access 보안 그룹 ID
   description       = "NodePort range for Kafka external access"
+}
+
+# Kafka external port도 추가
+resource "aws_security_group_rule" "eks_remote_access_kafka_external" {
+  type              = "ingress"
+  from_port         = 9094
+  to_port           = 9094
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr]
+  security_group_id = "sg-0fff56975bae37153"
+  description       = "Kafka external access port"
 }
 
 ######################################

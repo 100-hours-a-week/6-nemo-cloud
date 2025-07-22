@@ -3,16 +3,17 @@ serviceAccount:
   name: kafka-sa
 
 kafka:
-  externalAdvertisedHost: a1fea77a8ae4b44148ca9853dbf320e3-5176641.ap-northeast-2.elb.amazonaws.com
+  # EKS 워커 노드의 실제 IP 또는 NLB 주소로 변경 필요
+  externalAdvertisedHost: k8s-frontend-frontend-af87f59743-171113497.ap-northeast-2.elb.amazonaws.com
   replicaCount: 3
 
   statefulset:
     name: kafka
 
   container:
-    port: 9092
+    port: 9092          # 내부 통신용
     controllerPort: 9093
-    externalPort: 9094  # 외부에서 접근할 포트
+    externalPort: 9094  # 외부 접근용
   
   image:
     repository: bitnami/kafka
@@ -32,11 +33,11 @@ kafka:
 
   persistence:
     enabled: true
-    storageClass: gp3  # # 이미 존재하는 gp3 StorageClass를 참조만 함
+    storageClass: gp3
     size: 10Gi
 
   storageClass:
-    create: false  #Kafka Helm Chart에서 StorageClass 생성 시도하지 않도록 차단
+    create: false
 
   affinity:
     podAntiAffinity:
@@ -55,33 +56,17 @@ kafka:
       enabled: true
       storageClass: gp3
       size: 10Gi
-
     
   kraft:
     enabled: false
 
-  #kraft:
-  #  enabled: true
-  #  clusterId: 2N0jE9q6QDWYxidBhVkb5w  # 클러스터 고정 UUID
-  #  quorumVoters: |
-  #    0@kafka-controller-0.kafka-headless.kafka.svc.cluster.local:9093,\
-  #    1@kafka-controller-1.kafka-headless.kafka.svc.cluster.local:9093,\
-  #    2@kafka-controller-2.kafka-headless.kafka.svc.cluster.local:9093
-
-
-
+  # 불필요한 외부 접근 방식들 정리
   externalAccess:
-    enabled: false  # 기존 multi-LoadBalancer 비활성화
-    service:
-      type: LoadBalancer
-      ports:
-        external: 9094
-    autoDiscovery:
-      enabled: true
-
+    enabled: false
+    
   singleExternalAccess:
-    enabled: true   # 단일 LoadBalancer 활성화
+    enabled: false
 
+  # NodePort만 외부 접근용으로 활성화
   nodePortAccess:
     enabled: true
-
