@@ -13,7 +13,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.loki.host }}
-    secretName: dev-nemo-tls
+    secretName: loki-tls
   rules:
   - host: {{ .Values.loki.host }}
     http:

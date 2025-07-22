@@ -13,7 +13,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.grafana.host }}
-    secretName: dev-nemo-tls
+    secretName: grafana-tls
   rules:
   - host: {{ .Values.grafana.host }}
     http:

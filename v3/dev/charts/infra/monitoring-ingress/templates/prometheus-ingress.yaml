@@ -13,7 +13,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.prometheus.host }}
-    secretName: dev-nemo-tls
+    secretName: prometheus-tls
   rules:
   - host: {{ .Values.prometheus.host }}
     http:

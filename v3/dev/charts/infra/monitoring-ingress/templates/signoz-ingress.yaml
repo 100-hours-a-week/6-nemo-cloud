@@ -13,7 +13,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.signoz.host }}
-    secretName: dev-nemo-tls
+    secretName: signoz-tls
   rules:
   - host: {{ .Values.signoz.host }}
     http:
