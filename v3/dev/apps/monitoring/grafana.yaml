@@ -6,12 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: grafana
-    targetRevision: 7.3.9
+    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
+    targetRevision: infra/kubeadm
+    path: v3/dev
     helm:
+      repoURL: https://grafana.github.io/helm-charts
+      chart: grafana
+      targetRevision: 7.3.9
       valueFiles:
-        - ../../charts/monitoring/grafana.values.yaml
+        - charts/monitoring/grafana.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
