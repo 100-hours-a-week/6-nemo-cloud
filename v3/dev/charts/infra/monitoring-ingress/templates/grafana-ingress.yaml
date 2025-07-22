@@ -5,19 +5,15 @@ metadata:
   name: grafana-ingress
   namespace: {{ .Values.grafana.namespace | default .Values.namespace }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    {{- if .Values.tlsSecret }}
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    {{- end }}
+    cert-manager.io/cluster-issuer: letsencrypt-dev
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
-  {{- if .Values.tlsSecret }}
   tls:
   - hosts:
     - {{ .Values.grafana.host }}
-    secretName: {{ .Values.tlsSecret }}
-  {{- end }}
+    secretName: dev-nemo-tls
   rules:
   - host: {{ .Values.grafana.host }}
     http:
