@@ -14,7 +14,7 @@ spec:
       chart: signoz
       targetRevision: 0.36.1
       valueFiles:
-        - charts/observability/signoz.values.yaml
+        - v3/dev/charts/observability/signoz.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: observability

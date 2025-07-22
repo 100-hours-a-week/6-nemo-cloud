@@ -14,7 +14,7 @@ spec:
       chart: prometheus
       targetRevision: 25.8.0
       valueFiles:
-        - charts/monitoring/prometheus.values.yaml
+        - v3/dev/charts/monitoring/prometheus.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

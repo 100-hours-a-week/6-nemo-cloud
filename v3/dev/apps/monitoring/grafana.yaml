@@ -14,7 +14,7 @@ spec:
       chart: grafana
       targetRevision: 7.3.9
       valueFiles:
-        - charts/monitoring/grafana.values.yaml
+        - v3/dev/charts/monitoring/grafana.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

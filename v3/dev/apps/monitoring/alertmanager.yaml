@@ -14,7 +14,7 @@ spec:
       chart: alertmanager
       targetRevision: 1.8.0
       valueFiles:
-        - charts/monitoring/alertmanager.values.yaml
+        - v3/dev/charts/monitoring/alertmanager.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

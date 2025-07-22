@@ -14,7 +14,7 @@ spec:
       chart: loki
       targetRevision: 6.6.2
       valueFiles:
-        - charts/logging/loki.values.yaml
+        - v3/dev/charts/logging/loki.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: logging

@@ -14,7 +14,7 @@ spec:
       chart: fluent-bit
       targetRevision: 0.46.8
       valueFiles:
-        - charts/logging/fluent-bit.values.yaml
+        - v3/dev/charts/logging/fluent-bit.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
