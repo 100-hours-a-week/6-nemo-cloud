@@ -11,16 +11,6 @@ spec:
     targetRevision: 7.3.9
     helm:
       values: |
+        # 스토리지만 hostpath로 설정, 나머지는 공식 기본값 사용
         persistence:
-          enabled: true
-          size: 5Gi
-          storageClassName: hostpath
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true 
+          storageClassName: hostpath 

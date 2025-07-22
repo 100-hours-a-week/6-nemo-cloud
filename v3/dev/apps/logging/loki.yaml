@@ -11,15 +11,8 @@ spec:
     targetRevision: 6.6.2
     helm:
       values: |
-        loki:
-          storage:
-            type: filesystem
-            filesystem:
-              chunks_directory: /var/loki/chunks
-              rules_directory: /var/loki/rules
+        # 스토리지만 hostpath로 설정, 나머지는 공식 기본값 사용
         persistence:
-          enabled: true
-          size: 10Gi
           storageClassName: hostpath
   destination:
     server: https://kubernetes.default.svc

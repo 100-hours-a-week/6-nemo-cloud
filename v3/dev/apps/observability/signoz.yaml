@@ -9,6 +9,12 @@ spec:
     repoURL: https://charts.signoz.io
     chart: signoz
     targetRevision: 0.35.0
+    helm:
+      values: |
+        # 스토리지만 hostpath로 설정, 나머지는 공식 기본값 사용
+        clickhouse:
+          persistence:
+            storageClassName: hostpath
   destination:
     server: https://kubernetes.default.svc
     namespace: observability

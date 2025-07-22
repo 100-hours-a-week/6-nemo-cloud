@@ -11,15 +11,12 @@ spec:
     targetRevision: 25.8.0
     helm:
       values: |
+        # 스토리지만 hostpath로 설정, 나머지는 공식 기본값 사용
         server:
           persistentVolume:
-            enabled: true
-            size: 8Gi
             storageClass: hostpath
         alertmanager:
           persistentVolume:
-            enabled: true
-            size: 1Gi
             storageClass: hostpath
   destination:
     server: https://kubernetes.default.svc
