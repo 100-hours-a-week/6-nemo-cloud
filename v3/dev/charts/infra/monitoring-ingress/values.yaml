@@ -1,0 +1,33 @@
+# Monitoring Stack Ingress Configuration
+namespace: monitoring
+tlsSecret: dev-nemo-tls
+
+# Grafana Configuration
+grafana:
+  enabled: true
+  host: grafana.dev3.nemo.ai.kr
+  service: grafana
+  port: 80
+
+# Prometheus Configuration
+prometheus:
+  enabled: true
+  host: prometheus.dev3.nemo.ai.kr
+  service: prometheus-server
+  port: 80
+
+# SigNoz Configuration
+signoz:
+  enabled: true
+  host: signoz.dev3.nemo.ai.kr
+  service: signoz-frontend
+  port: 3301
+  namespace: observability
+
+# Loki Configuration
+loki:
+  enabled: true
+  host: loki.dev3.nemo.ai.kr
+  service: loki-gateway
+  port: 80
+  namespace: observability 

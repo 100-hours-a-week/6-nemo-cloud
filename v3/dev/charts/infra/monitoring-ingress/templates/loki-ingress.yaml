@@ -1,0 +1,32 @@
+{{- if .Values.loki.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: loki-ingress
+  namespace: {{ .Values.loki.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    {{- if .Values.tlsSecret }}
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    {{- end }}
+spec:
+  ingressClassName: nginx
+  {{- if .Values.tlsSecret }}
+  tls:
+  - hosts:
+    - {{ .Values.loki.host }}
+    secretName: {{ .Values.tlsSecret }}
+  {{- end }}
+  rules:
+  - host: {{ .Values.loki.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.loki.service }}
+            port:
+              number: {{ .Values.loki.port }}
+{{- end }} 
