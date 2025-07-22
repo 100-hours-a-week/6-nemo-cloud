@@ -8,16 +8,22 @@ spec:
   source:
     repoURL: https://grafana.github.io/helm-charts
     chart: loki
-    targetRevision: 6.6.2
+    targetRevision: 5.41.4       # 원하는 버전
     helm:
       values: |
-        # 공식 기본값 사용 (별도 설정 없음)
+        isDefault: true
+        persistence:
+          enabled: true
+          size: 10Gi
+        tableManager:
+          retention_deletes_enabled: true
+          retention_period: 168h
   destination:
     server: https://kubernetes.default.svc
-    namespace: logging
+    namespace: observability
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true 
+      - CreateNamespace=true
