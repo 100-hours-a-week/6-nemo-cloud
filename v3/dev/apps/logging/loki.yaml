@@ -18,6 +18,8 @@ spec:
         tableManager:
           retention_deletes_enabled: true
           retention_period: 168h
+        grafana-agent:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: observability
