@@ -17,6 +17,10 @@ spec:
             filesystem:
               chunks_directory: /var/loki/chunks
               rules_directory: /var/loki/rules
+        persistence:
+          enabled: true
+          size: 10Gi
+          storageClassName: local-path
   destination:
     server: https://kubernetes.default.svc
     namespace: logging

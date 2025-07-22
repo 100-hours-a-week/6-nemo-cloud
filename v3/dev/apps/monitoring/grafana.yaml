@@ -9,6 +9,12 @@ spec:
     repoURL: https://grafana.github.io/helm-charts
     chart: grafana
     targetRevision: 7.3.9
+    helm:
+      values: |
+        persistence:
+          enabled: true
+          size: 5Gi
+          storageClassName: local-path
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
