@@ -5,5 +5,5 @@ metadata:
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: kubernetes.io/hostpath
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 reclaimPolicy: Delete 

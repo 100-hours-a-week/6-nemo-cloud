@@ -11,6 +11,4 @@ spec:
     targetRevision: 7.3.9
     helm:
       values: |
-        # 스토리지만 hostpath로 설정, 나머지는 공식 기본값 사용
-        persistence:
-          storageClassName: hostpath 
+        # 공식 기본값 사용 (별도 설정 없음) 
