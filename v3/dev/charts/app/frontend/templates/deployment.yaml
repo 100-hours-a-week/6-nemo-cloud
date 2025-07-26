@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.containerPort }}"
+        prometheus.io/path: "/metrics"
     spec:
       imagePullSecrets:
         - name: {{ .Values.imagePullSecretName }}

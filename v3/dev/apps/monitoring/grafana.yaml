@@ -11,11 +11,27 @@ spec:
     targetRevision: 7.3.9
     helm:
       values: |
-        # 공식 기본값 사용 (별도 설정 없음) 
+        adminUser: admin
+        adminPassword: admin
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Prometheus
+                type: prometheus
+                url: http://prometheus-server.monitoring.svc.cluster.local
+                access: proxy
+                isDefault: true
+              - name: Loki
+                type: loki
+                url: http://loki-gateway.observability.svc.cluster.local
+                access: proxy
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true 
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 
