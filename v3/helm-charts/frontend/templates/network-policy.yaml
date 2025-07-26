@@ -1,0 +1,3 @@
+# Network policy is no longer needed
+# Both frontend and backend are now in the same namespace (frontend)
+# Same-namespace communication is allowed by default

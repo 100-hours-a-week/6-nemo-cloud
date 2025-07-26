@@ -1,0 +1,78 @@
+config:
+  registries:
+    - name: aws-ecr
+      prefix: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
+      api_url: https://084375578827.dkr.ecr.ap-northeast-2.amazonaws.com
+      ping: true
+      credentials: ext:/scripts/ecr-login.sh
+      credsexpire: 10h
+
+  git:
+    branch: infra/applications
+    email: onurivit01@gmail.com
+    user: halfmoon01
+    commitMessageTemplate: "🚀 {{.AppName}}: update image to {{.NewTag}}"
+
+authScripts:
+  enabled: true
+  scripts:
+    ecr-login.sh: |
+      #!/bin/sh
+      
+      # 모든 AWS 환경변수 설정
+      export AWS_CONFIG_FILE=/tmp/aws-config
+      export AWS_SHARED_CREDENTIALS_FILE=/tmp/aws-credentials
+      export AWS_REGION=ap-northeast-2
+      export AWS_DEFAULT_REGION=ap-northeast-2
+      export AWS_ROLE_ARN=arn:aws:iam::084375578827:role/argocd-image-updater-irsa
+      export AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
+      
+      # ~/.aws 디렉토리 관련 환경변수 비활성화
+      unset HOME
+      export HOME=/tmp
+      
+      # AWS CLI가 홈 디렉토리를 찾지 못하도록 설정
+      export AWS_CONFIG_FILE=/tmp/aws-config
+      export AWS_SHARED_CREDENTIALS_FILE=/tmp/aws-credentials
+      
+      # 임시 AWS 설정 파일 생성
+      mkdir -p /tmp
+      cat > /tmp/aws-config << EOF
+      [default]
+      region = ap-northeast-2
+      output = json
+      credential_source = WebIdentityToken
+      role_arn = arn:aws:iam::084375578827:role/argocd-image-updater-irsa
+      web_identity_token_file = /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+      EOF
+      
+      # 빈 credentials 파일 생성
+      touch /tmp/aws-credentials
+      
+      # ECR 로그인 토큰 생성
+      echo "AWS:$(aws ecr get-login-password --region ap-northeast-2 2>/dev/null)"
+
+secret:
+  create: false  # External Secret으로 관리
+
+serviceAccount:
+  create: true
+  name: argocd-image-updater
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::084375578827:role/argocd-image-updater-irsa
+
+env:
+  - name: AWS_REGION
+    value: ap-northeast-2
+  - name: AWS_DEFAULT_REGION
+    value: ap-northeast-2
+  - name: AWS_ROLE_ARN
+    value: arn:aws:iam::084375578827:role/argocd-image-updater-irsa
+  - name: AWS_WEB_IDENTITY_TOKEN_FILE
+    value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+  - name: AWS_CONFIG_FILE
+    value: /tmp/aws-config
+  - name: AWS_SHARED_CREDENTIALS_FILE
+    value: /tmp/aws-credentials
+
+logLevel: info

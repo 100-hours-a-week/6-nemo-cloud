@@ -18,6 +18,8 @@ resource "aws_subnet" "public-a" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-public-azone-subnet"
+    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -29,6 +31,9 @@ resource "aws_subnet" "public-c" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-public-czone-subnet"
+    # 원하는 서브넷에 추가하기
+    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -39,6 +44,8 @@ resource "aws_subnet" "private-a" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-azone-subnet"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -48,6 +55,8 @@ resource "aws_subnet" "private-b" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-bzone-subnet"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -57,6 +66,8 @@ resource "aws_subnet" "private-c" {
   vpc_id                = aws_vpc.this.id
   tags = { 
     Name = "${var.name}-private-czone-subnet"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/nemo_EKS_kluster" = "owned"
   }
 }
 
@@ -74,6 +85,11 @@ resource "aws_route_table" "public" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.this.id
+  }
+  # VPC 내부 모든 서브넷 간 통신 허용
+  route {
+    cidr_block = var.vpc_cidr
+    gateway_id = "local"
   }
   tags = {
     Name = "${var.name}-public-RT"
@@ -115,6 +131,11 @@ resource "aws_route_table" "private" {
   route {
     cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.this.id
+  }
+  # VPC 내부 모든 서브넷 간 통신 허용
+  route {
+    cidr_block = var.vpc_cidr
+    gateway_id = "local"
   }
   tags = {
     Name = "${var.name}-private-RT"

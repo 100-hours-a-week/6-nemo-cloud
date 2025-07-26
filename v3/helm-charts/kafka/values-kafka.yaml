@@ -1,0 +1,72 @@
+serviceAccount:
+  create: false
+  name: kafka-sa
+
+kafka:
+  # EKS 워커 노드의 실제 IP 또는 NLB 주소로 변경 필요
+  externalAdvertisedHost: k8s-frontend-frontend-af87f59743-171113497.ap-northeast-2.elb.amazonaws.com
+  replicaCount: 3
+
+  statefulset:
+    name: kafka
+
+  container:
+    port: 9092          # 내부 통신용
+    controllerPort: 9093
+    externalPort: 9094  # 외부 접근용
+  
+  image:
+    repository: bitnami/kafka
+    tag: 3.6.0
+
+  service:
+    name: kafka-headless
+    type: ClusterIP
+    port: 9092
+    targetPort: 9092
+
+  volumePermissions:
+    enabled: true
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+
+  persistence:
+    enabled: true
+    storageClass: gp3
+    size: 10Gi
+
+  storageClass:
+    create: false
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: kafka
+            topologyKey: topology.kubernetes.io/zone
+
+  zookeeper:
+    enabled: true
+    replicaCount: 3
+    persistence:
+      enabled: true
+      storageClass: gp3
+      size: 10Gi
+    
+  kraft:
+    enabled: false
+
+  # 불필요한 외부 접근 방식들 정리
+  externalAccess:
+    enabled: false
+    
+  singleExternalAccess:
+    enabled: false
+
+  # NodePort만 외부 접근용으로 활성화
+  nodePortAccess:
+    enabled: true

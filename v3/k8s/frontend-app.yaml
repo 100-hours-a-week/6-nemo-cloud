@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: frontend
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: frontend=084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/frontend
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^prod-20.*
+    argocd-image-updater.argoproj.io/frontend.sort-tags: latest
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-branch: infra/applications
+    argocd-image-updater.argoproj.io/git-commit-message: "🎨 Frontend: update image to {{.NewTag}}"
+    notifications.argoproj.io/subscribe.on-deployed.discord: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.discord: ""
+    notifications.argoproj.io/subscribe.on-sync-succeeded.discord: ""
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
+    targetRevision: infra/applications
+    path:  v3/helm-charts/frontend
+    helm:
+      valueFiles:
+        - values-frontend.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: application  # frontend → application으로 통합
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -12,7 +12,15 @@ envs
 *.tfstate
 *.tfstate.backup
 
-v3/env/prod/files/node_modules/
-v3/env/prod/files/package-lock.json
-v3/env/prod/files/package.json
+v3/terraform/prod/files/node_modules/
+v3/terraform/prod/files/package-lock.json
+v3/terraform/prod/files/package.json
  
+ v3/modules/argocd_image_updater/terraform.tfstate
+
+ *.tfvars
+ 
+
+
+# Terraform lock files
+.terraform.tfstate.lock.info

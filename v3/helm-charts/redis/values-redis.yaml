@@ -1,0 +1,22 @@
+replicaCount: 3
+
+image:
+  repository: redis
+  tag: "7.2"
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+storage:
+  size: 5Gi
+  storageClassName: gp3
+  
+redis:
+  config:
+    # redis.conf 안에 replication 관련 설정 포함 가능
+    appendonly: "yes"

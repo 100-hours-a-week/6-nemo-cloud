@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-sentinel
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: redis-sentinel
+  template:
+    metadata:
+      labels:
+        app: redis-sentinel
+    spec:
+      dnsPolicy: ClusterFirst
+      affinity: {{- toYaml .Values.affinity | nindent 8 }}
+
+      initContainers:
+        - name: wait-for-redis
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo "[Init] Waiting for redis-0 to be reachable..."
+              until nc -z redis-0.redis-headless.redis.svc.cluster.local 6379; do
+                echo "Redis not reachable yet. Retrying..."
+                sleep 2
+              done
+              echo "[Init] Redis is reachable!"
+
+
+      containers:
+        - name: sentinel
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["sh", "-c", "--"]
+          args:
+            - |
+              echo "[Entrypoint] Waiting for redis DNS to resolve...";
+              until getent hosts redis-0.redis-headless.redis.svc.cluster.local; do
+                echo "Still waiting for redis...";
+                sleep 2;
+              done;
+              echo "DNS resolved. Sleeping 5s to ensure DNS availability...";
+              sleep 5
+              echo "Starting Redis Sentinel...";
+              exec redis-server /config/sentinel.conf --sentinel
+          ports:
+            - containerPort: 26379
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  until nslookup redis-0.redis-headless.redis.svc.cluster.local; do
+                    echo "Waiting for redis-0 DNS..."
+                    sleep 2
+                  done
+            failureThreshold: 30
+            periodSeconds: 5
+
+      volumes:
+        - name: config
+          configMap:
+            name: sentinel-config
