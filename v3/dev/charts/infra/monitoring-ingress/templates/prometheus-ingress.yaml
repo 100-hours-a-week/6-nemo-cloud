@@ -5,9 +5,9 @@ metadata:
   name: prometheus-ingress
   namespace: {{ .Values.prometheus.namespace | default .Values.namespace }}
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-dev
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
