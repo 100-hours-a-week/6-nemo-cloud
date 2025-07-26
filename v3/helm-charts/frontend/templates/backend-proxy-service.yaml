@@ -1,3 +1,0 @@
-# This file is no longer needed
-# Backend service is now deployed in the same namespace (frontend)
-# Ingress can directly reference the backend service without cross-namespace proxy

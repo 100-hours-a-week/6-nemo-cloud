@@ -1,16 +1,14 @@
 backend:
   serviceAccount:
-    name: backend     ## Deployment에서 사용할 ServiceAccount 이름
-  namespace:
-    name: frontend    ## 배포될 Namespace 이름 (backend → frontend로 변경)
+    name: backend
   image:
     repository: 084375578827.dkr.ecr.ap-northeast-2.amazonaws.com/backend
     tag: prod-20250714-1752
   replicas: 3
   imagePullSecrets:
-    - name: regcred   # ✅ ECR용 이미지 Pull 시크릿
+    - name: regcred
 
-  # 카프카 내부 접근용 환경변수 추가
+  # 카프카 내부 접근용 환경변수
   env:
     KAFKA_BOOTSTRAP_SERVERS: "kafka-headless.kafka.svc.cluster.local:9092"
     SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-headless.kafka.svc.cluster.local:9092"
