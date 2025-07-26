@@ -21,6 +21,8 @@ spec:
           retention_period: 168h
         grafana-agent:
           enabled: false
+        grafana-agent-operator:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
