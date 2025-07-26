@@ -15,7 +15,7 @@ spec:
           retention: 7d
           persistentVolume:
             enabled: true
-            size: 10Gi
+            size: 8Gi
             storageClass: standard
         kubeStateMetrics:
           enabled: true

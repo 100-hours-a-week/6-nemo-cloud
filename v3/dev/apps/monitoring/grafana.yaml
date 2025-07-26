@@ -24,7 +24,7 @@ spec:
                 isDefault: true
               - name: Loki
                 type: loki
-                url: http://loki-gateway.observability.svc.cluster.local
+                url: http://loki-gateway.logging.svc.cluster.local
                 access: proxy
   destination:
     server: https://kubernetes.default.svc
@@ -34,4 +34,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true 
+      - CreateNamespace=true

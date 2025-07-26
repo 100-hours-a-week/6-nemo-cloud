@@ -8,10 +8,11 @@ spec:
   source:
     repoURL: https://grafana.github.io/helm-charts
     chart: loki
-    targetRevision: 5.41.4       # 원하는 버전
+    targetRevision: 5.41.4
     helm:
       values: |
         isDefault: true
+        auth_enabled: false
         persistence:
           enabled: true
           size: 10Gi
@@ -22,7 +23,7 @@ spec:
           enabled: false
   destination:
     server: https://kubernetes.default.svc
-    namespace: observability
+    namespace: logging
   syncPolicy:
     automated:
       prune: true
