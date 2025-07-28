@@ -8,12 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://charts.rancher.com
-    chart: local-path-provisioner
-    targetRevision: 0.0.24
-    helm:
-      values: |
-        # 기본 설정 사용
+    repoURL: https://github.com/100-hours-a-week/6-nemo-cloud.git
+    targetRevision: infra/kubeadm
+    path: v3/dev/bootstrap
   destination:
     server: https://kubernetes.default.svc
     namespace: local-path-storage
