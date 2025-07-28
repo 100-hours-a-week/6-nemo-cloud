@@ -13,15 +13,14 @@ spec:
     targetRevision: 25.0.0
     helm:
       values: |
-        # KRaft 모드 완전 비활성화
+        # KRaft 비활성화 (ZooKeeper 기반 운영)
         kraft:
           enabled: false
-        
-        # Controller 비활성화 (ZooKeeper 모드에서는 사용하지 않음)
+
         controller:
           replicaCount: 0
-        
-        # ZooKeeper 모드 설정
+
+        # ZooKeeper 설정
         zookeeper:
           enabled: true
           replicaCount: 3
@@ -29,48 +28,38 @@ spec:
             enabled: true
             size: 8Gi
             storageClass: standard
-          # ZooKeeper 메트릭 활성화
           metrics:
             enabled: true
             serviceMonitor:
               enabled: true
               interval: 30s
-        
-        # Kafka 브로커 설정 (ZooKeeper 모드)
+
+        # Kafka 브로커 설정
         broker:
           replicaCount: 3
           persistence:
             enabled: true
             size: 8Gi
             storageClass: standard
-        
-        # 인증 설정 (PLAINTEXT - 인증 없음)
+
+        # 인증 및 암호화 비활성화 (PLAINTEXT only)
         auth:
           enabled: false
           clientProtocol: PLAINTEXT
           interBrokerProtocol: PLAINTEXT
-        
-        # 추가 설정으로 PLAINTEXT 강제 설정
-        extraConfig: |
-          listener.security.protocol.map=CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT
-          security.inter.broker.protocol=PLAINTEXT
-          sasl.enabled.mechanisms=
-          sasl.mechanism.inter.broker.protocol=PLAIN
-          sasl.mechanism.client.protocols=PLAIN
-        
-        # 전역 설정
-        global:
-          storageClass: standard
-        
-        # 서비스 설정
-        service:
-          type: ClusterIP
-        
-        # 로깅 설정
-        logPersistence:
-          enabled: false
-        
-        # 메트릭 설정 (프로메테우스 모니터링용)
+
+        tls:
+          type: disabled
+
+        extraEnvVars:
+          - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+            value: "CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT"
+          - name: KAFKA_CFG_SECURITY_INTER_BROKER_PROTOCOL
+            value: "PLAINTEXT"
+          - name: KAFKA_CFG_SASL_ENABLED_MECHANISMS
+            value: ""
+
+        # 메트릭 설정
         metrics:
           enabled: true
           serviceMonitor:
@@ -82,26 +71,20 @@ spec:
               matchLabels:
                 app.kubernetes.io/name: kafka
                 app.kubernetes.io/instance: kafka
-        
-        # 브로커 메트릭 설정
-        broker:
-          replicaCount: 3
-          persistence:
-            enabled: true
-            size: 8Gi
-            storageClass: standard
-          # 브로커 메트릭 활성화
-          metrics:
-            enabled: true
-            serviceMonitor:
-              enabled: true
-              interval: 30s
-        
-        # 보안 설정
+
+        # 공통 설정
+        global:
+          storageClass: standard
+
+        service:
+          type: ClusterIP
+
+        logPersistence:
+          enabled: false
+
         securityContext:
           enabled: false
-        
-        # 리소스 설정
+
         resources:
           limits:
             memory: 1Gi
@@ -117,4 +100,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true 
+      - CreateNamespace=true
