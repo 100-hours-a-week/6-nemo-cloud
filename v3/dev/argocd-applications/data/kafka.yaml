@@ -50,6 +50,11 @@ spec:
           clientProtocol: PLAINTEXT
           interBrokerProtocol: PLAINTEXT
         
+        # 추가 설정으로 PLAINTEXT 강제 설정
+        extraConfig: |
+          listener.security.protocol.map=CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT
+          security.inter.broker.protocol=PLAINTEXT
+        
         # 전역 설정
         global:
           storageClass: standard
