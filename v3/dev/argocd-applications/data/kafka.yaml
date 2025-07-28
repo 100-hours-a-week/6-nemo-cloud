@@ -54,6 +54,9 @@ spec:
         extraConfig: |
           listener.security.protocol.map=CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT
           security.inter.broker.protocol=PLAINTEXT
+          sasl.enabled.mechanisms=
+          sasl.mechanism.inter.broker.protocol=PLAIN
+          sasl.mechanism.client.protocols=PLAIN
         
         # 전역 설정
         global:
