@@ -45,6 +45,8 @@ spec:
         # 인증 완전 비활성화 (PLAINTEXT only)
         auth:
           enabled: false
+          clientProtocol: plaintext
+          interBrokerProtocol: plaintext
         
         tls:
           type: disabled
