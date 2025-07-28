@@ -22,7 +22,7 @@ signoz:
   host: signoz.dev3.nemo.ai.kr
   service: signoz-frontend
   port: 3301
-  namespace: observability
+  namespace: monitoring
 
 # Loki Configuration
 loki:
