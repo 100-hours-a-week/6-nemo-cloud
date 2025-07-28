@@ -42,14 +42,25 @@ spec:
             size: 8Gi
             storageClass: standard
 
-        # 인증 및 암호화 비활성화 (PLAINTEXT only)
+        # 인증 및 암호화 완전 비활성화 (PLAINTEXT only)
         auth:
           enabled: false
           clientProtocol: PLAINTEXT
           interBrokerProtocol: PLAINTEXT
-
+          sasl:
+            enabled: false
+            mechanisms: []
+        
         tls:
           type: disabled
+        
+        # PLAINTEXT 강제 설정
+        extraConfig: |
+          listener.security.protocol.map=CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT
+          security.inter.broker.protocol=PLAINTEXT
+          sasl.enabled.mechanisms=
+          sasl.mechanism.inter.broker.protocol=PLAIN
+          sasl.mechanism.client.protocols=PLAIN
 
         extraEnvVars:
           - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
