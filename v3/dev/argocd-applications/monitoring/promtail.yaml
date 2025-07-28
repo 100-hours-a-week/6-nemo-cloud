@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promtail
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: promtail
+    targetRevision: 6.16.6
+    helm:
+      values: |-
+        config:
+          clients:
+            - url: http://loki-gateway.logging.svc.cluster.local/loki/api/v1/push
+              headers:
+                X-Scope-OrgID: fake
+          positions:
+            filename: /tmp/positions.yaml
+          server:
+            http_listen_port: 3101
+          scrape_configs:
+            - job_name: kubernetes-pods
+              kubernetes_sd_configs:
+                - role: pod
+              pipeline_stages:
+                - cri: {}
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  target_label: node_name
+                - source_labels: [__meta_kubernetes_namespace]
+                  target_label: namespace
+                - source_labels: [__meta_kubernetes_pod_name]
+                  target_label: pod
+                - source_labels: [__meta_kubernetes_pod_container_name]
+                  target_label: container
+                - replacement: /var/log/pods/*$1/*.log
+                  separator: /
+                  source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+                  target_label: __path__
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 

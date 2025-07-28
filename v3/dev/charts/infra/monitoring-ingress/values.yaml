@@ -30,4 +30,4 @@ loki:
   host: loki.dev3.nemo.ai.kr
   service: loki-gateway
   port: 80
-  namespace: observability 
+  namespace: logging 
