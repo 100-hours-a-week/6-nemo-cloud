@@ -1,22 +1,25 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: local-path-storage
-#   namespace: argocd
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
-# spec:
-#   project: default
-#   source:
-#     repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
-#     targetRevision: infra/kubeadm
-#     path: v3/dev/raw-manifest/infra/local-path-storage
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: local-path-storage
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true 
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: local-path-storage
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.rancher.com
+    chart: local-path-provisioner
+    targetRevision: 0.0.24
+    helm:
+      values: |
+        # 기본 설정 사용
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: local-path-storage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 

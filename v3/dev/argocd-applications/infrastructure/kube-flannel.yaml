@@ -1,22 +1,25 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: kube-flannel
-#   namespace: argocd
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
-# spec:
-#   project: default
-#   source:
-#     repoURL: 'https://github.com/100-hours-a-week/6-nemo-cloud.git'
-#     targetRevision: infra/kubeadm
-#     path: v3/dev/bootstrap
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: kube-flannel
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true 
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-flannel
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.rancher.com
+    chart: kube-flannel
+    targetRevision: 0.27.0
+    helm:
+      values: |
+        # 기본 설정 사용
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-flannel
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true 

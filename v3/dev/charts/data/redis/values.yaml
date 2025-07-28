@@ -4,7 +4,7 @@ redis:
   secretName: redis-secret
   storage: 1Gi
 storageClass:
-  name: hostpath
+  name: standard
 
 resources:
   requests:
