@@ -13,24 +13,92 @@ spec:
     targetRevision: 25.0.0
     helm:
       values: |
-        replicaCount: 3
-        # SASL 인증을 비활성화하고 PLAINTEXT를 사용합니다.
-        auth:
+        # KRaft 모드 완전 비활성화
+        kraft:
           enabled: false
-        global:
-          storageClass: local-path
-        # Broker(StatefulSet)의 데이터 저장 설정
-        persistence:
-          enabled: true
-          size: 8Gi
-          storageClass: local-path
-        # Zookeeper 설정
+        
+        # Controller 비활성화 (ZooKeeper 모드에서는 사용하지 않음)
+        controller:
+          replicaCount: 0
+        
+        # ZooKeeper 모드 설정
         zookeeper:
+          enabled: true
           replicaCount: 3
           persistence:
             enabled: true
             size: 8Gi
-            storageClass: local-path
+            storageClass: standard
+          # ZooKeeper 메트릭 활성화
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              interval: 30s
+        
+        # Kafka 브로커 설정 (ZooKeeper 모드)
+        broker:
+          replicaCount: 3
+          persistence:
+            enabled: true
+            size: 8Gi
+            storageClass: standard
+        
+        # 인증 설정 (PLAINTEXT)
+        auth:
+          enabled: false
+        
+        # 전역 설정
+        global:
+          storageClass: standard
+        
+        # 서비스 설정
+        service:
+          type: ClusterIP
+        
+        # 로깅 설정
+        logPersistence:
+          enabled: false
+        
+        # 메트릭 설정 (프로메테우스 모니터링용)
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            interval: 30s
+            scrapeTimeout: 10s
+            jobLabel: kafka
+            selector:
+              matchLabels:
+                app.kubernetes.io/name: kafka
+                app.kubernetes.io/instance: kafka
+        
+        # 브로커 메트릭 설정
+        broker:
+          replicaCount: 3
+          persistence:
+            enabled: true
+            size: 8Gi
+            storageClass: standard
+          # 브로커 메트릭 활성화
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              interval: 30s
+        
+        # 보안 설정
+        securityContext:
+          enabled: false
+        
+        # 리소스 설정
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: 1000m
+          requests:
+            memory: 512Mi
+            cpu: 500m
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka
