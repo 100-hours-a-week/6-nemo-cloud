@@ -44,9 +44,11 @@ spec:
             size: 8Gi
             storageClass: standard
         
-        # 인증 설정 (PLAINTEXT)
+        # 인증 설정 (PLAINTEXT - 인증 없음)
         auth:
           enabled: false
+          clientProtocol: PLAINTEXT
+          interBrokerProtocol: PLAINTEXT
         
         # 전역 설정
         global:
