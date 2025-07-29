@@ -48,10 +48,6 @@ services:
   kafka-1:
     image: wurstmeister/kafka:latest
     container_name: kafka-1
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
     ports:
       - "9092:9092"
     environment:
@@ -70,10 +66,6 @@ services:
   kafka-2:
     image: wurstmeister/kafka:latest
     container_name: kafka-2
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
     ports:
       - "9092:9092"
     environment:
@@ -92,10 +84,6 @@ services:
   kafka-3:
     image: wurstmeister/kafka:latest
     container_name: kafka-3
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
     ports:
       - "9092:9092"
     environment:
@@ -114,8 +102,6 @@ services:
   kafdrop:
     image: obsidiandynamics/kafdrop:3.30.0
     container_name: kafdrop
-    depends_on:
-      - kafka-1
     ports:
       - "9000:9000"
     environment:
