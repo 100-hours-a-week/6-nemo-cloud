@@ -1,0 +1,138 @@
+version: "3.8"
+services:
+  zookeeper-1:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper-1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=10.20.5.4:2888:3888 server.2=10.20.5.5:2888:3888 server.3=10.20.5.6:2888:3888
+    networks:
+      - nemo-net
+    restart: unless-stopped
+    volumes:
+      - zookeeper-data-1:/data
+
+  zookeeper-2:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper-2
+    ports:
+      - "2182:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=10.20.5.4:2888:3888 server.2=10.20.5.5:2888:3888 server.3=10.20.5.6:2888:3888
+    networks:
+      - nemo-net
+    restart: unless-stopped
+    volumes:
+      - zookeeper-data-2:/data
+
+  zookeeper-3:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper-3
+    ports:
+      - "2183:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=10.20.5.4:2888:3888 server.2=10.20.5.5:2888:3888 server.3=10.20.5.6:2888:3888
+    networks:
+      - nemo-net
+    restart: unless-stopped
+    volumes:
+      - zookeeper-data-3:/data
+
+  kafka-1:
+    image: wurstmeister/kafka:latest
+    container_name: kafka-1
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 10.20.5.4:2181,10.20.5.5:2181,10.20.5.6:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.20.5.4:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    networks:
+      - nemo-net
+    restart: unless-stopped
+    volumes:
+      - kafka-data-1:/kafka
+
+  kafka-2:
+    image: wurstmeister/kafka:latest
+    container_name: kafka-2
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 10.20.5.4:2181,10.20.5.5:2181,10.20.5.6:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.20.5.5:9093
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    networks:
+      - nemo-net
+    restart: unless-stopped
+    volumes:
+      - kafka-data-2:/kafka
+
+  kafka-3:
+    image: wurstmeister/kafka:latest
+    container_name: kafka-3
+    depends_on:
+      - zookeeper-1
+      - zookeeper-2
+      - zookeeper-3
+    ports:
+      - "9094:9092"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: 10.20.5.4:2181,10.20.5.5:2181,10.20.5.6:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.20.5.6:9094
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    networks:
+      - nemo-net
+    restart: unless-stopped
+    volumes:
+      - kafka-data-3:/kafka
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:3.30.0
+    container_name: kafdrop
+    depends_on:
+      - kafka-1
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: 10.20.5.4:9092,10.20.5.5:9093,10.20.5.6:9094
+      JVM_OPTS: -Xms32M -Xmx64M
+      SERVER_SERVLET_CONTEXTPATH: /
+    networks:
+      - nemo-net
+    restart: unless-stopped
+
+networks:
+  nemo-net:
+
+volumes:
+  kafka-data-1:
+  kafka-data-2:
+  kafka-data-3:
+  zookeeper-data-1:
+  zookeeper-data-2:
+  zookeeper-data-3: 
