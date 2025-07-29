@@ -1,5 +1,5 @@
-version: "3.8"
 services:
+
   zookeeper-1:
     image: wurstmeister/zookeeper:latest
     container_name: zookeeper-1
